@@ -34,8 +34,8 @@ $ python -m spacy.en.download
 # https://textblob.readthedocs.org/
 $ pip3 install textblob
 
-# interface from python to the # Stanford NER Tagger
-download Project
+# interface from python to the 
+# Stanford NER Tagger download Project
 ```
 
 Clustering
@@ -58,8 +58,14 @@ Infrastructure
 $ brew install redis
 $ pip3 install redis-py
 
-Install Postgresql
-Install Elastic Search
-Install MongoDB
+# Install Postgresql
+# http://python.projects.pgfoundry.org/
+# http://python.projects.pgfoundry.org/docs/1.1/admin.html#installation
+
+# Install MongoDB
+pip3 install mongodb
+
+# Or install Elastic Search
+pip3 install elasticsearch
 ```
 
