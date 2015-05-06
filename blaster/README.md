@@ -4,12 +4,15 @@
 
 Scraping and Indexing
 ```python
+# Generally just cool, does almost what I actually want to create.. :)
 $ pip3 install newspaper
+# Great for any scraping http://scrapy.org/doc/
+$ pip3 install scrapy
 ```
 
 Parsing and Text Processing
 ```python
-# Python 3.4.2 used
+# Python version 3.4.2 used
 # Python NLTK 3.0 http://www.nltk.org/install.html
 # Installing the SciPy Stack — SciPy.org
 
