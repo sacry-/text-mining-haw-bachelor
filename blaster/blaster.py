@@ -1,5 +1,5 @@
-import os, sys
-import path_router
+import os
+import sys
 from logger import Logger
 
 logger = Logger("blaster").getLogger()

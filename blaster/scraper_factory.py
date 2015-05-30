@@ -1,9 +1,9 @@
 from utils import read_json
 from utils import timeit
-from persistence import FileScraper
-from scraper import Source
-from scraper import Download
-from scraper import newspaper_config
+from filescraper import FileScraper
+from newspaper_scraper import Source
+from newspaper_scraper import Download
+from paths import newspaper_config
 
 @timeit
 def persist_articles(source_name, download):
