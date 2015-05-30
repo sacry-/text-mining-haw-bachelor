@@ -2,7 +2,6 @@ import newspaper
 
 from newspaper import Article
 from data import Data
-from persister import Persister
 from utils import timeit
 from logger import Logger
 
@@ -37,44 +36,64 @@ class Download():
     self.name = source.name
     self.url = source.url
     self.paper = source.paper
-    self.persister = Persister(self.name)
 
   @timeit
   def start(self):
-    downloaded = self.download_paper()
-    self.persist_articles(downloaded)
+    return self.download_paper()
 
   @timeit
   def download_paper(self):
     for article in self.paper.articles:
-      article = self.download_article(article)
+      article = self.download_article(article, 1)
+
+      if not article.html:
+        continue
+      
+      article = self.parse_article(article)
+      
       if not article:
         continue
+      
       yield Data(article)
 
   @timeit
-  def download_article(self, article):
-    a = Article(article.url, 
+  def download_article(self, article, retry):
+    article = Article(article.url, 
                 language='en', 
                 keep_article_html=True, 
                 fetch_images=False)
     try:
-      a.download()
-    except:
-      logger.info("could not be downloaded: " + article.url)
-      return None
+      article.download()
+      if article.is_downloaded:
+        return article
 
-    try:
-      a.parse()
-    except:
-      logger.info("could not be parsed: " + article.url)
+    except (KeyboardInterrupt, SystemExit):
+      raise SystemExit("\nKeyboard was interrupted - Exiting System")
+      
+    except Exception as e:
+      doc = "could not be downloaded: " + article.url
+      exc = "exception: " + e + " - " + e.__doc__
+      logger.info(doc + " " + exc)
+    
+    if retry > 0:
+      return self.download_article(article, retry - 1)
+    else:
       return None
-
-    return a
 
   @timeit
-  def persist_articles(self, articles):
-    for data in articles:
-      self.persister.save(data.to_h())
+  def parse_article(self, article):
+    try:
+      article.parse()
+      if article.is_parsed:
+        return article
 
+    except (KeyboardInterrupt, SystemExit):
+      raise SystemExit("\nKeyboard was interrupted - Exiting System")
+
+    except Exception as e:
+      doc = "could not be parsed: " + article.url
+      exc = "exception: " + e + " - " + e.__doc__
+      logger.info(doc + " " + exc)
+
+    return None
 

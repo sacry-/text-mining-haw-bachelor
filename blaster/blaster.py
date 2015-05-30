@@ -10,9 +10,8 @@ def not_implemented(cmd):
 def delegate(cmd, tail):
 
   if cmd == "scrape":
-    from scraper_api import download_papers_from_sources
+    from scraper_factory import download_papers_from_sources
 
-    logger.info("scrape")
     download_papers_from_sources()
 
   elif cmd == "tokenize":

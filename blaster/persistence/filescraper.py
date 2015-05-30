@@ -9,7 +9,7 @@ from logger import Logger
 
 logger = Logger(__name__).getLogger()
 
-class Persister():
+class FileScraper():
 
   def __init__(self, paper):
     self.paper = paper
@@ -23,7 +23,7 @@ class Persister():
     ppath = self.path_for_article(data["ntitle"])
     with io.open(ppath, 'w+', encoding='utf-8') as f:
       json_data = json.dumps(data, indent=2, sort_keys=True)
-      logger.info(self.paper + " - " + data["ntitle"])
+      logger.info("local: " + self.paper + " - " + data["ntitle"])
       f.write(json_data)
 
   def path_for_article(self, ntitle):
@@ -34,4 +34,3 @@ class Persister():
 
   def date_today(self):
     return date.today().strftime("%Y%m%d")
-
