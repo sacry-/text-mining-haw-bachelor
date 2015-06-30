@@ -46,6 +46,9 @@ class Download():
     for article in self.paper.articles:
       article = self.download_article(article, 1)
 
+      if not article:
+        continue
+
       if not article.html:
         continue
       
@@ -73,7 +76,7 @@ class Download():
     except Exception as e:
       doc = "could not be downloaded: " + article.url
       exc = "exception: " + e + " - " + e.__doc__
-      logger.info(doc + " " + exc)
+      logger.error(doc + " " + exc)
     
     if retry > 0:
       return self.download_article(article, retry - 1)
@@ -93,7 +96,7 @@ class Download():
     except Exception as e:
       doc = "could not be parsed: " + article.url
       exc = "exception: " + e + " - " + e.__doc__
-      logger.info(doc + " " + exc)
+      logger.error(doc + " " + exc)
 
     return None
 
