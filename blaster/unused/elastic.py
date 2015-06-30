@@ -21,7 +21,7 @@ class Elastic():
   def count(self, _index, _doc_type, le_search={"query" : {"match_all" : {}}}):
     return self.es.count(index=_index, doc_type=_doc_type, body=le_search)["count"]
 
-  def index_doc(_index, _doc_type, uid=None, doc={"dummy": "dummy", "timestamp": datetime.now()}):
+  def index_doc(self, _index, _doc_type, uid=None, doc={"dummy": "dummy", "timestamp": datetime.now()}):
     if uid:
       self.es.index(index=_index, doc_type=_doc_type, id=uid, body=doc)
     else:

@@ -1,5 +1,4 @@
 from datetime import datetime
-from utils import ts_now
 from utils import normalize_title
 from logger import Logger
 
@@ -8,15 +7,16 @@ logger = Logger(__name__).getLogger()
 class Data():
 
   def __init__(self, article):
-    self.ts_in = ts_now()
+    self.newspaper = None
+    self.ts_in = datetime.now()
 
     self.title = article.title
-    if not self.title_valid():
+    if not self.text_valid(self.title):
       self.title = "invalid_title"
       logger.info("has no title: " + article.url)
 
     self.text = article.text
-    if not self.text_valid():
+    if not self.text_valid(self.title):
       self.text = "invalid_text"
       logger.info("has no text: " + article.url)
 
@@ -33,30 +33,8 @@ class Data():
     self.meta_keywords = list(article.meta_keywords)
     self.tags = list(article.tags)
     self.authors = list(article.authors)
+    self.publish_date = ""
 
-    date = article.publish_date
-    if isinstance(date, datetime):
-      date = date.isoformat()
-    self.publish_date = date
+  def text_valid(self, s):
+    return s and s.strip()
 
-  def to_h(self):
-    return { 
-      "ts_in" : self.ts_in,
-      "ntitle" : self.normalized_title,
-      "url" : self.url,
-      "canonical_link" : self.canonical_link,
-      "title" : self.title,
-      "text" : self.text,
-      "article_html" : self.article_html,
-      "keywords" : self.keywords,
-      "meta_keywords" : self.meta_keywords,
-      "tags" : self.tags,
-      "authors" : self.authors,
-      "publish_date" : self.publish_date
-    }
-
-  def title_valid(self):
-    return self.title and self.title.strip()
-
-  def text_valid(self):
-    return self.text and self.text.strip()

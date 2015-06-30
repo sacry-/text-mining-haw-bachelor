@@ -1,33 +1,36 @@
 import os
 import json
+import re
+from datetime import datetime
+form esscraper import EsScraper
 
+
+def read_json(abs_path):
+  with open(abs_path) as f:
+    return json.loads(f.read())
 
 if __name__ == "__main__":
-  def read_json(abs_path):
-    with open(abs_path) as f:
-      return json.loads(f.read())
+  persister = EsScraper("theguardian")
 
-  base = "/Users/sacry/dev/uni/bachelor/text-mining-haw-bachelor/blaster/scraper/resources/articles"
+  articles = "/Users/sacry/dev/uni/bachelor/text-mining-haw-bachelor/blaster/resources/articles"
 
-  sdirs = []
-  for root, dirs, files in os.walk(base):
-    for adir in dirs:
-      if adir != "theguardian":
-        sdirs.append(adir)
+  for folder_date in os.listdir(articles):
 
-  h = {}
-  for root, dirs, files in os.walk(base):
-    for adir in sdirs:
-      if not adir in h:
-        h[adir] = []
-      for f in files:
-        if f.endswith(".json"):
-          abs_path = os.path.join(root, f)
-          if adir in abs_path:
-            ajson = read_json(abs_path)
-            h[adir].append( ajson ) 
+    date_path = articles + "/" + folder_date
 
-  for ts, collection in h.items():
-    for element in collection:
-      print(e["ntitle"])
+    for paper in os.listdir(date_path):
+
+      paper_path = date_path + "/" + paper
+
+      for articlejson in os.listdir(paper_path):  
+
+        article_path = paper_path + "/" + articlejson
+        article = articlejson.split(".json")[0]
+        
+        data = read_json(article_path)
+
+        persister.save(data)
+
+
+
 

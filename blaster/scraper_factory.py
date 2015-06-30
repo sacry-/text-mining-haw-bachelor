@@ -1,15 +1,16 @@
 from utils import read_json
 from utils import timeit
-from filescraper import FileScraper
+from esscraper import EsScraper
 from newspaper_scraper import Source
 from newspaper_scraper import Download
 from paths import newspaper_config
 
 @timeit
 def persist_articles(source_name, download):
-  persister = FileScraper(source_name)
+  persister = EsScraper(source_name)
   for data in download.start():
-    persister.save(data.to_h())
+    data.newspaper = source_name
+    persister.save(data)
 
 def build_newspapers():
   config = newspaper_config()

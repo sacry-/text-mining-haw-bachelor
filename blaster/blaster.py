@@ -5,54 +5,71 @@ from logger import Logger
 logger = Logger("blaster").getLogger()
 
 def not_implemented(cmd):
-  print("{} not implemented!".format(cmd))
+  print("{func} not implemented!".format(func=cmd))
 
-def delegate(cmd, tail):
+def blaster_facade(cmd, tail):
+  if cmd == "scrape": scrape()
+  elif cmd == "preprocess": preprocess()
+  elif cmd == "features": features()
+  elif cmd == "cluster": cluster()
+  elif cmd == "summarize": summarize()
+  else: not_avaliable(cmd, tail)
 
-  if cmd == "scrape":
-    from scraper_factory import download_papers_from_sources
 
-    download_papers_from_sources()
+def scrape():
+  from scraper_factory import download_papers_from_sources
+  download_papers_from_sources()
 
-  elif cmd == "tokenize":
-    not_implemented(cmd)
-    logger("tokenize")
 
-  elif cmd == "tag":
-    not_implemented(cmd)
-    logger("tag")
+def preprocess(cmd="preprocess"):
+  '''
+    flags = --overwrite | --dry | --allow-collisions
+    mode = all | from date to now| start to date | from date to date | at date
+    articles = get_articles(mode)
+    for article in articles:
+      tokens = tokenize( article.text )
+      postags = tag( tokens )
+      nertags = ner_tag( tokens )
+      aptags = ap_tag( tokens )
+      persist( article, tokens, postags, nertags, aptags )
+  '''
+  not_implemented(cmd)
+  logger.error(cmd)
 
-  elif cmd == "features":
-    not_implemented(cmd)
-    logger("features")
 
-  elif cmd == "cluster":
-    not_implemented(cmd)
-    logger("cluster")
+def features(cmd="features"):
+  not_implemented(cmd)
+  logger.error(cmd)
 
-  elif cmd == "summarize":
-    not_implemented(cmd)
-    logger("summarize")
 
-  else:
-    print("{} : {} currently not available!".format(cmd, tail))
+def cluster(cmd="cluster"):
+  not_implemented(cmd)
+  logger.error(cmd)
+
+
+def summarize(cmd="summarize"):
+  not_implemented(cmd)
+  logger.error(cmd)
+
+
+def not_avaliable(cmd, tail):
+  out = "Command invalid: {command} -> {args}".format(command=cmd, args=tail)
+  print(out)
+  logger.error(out)
 
 
 def consolify(args):
   head, tail = None, []
-
   if len(sys.argv) > 1:
     args = [x.lower().strip() for x in args if x]
     head = args[0]
-
     if len(sys.argv) > 2:
       tail = args[1:]
-
   return head, tail
 
 
 if __name__ == "__main__":
   head, tail = consolify(sys.argv[1:])
-  delegate(head, tail)
+  blaster_facade(head, tail)
 
 
