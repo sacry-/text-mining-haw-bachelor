@@ -1,22 +1,21 @@
-from utils import read_json
 from utils import timeit
 from esscraper import EsScraper
 from newspaper_scraper import Source
 from newspaper_scraper import Download
-from paths import newspaper_config
+from router import newspaper_conf, app_conf
 
 @timeit
 def persist_articles(source_name, download):
-  persister = EsScraper(source_name)
+  conf = app_conf()
+  persister = EsScraper(source_name, conf["elasticsearch"])
   for data in download.start():
     data.newspaper = source_name
     persister.save(data)
 
 def build_newspapers():
-  config = newspaper_config()
-
+  conf = newspaper_conf()
   sources = []
-  for name, data in config.items():
+  for name, data in conf.items():
     url, memoize = data["url"], data["memoize"]
     source = Source(name, url, memoize)
     source.build()

@@ -19,5 +19,5 @@ class Logger():
     return self.logger
 
   def log_path(self, name):
-    p = path.dirname(path.realpath(__file__))
-    return "%s/log/%s.log" % (p, name)
+    log_dir = path.dirname(path.abspath(__file__))
+    return "{}/log/{}.log".format(log_dir, name)

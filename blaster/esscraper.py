@@ -4,12 +4,16 @@ from elasticsearch_dsl.connections import connections
 from article import createArticle
 from article import Article
 
+
 logger = Logger(__name__).getLogger()
 
 class EsScraper():
 
-  def __init__(self, paper):
-    connections.create_connection(hosts=['localhost:9200'])
+  def __init__(self, paper, config=None):
+    host, port = "localhost", 9200 # defaults
+    if config:
+      host, port = config["host"], config["port"]
+    connections.create_connection(hosts=['{}:{}'.format(host,port)])
     self.paper = paper
 
   def save(self, data):

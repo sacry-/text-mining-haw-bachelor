@@ -2,6 +2,7 @@ from datetime import datetime
 from utils import normalize_title
 from logger import Logger
 
+
 logger = Logger(__name__).getLogger()
 
 class Data():

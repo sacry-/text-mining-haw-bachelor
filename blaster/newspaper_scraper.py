@@ -5,6 +5,7 @@ from data import Data
 from utils import timeit
 from logger import Logger
 
+
 logger = Logger(__name__).getLogger()
 
 class Source():

@@ -2,18 +2,25 @@ import os
 import sys
 from logger import Logger
 
+
 logger = Logger("blaster").getLogger()
 
 def not_implemented(cmd):
   print("{func} not implemented!".format(func=cmd))
 
 def blaster_facade(cmd, tail):
-  if cmd == "scrape": scrape()
-  elif cmd == "preprocess": preprocess()
-  elif cmd == "features": features()
-  elif cmd == "cluster": cluster()
-  elif cmd == "summarize": summarize()
-  else: not_avaliable(cmd, tail)
+  if cmd == "scrape": 
+    scrape()
+  elif cmd == "preprocess": 
+    preprocess()
+  elif cmd == "features": 
+    features()
+  elif cmd == "cluster": 
+    cluster()
+  elif cmd == "summarize": 
+    summarize()
+  else: 
+    not_avaliable(cmd, tail)
 
 
 def scrape():

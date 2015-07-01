@@ -1,7 +1,7 @@
 from datetime import date
 from datetime import datetime
-from utils import ts_now
 from elasticsearch_dsl import DocType, String, Date, Nested, analysis
+
 
 class Article(DocType):
   ts_in = Date()

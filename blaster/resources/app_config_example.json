@@ -1,6 +1,6 @@
 {
   "elasticsearch" : {
-    "host" : "localhost"
+    "host" : "localhost",
     "port" : 9200
   },
   "more.." : ".."

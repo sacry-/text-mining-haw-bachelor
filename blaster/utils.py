@@ -3,12 +3,10 @@ import ast
 import json                                              
 import re
 import hashlib
-import os
 import time
-import dateutil.parser as dp
 
-from datetime import datetime
 from logger import Logger
+
 
 logger = Logger(__name__).getLogger()
 
@@ -35,12 +33,6 @@ def normalize_title(s):
 def md5_hex(s):
   return hashlib.md5(url.encode()).hexdigest()
 
-def iso_to_sec(t):
-  return dp.parse(t).strftime('%s')
-
-def ts_now():
-  return datetime.fromtimestamp(time.time()).isoformat()
-
 def evaluate(python_data):
   return ast.literal_eval(python_data)
 
@@ -51,12 +43,5 @@ def read_json(abs_path):
 def freadlines(abs_path):
   with open(abs_path) as f:
     return f.readlines()
-
-
-
-
-
-
-
 
 
