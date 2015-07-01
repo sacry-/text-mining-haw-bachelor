@@ -62,10 +62,8 @@ $ pip3 install redis-py
 # http://python.projects.pgfoundry.org/
 # http://python.projects.pgfoundry.org/docs/1.1/admin.html#installation
 
-# Install MongoDB
-pip3 install mongodb
-
 # Or install Elastic Search
 pip3 install elasticsearch
+pip3 install elasticsearch-dsl
 ```
 
