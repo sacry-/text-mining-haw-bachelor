@@ -20,8 +20,8 @@ def newspaper_conf():
 def app_conf():
   return read_config(APP_CONFIG)
 
-def stanford_ner():
+def stanford_ner_conf():
   ner_conf = app_conf()["stanford_ner"]
   if ner_conf and ner_conf["ner_jar"] and ner_conf["classifier"]:
-    return NERTagger( ner_conf["ner_jar"], ner_conf["classifier"] ) 
-  return None
+    return ( ner_conf["ner_jar"], ner_conf["classifier"] ) 
+  return ( None, None )
