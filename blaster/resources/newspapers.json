@@ -1,8 +1,0 @@
-{
-  "theguardian" : {
-    "url" : "http://www.theguardian.com/us",
-    "memoize" : True,
-    "api_key" : "",
-    "api_url" : ""
-  }
-}
