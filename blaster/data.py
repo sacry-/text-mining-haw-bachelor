@@ -34,7 +34,10 @@ class Data():
     self.meta_keywords = list(article.meta_keywords)
     self.tags = list(article.tags)
     self.authors = list(article.authors)
-    self.publish_date = ""
+
+    self.publish_date = str(article.publish_date)
+    if not self.publish_date:
+      self.publish_date = str(datetime.now())
 
   def text_valid(self, s):
     return s and s.strip()

@@ -48,14 +48,19 @@ class Download():
       article = self.download_article(article, 1)
 
       if not article:
+        logger.info("Lost article after download: {}".format(self.name))
         continue
 
+      title = article.title
+      
       if not article.html:
+        logger.info("no html in body: {}".format(title))
         continue
       
       article = self.parse_article(article)
       
       if not article:
+        logger.info("could not be parsed: {}".format(title))
         continue
       
       yield Data(article)

@@ -1,7 +1,7 @@
 from datetime import date
 from datetime import datetime
 from elasticsearch_dsl import DocType, String, Date, Nested, analysis
-
+from utils import date_for_index
 
 class Article(DocType):
   ts_in = Date()
@@ -23,26 +23,8 @@ class Article(DocType):
   def save(self, ** kwargs):
     return super(Article, self).save(** kwargs)
 
-'''
-  Article(
-    meta={'id' : "some_title"}, 
-    ts_in=datetime.now(), 
-    newspaper="theguardian"
-    normalized_title="some_title",
-    url="www.url_canonical.de/us/Some-title",
-    canonical_link="www.url_canonical.de/us/Some-title",
-    title="Some title",
-    text="text",
-    article_html="<html>text</html>",
-    keywords=[],
-    meta_keywords=[],
-    tags=[],
-    authors=[],
-    publish_date = datetime.now()
-  )
-'''
 def createArticle(d):
-  return Article(
+  a = Article(
     meta={'id' : d.normalized_title}, 
     ts_in=datetime.now(), 
     newspaper=d.newspaper,
@@ -55,6 +37,13 @@ def createArticle(d):
     meta_keywords=d.meta_keywords,
     tags=d.tags,
     authors=d.authors,
-    publish_date=datetime.now()
+    publish_date=d.publish_date
   )
+  date_index = date_for_index(d.publish_date)
+  if date_index:
+    a._index = date_index
+  return a
+
+if __name__ == "__main__":
+  pass
 

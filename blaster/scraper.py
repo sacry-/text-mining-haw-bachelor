@@ -7,7 +7,7 @@ from article import Article
 
 logger = Logger(__name__).getLogger()
 
-class EsScraper():
+class Scraper():
 
   def __init__(self, paper, config=None):
     host, port = "localhost", 9200 # defaults
@@ -19,7 +19,7 @@ class EsScraper():
   def save(self, data):
     Article.init()
     article = createArticle(data)
-    logger.info("post es/" + date.today().strftime("%Y%m%d") + "/" + self.paper + "/" + article.meta.id)
+    logger.info("> " + article.newspaper + " uri/" + date.today().strftime("%Y%m%d") + "/article/" + article.meta.id)
     article.save()
 
   def read(self, identifier):

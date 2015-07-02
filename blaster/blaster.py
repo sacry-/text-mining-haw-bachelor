@@ -23,8 +23,11 @@ def blaster_facade(cmd, tail):
     not_avaliable(cmd, tail)
 
 
-def scrape():
+def scrape(cmd="scrape"):
   from scraper_factory import download_papers_from_sources
+
+  logger.info(cmd)
+
   download_papers_from_sources()
 
 

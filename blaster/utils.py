@@ -44,4 +44,12 @@ def freadlines(abs_path):
   with open(abs_path) as f:
     return f.readlines()
 
+date_index_pattern = re.compile("^(?P<year>2[0-9]{3})\W+(?P<month>[0-9]{1,2})\W+(?P<day>[0-9]{1,2})")
+
+def date_for_index(date_str):
+  m = date_index_pattern.match(date_str)
+  if m:
+    return "".join([m.group(x) for x in range(1, 3 + 1)])
+  return None
+
 
