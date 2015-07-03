@@ -23,18 +23,27 @@ class NerTagger():
     return self.tagged != None
 
   def extract(self):
+
     result = []
 
     for sentenceno, sentence in enumerate(self.tagged):
 
-      primaries_sentence = []
+      named_entities = []
+      current_entity = []
 
       for (w, tag) in sentence:
         if tag != "O":
-          primaries_sentence.append( (w, tag) ) 
+          current_entity.append( (w, tag) ) 
+        else:
+          if current_entity:
+            named_entities.append( current_entity )
+            current_entity = []
 
-      if primaries_sentence:
-        new_sentence = (sentenceno + 1, primaries_sentence)
+      if current_entity:
+        named_entities.append( current_entity )
+
+      if named_entities:
+        new_sentence = (sentenceno + 1, named_entities)
         result.append( new_sentence )
 
     return result
