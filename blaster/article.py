@@ -5,11 +5,11 @@ from utils import date_for_index
 
 class Article(DocType):
   ts_in = Date()
-  newspaper = String(analyzer='snowball')
+  newspaper = String()
   publish_date = String()
   title = String()
-  text = String(analyzer='snowball')
-  article_html = String(analyzer='snowball')
+  text = String()
+  article_html = String()
   url = String()
   canonical_link = String()
   keywords = String(fields={'raw': String(index='not_analyzed')})

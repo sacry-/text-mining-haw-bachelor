@@ -25,9 +25,37 @@ def build_newspapers():
 
   return sources
 
+def download_paper(source):
+  download = Download(source)
+  persist_articles(source.name, download)
+
 def download_papers_from_sources():
   sources = build_newspapers()
-
   for source in sources:  
-    download = Download(source)
-    persist_articles(source.name, download)
+    download_paper(source)
+
+
+# THREADED - TODO TESTING ...!
+def download_paper_from_source(name, url, memoize):
+  print("paper: ", name, " with: ", url)
+  source = Source(name, url, memoize)
+  source.build()
+  download_paper(source)
+
+def threaded_download_papers():
+  import threading
+
+  conf = newspaper_conf()
+  pool = []
+  for name, data in conf.items():
+    memoize = data["memoize"]
+    for url in data["urls"]:
+      thr = threading.Thread(
+        target=download_paper_from_source, 
+        args=(name, url, memoize), 
+        kwargs={}
+      )
+      thr.start()
+      pool.append(thr)
+  [t.join() for t in pool]
+

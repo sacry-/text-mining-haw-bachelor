@@ -1,6 +1,7 @@
 from datetime import date
 from logger import Logger
 from elasticsearch_dsl.connections import connections
+from elasticsearch_dsl import Index
 from article import createArticle
 from article import Article
 
@@ -17,13 +18,25 @@ class Scraper():
     self.paper = paper
 
   def save(self, data):
-    Article.init()
-    article = createArticle(data)
-    logger.info("> " + article.newspaper + " uri/" + date.today().strftime("%Y%m%d") + "/article/" + article.meta.id)
-    article.save()
-
-  def read(self, identifier):
-    return Article.get(id=identifier)
+    try:
+      Article.init()
+      a = createArticle(data)
+      a.save()
+      logger.info(self.logging_text(a))
+    except Exception as e:
+      logger.error("article could not be created: " + e)
 
   def date_today(self):
     return date.today().strftime("%Y%m%d")
+
+  def new_index(self, index_name):
+    new_index = Index(index_name)
+    new_index.settings(
+      number_of_shards=2,
+      number_of_replicas=1
+    )
+    new_index.create()
+
+  def logging_text(self, a):
+    return ("> " + a.newspaper + " uri/" + a._index + "/article/" + a.meta.id)
+
