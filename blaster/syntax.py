@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import re
 import enchant # pip install pyenchant
 from nltk import word_tokenize

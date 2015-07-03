@@ -23,5 +23,7 @@ def app_conf():
 def stanford_ner_conf():
   ner_conf = app_conf()["stanford_ner"]
   if ner_conf and ner_conf["ner_jar"] and ner_conf["classifier"]:
-    return ( ner_conf["ner_jar"], ner_conf["classifier"] ) 
+    expanded_ner = path.expanduser(ner_conf["ner_jar"])
+    expanded_classifier = path.expanduser(ner_conf["classifier"])
+    return ( expanded_ner, expanded_classifier ) 
   return ( None, None )
