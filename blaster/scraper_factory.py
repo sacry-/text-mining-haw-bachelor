@@ -26,6 +26,17 @@ def download_papers_from_sources():
   [t.join() for t in pool]
   print_queue_count(q)
 
+def download_paper_from_source(name, url, memoize, q):
+  print("paper: ", name, " with: ", url)
+
+  source = Source(name, url, memoize)
+  source.build()
+
+  download = Download(source)
+  actual = persist_articles(source.name, download)
+
+  count_queue(q, source.size, actual)
+
 @timeit
 def persist_articles(source_name, download):
   conf = app_conf()
@@ -37,21 +48,6 @@ def persist_articles(source_name, download):
     if saved: 
       actual += 1
   return actual
-
-def download_paper(source):
-  download = Download(source)
-  return persist_articles(source.name, download)
-
-def download_paper_from_source(name, url, memoize, q):
-  print("paper: ", name, " with: ", url)
-
-  source = Source(name, url, memoize)
-  source.build()
-
-  total = source.size
-  actual = download_paper(source)
-
-  count_queue(q, total, actual)
 
 def count_queue(q, total, actual):
   h = {"total" : 0, "actual" : 0}
