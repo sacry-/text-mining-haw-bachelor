@@ -42,3 +42,5 @@ class Data():
   def text_valid(self, s):
     return s and s.strip()
 
+if __name__ == "__main__":
+  pass

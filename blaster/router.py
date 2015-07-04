@@ -27,3 +27,7 @@ def stanford_ner_conf():
     expanded_classifier = path.expanduser(ner_conf["classifier"])
     return ( expanded_ner, expanded_classifier ) 
   return ( None, None )
+
+
+if __name__ == "__main__":
+  pass

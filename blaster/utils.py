@@ -53,3 +53,5 @@ def date_for_index(date_str):
   return None
 
 
+if __name__ == "__main__":
+  pass

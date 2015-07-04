@@ -33,3 +33,5 @@ class Elastic():
   def scroll_by_id(self, _index, _doc_type, _scroll_id):
     return self.es.scroll(scroll_id=_scroll_id, scroll= "1m")
 
+if __name__ == "__main__":
+  pass

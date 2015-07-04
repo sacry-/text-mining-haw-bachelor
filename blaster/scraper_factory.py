@@ -64,3 +64,6 @@ def print_queue_count(q):
   else:
     print("No count! W00t?!")
 
+
+if __name__ == "__main__":
+  pass

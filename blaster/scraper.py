@@ -31,14 +31,9 @@ class Scraper():
   def date_today(self):
     return date.today().strftime("%Y%m%d")
 
-  def new_index(self, index_name):
-    new_index = Index(index_name)
-    new_index.settings(
-      number_of_shards=2,
-      number_of_replicas=1
-    )
-    new_index.create()
-
   def logging_text(self, a):
     return ("> " + a.newspaper + " uri/" + a._index + "/article/" + a.meta.id)
 
+
+if __name__ == "__main__":
+  pass
