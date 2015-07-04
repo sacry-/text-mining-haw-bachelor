@@ -26,7 +26,7 @@ class Source():
                             language='en', 
                             memoize_articles=self.memoize)
     self.size = len(self.paper.articles)
-    s = "total articles: {}".format(self.size)
+    s = "total articles: {} for {}".format(self.size, self.name)
     print(s)
     logger.info(s)
 
@@ -35,7 +35,6 @@ class Download():
 
   def __init__(self, source):
     self.name = source.name
-    self.url = source.url
     self.paper = source.paper
 
   @timeit

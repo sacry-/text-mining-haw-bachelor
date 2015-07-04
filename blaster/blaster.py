@@ -32,6 +32,7 @@ def scrape(cmd="scrape"):
 
 
 def preprocess(cmd="preprocess"):
+  from preprocessor import preprocess
   '''
     flags = --overwrite | --dry | --allow-collisions
     mode = all | from date to now| start to date | from date to date | at date

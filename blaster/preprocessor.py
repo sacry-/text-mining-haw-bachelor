@@ -37,15 +37,16 @@ class Preprocessor():
     self.ner_tags()
     return self.ner_tagger.extract()
 
+def preprocess(text):
+  
+  tokens = [word for sentence in sentence_tokenize( text ) for word in sentence]
+  pre = Preprocessor(text, tokens)
+  blob = TextBlob(text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
+  pre.set_blob(blob)
+  ner_tagger = get_configured_ner_tagger(tokens)
+  pre.set_ner_tagger(ner_tagger)
 
-def pretified(named_entities):
-  entities = []
-  for named_entity in named_entities:
-    word = []
-    for val, tag in named_entity:
-      word.append( val )
-    entities.append( " ".join(word) )
-  return entities
+  return (pre.pos_tags(), pre.ner_extract(), pre.noun_phrases())
 
 
 if __name__ == "__main__":

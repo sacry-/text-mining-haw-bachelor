@@ -25,6 +25,8 @@ class Scraper():
       logger.info(self.logging_text(a))
     except Exception as e:
       logger.error("article could not be created: " + e)
+      return False
+    return True
 
   def date_today(self):
     return date.today().strftime("%Y%m%d")
