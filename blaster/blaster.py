@@ -31,21 +31,62 @@ def scrape(cmd="scrape"):
   download_papers_from_sources()
 
 
-def preprocess(cmd="preprocess"):
+def preprocess(args=None):
   from preprocessor import preprocess
-  '''
-    flags = --overwrite | --dry | --allow-collisions
-    mode = all | from date to now| start to date | from date to date | at date
-    articles = get_articles(mode)
-    for article in articles:
-      tokens = tokenize( article.text )
-      postags = tag( tokens )
-      nertags = ner_tag( tokens )
-      aptags = ap_tag( tokens )
-      persist( article, tokens, postags, nertags, aptags )
-  '''
-  not_implemented(cmd)
-  logger.error(cmd)
+
+  from_date, to_date = mode(args)
+
+  articles = []
+  if from_date and not to_date:
+    if from_date == "all":
+      print("get_all_articles()")
+    else:
+      print("get_articles_at_date(from_date)")
+  elif from_date and to_date:
+    print("get_articles(from_date, to_date)")
+
+  for article in articles:
+    prep = preprocess( article.text )
+
+    postags = prep.pos_tags()
+    nertags = prep.ner_extract()
+    aptags = prep.noun_phrases()
+
+    print("should persist it here")
+
+  logger.info("preprocess finished")
+
+
+def mode(args):
+  date, from_date, to_date = None, None, None
+
+  if args[0] == "at":
+    date = args[1]
+
+  elif args[0] == "all":
+    date = "all"
+
+  elif args[0] == "from":
+    from_date = args[1]
+    if args[2] == "to":
+      if args[3] == "now":
+        to_date = "now"
+      else:
+        to_date = args[3]
+
+  elif args[0] == "start":
+    from_date = "start"
+    if args[1] == "to":
+      to_date = args[2]
+
+  if date:
+    return date, None
+
+  elif from_date and to_date:
+    return from_date, to_date
+
+  return None, None
+
 
 
 def features(cmd="features"):
