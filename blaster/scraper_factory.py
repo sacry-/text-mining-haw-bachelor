@@ -2,7 +2,7 @@ import threading
 import queue
 
 from utils import timeit
-from scraper import Scraper
+from espersister import EsPersister
 from newspaper_scraper import Source
 from newspaper_scraper import Download
 from router import newspaper_conf, app_conf
@@ -40,7 +40,7 @@ def download_paper_from_source(name, url, memoize, q):
 @timeit
 def persist_articles(source_name, download):
   conf = app_conf()
-  persister = Scraper(source_name, conf["elasticsearch"])
+  persister = EsPersister(source_name, conf["elasticsearch"])
   actual = 0
   for data in download.start():
     data.newspaper = source_name

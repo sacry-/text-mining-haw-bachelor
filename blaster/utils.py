@@ -52,6 +52,8 @@ def date_for_index(date_str):
     return "".join([m.group(x) for x in range(1, 3 + 1)])
   return None
 
+def date_today():
+  return date.today().strftime("%Y%m%d")
 
 if __name__ == "__main__":
   pass

@@ -5,116 +5,95 @@ from logger import Logger
 
 logger = Logger("blaster").getLogger()
 
-def not_implemented(cmd):
-  print("{func} not implemented!".format(func=cmd))
-
-def blaster_facade(cmd, tail):
+def blaster_facade(cmd, args):
   if cmd == "scrape": 
+    logger.info("scrape")
     scrape()
+
   elif cmd == "preprocess": 
-    preprocess()
+    logger.info("preprocess")
+    preprocess(args)
+
   elif cmd == "features": 
+    logger.error("features")
     features()
+
   elif cmd == "cluster": 
+    logger.error("cluster")
     cluster()
+
   elif cmd == "summarize": 
+    logger.error("summarize")
     summarize()
+
   else: 
-    not_avaliable(cmd, tail)
+    not_available(cmd, args)
 
 
-def scrape(cmd="scrape"):
+def scrape():
   from scraper_factory import download_papers_from_sources
-
-  logger.info(cmd)
 
   download_papers_from_sources()
 
 
-def preprocess(args=None):
-  from preprocessor import preprocess
+def preprocess(args):
+  from preprocess_factory import preprocess_articles
 
-  from_date, to_date = mode(args)
-
-  articles = []
-  if from_date and not to_date:
-    if from_date == "all":
-      print("get_all_articles()")
-    else:
-      print("get_articles_at_date(from_date)")
-  elif from_date and to_date:
-    print("get_articles(from_date, to_date)")
-
-  for article in articles:
-    prep = preprocess( article.text )
-
-    postags = prep.pos_tags()
-    nertags = prep.ner_extract()
-    aptags = prep.noun_phrases()
-
-    print("should persist it here")
-
-  logger.info("preprocess finished")
+  from_date, to_date = preprocess_mode(args)
+  preprocess_articles(from_date, to_date)
 
 
-def mode(args):
-  date, from_date, to_date = None, None, None
+def preprocess_mode(args):
+  if not args:
+    return None, None
 
-  if args[0] == "at":
+  from utils import date_today
+
+  if args[0] == "all":
+    return "all", None
+
+  elif args[0] == "at":
     date = args[1]
-
-  elif args[0] == "all":
-    date = "all"
+    return date, None
 
   elif args[0] == "from":
     from_date = args[1]
     if args[2] == "to":
+      to_date = None
       if args[3] == "now":
-        to_date = "now"
+        to_date = date_today()
       else:
         to_date = args[3]
-
-  elif args[0] == "start":
-    from_date = "start"
-    if args[1] == "to":
-      to_date = args[2]
-
-  if date:
-    return date, None
-
-  elif from_date and to_date:
-    return from_date, to_date
+      return from_date, to_date
 
   return None, None
 
 
+def features():
+  not_implemented("features")
 
-def features(cmd="features"):
-  not_implemented(cmd)
-  logger.error(cmd)
+def cluster():
+  not_implemented("cluster")
+
+def summarize():
+  not_implemented("summarize")
 
 
-def cluster(cmd="cluster"):
-  not_implemented(cmd)
-  logger.error(cmd)
+# System stuff
+def not_implemented(cmd):
+  print("{func} not implemented!".format(func=cmd))
 
-
-def summarize(cmd="summarize"):
-  not_implemented(cmd)
-  logger.error(cmd)
-
-def not_avaliable(cmd, tail):
+def not_available(cmd, tail):
   out = "Command invalid: {command} -> {args}".format(command=cmd, args=tail)
   print(out)
   logger.error(out)
 
-
 def consolify(args):
   head, tail = None, []
-  if len(sys.argv) > 1:
+  if len(sys.argv) >= 1:
     args = [x.lower().strip() for x in args if x]
     head = args[0]
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 1:
       tail = args[1:]
   return head, tail
 
@@ -123,4 +102,4 @@ if __name__ == "__main__":
   head, tail = consolify(sys.argv[1:])
   blaster_facade(head, tail)
 
-
+  

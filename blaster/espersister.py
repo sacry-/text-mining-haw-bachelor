@@ -8,7 +8,7 @@ from article import Article
 
 logger = Logger(__name__).getLogger()
 
-class Scraper():
+class EsPersister():
 
   def __init__(self, paper, config=None):
     host, port = "localhost", 9200 # defaults
