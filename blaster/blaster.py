@@ -103,7 +103,6 @@ def summarize(cmd="summarize"):
   not_implemented(cmd)
   logger.error(cmd)
 
-
 def not_avaliable(cmd, tail):
   out = "Command invalid: {command} -> {args}".format(command=cmd, args=tail)
   print(out)

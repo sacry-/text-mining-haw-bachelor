@@ -33,5 +33,16 @@ class Elastic():
   def scroll_by_id(self, _index, _doc_type, _scroll_id):
     return self.es.scroll(scroll_id=_scroll_id, scroll= "1m")
 
+  def all_indices(self):
+    indices = self.es.indices.stats()["indices"]
+    return map(str, sorted(map(int, indices)))
+
 if __name__ == "__main__":
-  pass
+  es = Elastic()
+  indices = list(es.all_indices())
+  for idx, index in enumerate(indices):
+    print(idx + 1, index)
+  index = "20150704"
+  date_count = es.count(index, "article")
+  print(index, "count:", date_count)
+
