@@ -40,6 +40,8 @@ def preprocess(args):
   from preprocess_factory import preprocess_articles
 
   from_date, to_date = preprocess_mode(args)
+
+  print(from_date, to_date)
   preprocess_articles(from_date, to_date)
 
 

@@ -16,10 +16,10 @@ class Preprocessor():
     self.blob = None
     self.ner_tagger = None
 
-  def set_blob(self, new_blob=None):
+  def set_blob(self, new_blob):
     self.blob = new_blob
 
-  def set_ner_tagger(self, new_tagger=None):
+  def set_ner_tagger(self, new_tagger):
     self.ner_tagger = new_tagger
 
   def pos_tags(self):
@@ -37,9 +37,16 @@ class Preprocessor():
     self.ner_tags()
     return self.ner_tagger.extract()
 
-def preprocess(text):
+
+def preprocess(text, tokenizer=None):
   
-  tokens = [word for sentence in sentence_tokenize( text ) for word in sentence]
+  def default_tokenizer(text):
+    return [word for sentence in sentence_tokenize( text ) for word in sentence]
+  
+  if not tokenizer:
+    tokenizer = default_tokenizer
+
+  tokens = tokenizer(text)
   pre = Preprocessor(text, tokens)
   blob = TextBlob(text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
   pre.set_blob(blob)
@@ -54,6 +61,9 @@ if __name__ == "__main__":
 
   prep = preprocess(text)
 
+  print("--------- tokens: -----")
+  print(prep.tokens)
+  print("--------- pos tags: -----")
   print(prep.pos_tags())
   print("--------- stanford ner: -----")
   print(prep.ner_tags())

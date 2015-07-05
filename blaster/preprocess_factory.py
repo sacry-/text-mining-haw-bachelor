@@ -1,18 +1,32 @@
+import os
+import multiprocessing
+import time
+
 from preprocessor import preprocess
 from essearcher import EsSearcher
+from utils import timeit
 
 
+START_TS = time.time() # HACK!
+def threaded_preprocess(t):
+  mid, text = t
+  prep = preprocess( text )
+  prep.pos_tags()
+  prep.ner_extract()
+  print("Done: {}, {:2.2f}".format(mid, time.time() - START_TS))
+  return prep
+
+@timeit
 def preprocess_articles(from_date, to_date):
-  articles = fetch_articles(from_date, to_date)
+  fetched = fetch_articles(from_date, to_date)
+  articles = map(lambda a: (a.meta.id, a.text), list(fetched))
 
-  for article in articles:
-    prep = preprocess( article.text )
+  cpu_count = max(2, os.cpu_count() - 1)
+  with multiprocessing.Pool(cpu_count) as p:
+    p.map(threaded_preprocess, articles)
 
-    postags = prep.pos_tags()
-    nertags = prep.ner_extract()
-    aptags = prep.noun_phrases()
+  print("All Done!")
 
-    persist_prep(prep)
 
 def fetch_articles(from_date, to_date):
   searcher = EsSearcher()
@@ -27,9 +41,3 @@ def fetch_articles(from_date, to_date):
     articles = searcher.articles_from_to(from_date, to_date)
 
   return articles
-
-
-def persist_prep(prep):
-
-
-  return False
