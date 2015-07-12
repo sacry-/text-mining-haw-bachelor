@@ -6,11 +6,14 @@ from utils import read_json
 
 MODULE = path.dirname(path.abspath(__file__))
 RESOURCES = path.join(MODULE, 'resources')
+BACKUPS = path.join(MODULE, 'backups')
 
 NEWSPAPER_CONFIG = "{}/{}".format(RESOURCES, "newspapers.json")
 APP_CONFIG = "{}/{}".format(RESOURCES, "app_config.json")
 
-
+def backup_path():
+  return BACKUPS
+  
 def read_config(conf):
   return read_json(conf)
 

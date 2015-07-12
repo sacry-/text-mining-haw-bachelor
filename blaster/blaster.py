@@ -26,7 +26,10 @@ def blaster_facade(cmd, args):
     logger.error("summarize")
     summarize()
 
-  else: 
+  elif cmd in ["dump", "import"]:
+    dump_or_import(cmd)
+
+  else:
     not_available(cmd, args)
 
 
@@ -41,7 +44,6 @@ def preprocess(args):
 
   from_date, to_date = preprocess_mode(args)
 
-  print(from_date, to_date)
   preprocess_articles(from_date, to_date)
 
 
@@ -66,6 +68,7 @@ def preprocess_mode(args):
         to_date = date_today()
       else:
         to_date = args[3]
+      print("from:",from_date,"to:",to_date)
       return from_date, to_date
 
   return None, None
@@ -79,6 +82,16 @@ def cluster():
 
 def summarize():
   not_implemented("summarize")
+
+
+def dump_or_import(cmd):
+  from espersister import EsPersister
+
+  if cmd == "dump":
+    EsPersister("none").dump_all()
+
+  elif cmd == "import":
+    EsPersister("none").import_all()
 
 
 # System stuff

@@ -1,7 +1,8 @@
-from datetime import date
+import dateutil.parser
 from datetime import datetime
-from elasticsearch_dsl import DocType, String, Date, Nested, analysis
-from utils import date_for_index
+from elasticsearch_dsl import DocType, String, Boolean, Date, Nested, analysis
+from utils import date_for_index, date_today
+
 
 class Article(DocType):
   ts_in = Date()
@@ -12,23 +13,27 @@ class Article(DocType):
   article_html = String()
   url = String()
   canonical_link = String()
+  preprocessed = Boolean()
   keywords = String(fields={'raw': String(index='not_analyzed')})
   meta_keywords = String(fields={'raw': String(index='not_analyzed')})
   tags = String(fields={'raw': String(index='not_analyzed')})
   authors = String(fields={'raw': String(index='not_analyzed')})
+  categories = String(fields={'raw': String(index='not_analyzed')})
 
   class Meta:
-    index = date.today().strftime("%Y%m%d")
+    index = date_today()
 
   def save(self, ** kwargs):
     return super(Article, self).save(** kwargs)
 
-def createArticle(d):
+
+def article_from_data(d):
   a = Article(
     meta={'id' : d.normalized_title}, 
     ts_in=datetime.now(), 
     newspaper=d.newspaper,
     url=d.url,
+    preprocessed=False,
     canonical_link=d.canonical_link,
     title=d.title,
     text=d.text,
@@ -43,6 +48,34 @@ def createArticle(d):
   if date_index:
     a._index = date_index
   return a
+
+def article_from_hash(h):
+  a = Article(
+    meta={'id' : h["id"]}, 
+    ts_in=dateutil.parser.parse(h["ts_in"]), 
+    newspaper=h["newspaper"],
+    url=h["url"],
+    preprocessed=h["preprocessed"],
+    canonical_link=h["canonical_link"],
+    title=h["title"],
+    text=h["text"],
+    article_html=h["article_html"],
+    keywords=h["keywords"],
+    meta_keywords=h["meta_keywords"],
+    tags=h["tags"],
+    authors=h["authors"],
+    publish_date=h["publish_date"],
+    categories=[]
+  )
+  a._index = h["index"]
+  return a
+
+def article_to_hash(a):
+  h = a.to_dict()
+  h["index"] = a._index
+  h["id"] = a.meta.id
+  h["ts_in"] = str(h["ts_in"])
+  return h
 
 if __name__ == "__main__":
   pass

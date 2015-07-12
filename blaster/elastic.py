@@ -12,18 +12,20 @@ class Elastic():
     self.es = Elasticsearch([{'host': host, 'port' : port}])
     print("connection established to %s:%s" % (host, port))
 
+  def update(self, _index, _doc_type, _id, script):
+    self.es.update(index=_index, doc_type=_doc_type, id=_id, body=script)
+    
   def count(self, _index, _doc_type, le_search={"query" : {"match_all" : {}}}):
     return self.es.count(index=_index, doc_type=_doc_type, body=le_search)["count"]
 
-  def pagiante(self, _index, _doc_type, _size=100):
-    total_items = self.count(_index, _doc_type)
+  def paginate(self, _index, _doc_type, _size=10):
     _id = self.retrieve_scroll_id(_index, _doc_type, _size)
-    while _id and total_items > 0:
+    initial_id = _id
+    while _id == initial_id:
       data = self.scroll_by_id(_index, _doc_type, _id)
       for entry in data["hits"]["hits"]:
         yield entry
       _id = data['_scroll_id']
-      total_items -= _size
 
   def retrieve_scroll_id(self, _index, _doc_type, _size=100):
     query = {"query" : {"match_all" : {}}}
@@ -39,10 +41,10 @@ class Elastic():
 
 if __name__ == "__main__":
   es = Elastic()
-  indices = list(es.all_indices())
-  for idx, index in enumerate(indices):
-    print(idx + 1, index)
-  index = "20150704"
-  date_count = es.count(index, "article")
-  print(index, "count:", date_count)
+  c = 0
+  for hit in es.paginate("20150704", "article"):
+    print(hit["_id"])
+    c += 1
+    print(c)
+
 

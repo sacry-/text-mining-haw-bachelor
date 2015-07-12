@@ -1,8 +1,14 @@
-from datetime import date
+import json
+
+from os import listdir
+from essearcher import EsSearcher
+from article import article_from_data, article_from_hash, article_to_hash
+from utils import date_today
+from router import backup_path
+
 from logger import Logger
 from elasticsearch_dsl.connections import connections
 from elasticsearch_dsl import Index
-from article import createArticle
 from article import Article
 
 
@@ -20,7 +26,7 @@ class EsPersister():
   def save(self, data):
     try:
       Article.init()
-      a = createArticle(data)
+      a = article_from_data(data)
       a.save()
       logger.info(self.logging_text(a))
     except Exception as e:
@@ -28,12 +34,44 @@ class EsPersister():
       return False
     return True
 
-  def date_today(self):
-    return date.today().strftime("%Y%m%d")
-
   def logging_text(self, a):
     return ("> " + a.newspaper + " uri/" + a._index + "/article/" + a.meta.id)
+
+  def dump_all(self):
+    a = input("Really? (y|n) ").strip()
+    if a != "y":
+      return
+
+    results = []
+    for a in EsSearcher().all_articles():
+      results.append( article_to_hash(a) )
+    backup_dir = "{}/{}.json".format( backup_path(), date_today() )
+    print("dumping all es indices to {}".format( backup_dir ))
+    with open(backup_dir, "w+") as f:
+      data = json.dumps(results, indent=2)
+      f.write( data )
+
+  def import_all(self):
+    a = input("Really? (y|n) ").strip()
+    if a != "y":
+      return
+
+    name = max([int(f.strip(".json")) for f in listdir(backup_path())])
+    backup_dir = "{}/{}.json".format( backup_path(), str(name) )
+    print("this is the dir: {}".format( backup_dir ))
+    with open(backup_dir, "r+") as f:
+      all_data = json.load(f)
+      for h in all_data:
+        Article.init()
+        a = article_from_hash( h )
+        a.save()
 
 
 if __name__ == "__main__":
   pass
+
+'''
+  p = EsPersister("none")
+  p.import_all()
+  p.dump_all()
+'''

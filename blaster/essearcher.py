@@ -1,13 +1,9 @@
-import datetime
-import re
-
 from elasticsearch_dsl.connections import connections
 from elasticsearch_dsl import Search
 from elastic import Elastic
 from article import Article
+from utils import date_range
 
-  
-DATE_PATTERN = re.compile("([0-9]{4})([0-9]{2})([0-9]{2})")
 
 class EsSearcher():
 
@@ -33,7 +29,7 @@ class EsSearcher():
       yield a
 
   def articles_from_to(self, from_date, to_date, paper=None):
-    for d in self.date_range(from_date, to_date):
+    for d in date_range(from_date, to_date):
       for a in self.articles_for_date(d, paper):
         yield a
 
@@ -42,25 +38,24 @@ class EsSearcher():
       return s.query('match_all')
     return s.query('match', newspaper=paper)
 
-  def date_range(self, start, end):
-    start = [int(x) for x in DATE_PATTERN.split(start) if x and x.strip()]
-    end = [int(x) for x in DATE_PATTERN.split(end) if x and x.strip()]
-
-    start = datetime.date(start[0],start[1],start[2])
-    end = datetime.date(end[0],end[1],end[2])
-
-    r = (end+datetime.timedelta(days=1)-start).days
-    times = [start+datetime.timedelta(days=i) for i in range(r)]
-
-    return [str(date).replace("-", "") for date in times]
+  def add_field(self, field_name, default_val):
+    script = {
+      "doc": {
+        field_name: default_val
+      }
+    }
+    total_updates = 0
+    for a in self.all_articles():
+      self.es.update(a._index, "article", a.meta.id, script)
+      total_updates += 1
+    print("updated:", total_updates)
 
 
 if __name__ == "__main__":
-  from_date, to_date = "20150630", "20150704"
+  from_date, to_date = "20150601", "20150715"
   single_date = "20150704"
-  paper = "nytimes"
+  paper = "theguardian"
 
-  es = EsSearcher()
   from_to = es.articles_from_to(from_date, to_date, paper)
   for idx, a in enumerate(from_to):
     print(idx + 1, "->", a.url) 
@@ -69,5 +64,3 @@ if __name__ == "__main__":
   single = es.articles_for_date(single_date, paper)
   res = ", ".join([str(idx) for idx, _ in enumerate(single)])
   print(res)
-
-
