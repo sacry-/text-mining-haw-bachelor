@@ -85,13 +85,13 @@ def summarize():
 
 
 def dump_or_import(cmd):
-  from espersister import EsPersister
+  from elastic import Elastic
 
   if cmd == "dump":
-    EsPersister("none").dump_all()
+    Elastic().dump_all()
 
   elif cmd == "import":
-    EsPersister("none").import_all()
+    Elastic().import_all()
 
 
 # System stuff

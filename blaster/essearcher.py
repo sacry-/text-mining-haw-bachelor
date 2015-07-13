@@ -15,11 +15,6 @@ class EsSearcher():
     self.es = Elastic(host, port)
     self.default_doc_type = "article"
 
-  def all_articles(self, paper=None):
-    for index in self.es.all_indices():
-      for a in self.articles_for_date(index, paper):
-        yield a
-
   def articles_for_date(self, index, paper=None):
     count = self.es.count(index, self.default_doc_type)
     s = Article.search()
@@ -37,18 +32,6 @@ class EsSearcher():
     if not paper:
       return s.query('match_all')
     return s.query('match', newspaper=paper)
-
-  def add_field(self, field_name, default_val):
-    script = {
-      "doc": {
-        field_name: default_val
-      }
-    }
-    total_updates = 0
-    for a in self.all_articles():
-      self.es.update(a._index, "article", a.meta.id, script)
-      total_updates += 1
-    print("updated:", total_updates)
 
 
 if __name__ == "__main__":
