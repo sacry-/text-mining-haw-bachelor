@@ -1,11 +1,7 @@
-from elasticsearch_dsl.connections import connections
-from elasticsearch_dsl import Search
 from elastic import Elastic
-from article import Article
 from article import article_from_hash
 from utils import date_range
 
-MAX_SIZE = 1000
 
 class EsSearcher():
 
@@ -13,7 +9,6 @@ class EsSearcher():
     host, port = "localhost", 9200
     if config:
       host, port = config["host"], config["port"]
-    connections.create_connection(hosts=['localhost:9200'])
     self.es = Elastic(host, port)
 
   def all_articles(self, paper=None):
@@ -40,7 +35,7 @@ class EsSearcher():
 if __name__ == "__main__":
   from_date, to_date = "20150601", "20150715"
   single_date = "20150704"
-  paper = "theguardian"
+  paper = "nytimes"
 
   from_to = es.articles_from_to(from_date, to_date, paper)
   for idx, a in enumerate(from_to):

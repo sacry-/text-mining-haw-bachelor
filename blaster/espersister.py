@@ -1,9 +1,8 @@
-from article import article_from_data
-
 from logger import Logger
 from elasticsearch_dsl.connections import connections
-from elasticsearch_dsl import Index
+
 from article import Article
+from article import article_from_data
 
 
 logger = Logger(__name__).getLogger()

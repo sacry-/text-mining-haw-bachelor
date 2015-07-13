@@ -1,7 +1,6 @@
 import json
 
 from elastic import Elastic
-from elasticsearch_dsl.connections import connections
 
 from article import article_from_hash
 from article import Article

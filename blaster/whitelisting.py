@@ -10,5 +10,9 @@
 # curl '127.0.0.1:9200/20150712/article/_search?q=newspaper:theguardian&size=1000'
 
 
+def remove_whitelisted_articles():
+  pass
+
+
 if __name__ == "__main__":
   pass
