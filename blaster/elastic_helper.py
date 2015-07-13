@@ -21,11 +21,11 @@ class ElasticHelper():
       return
 
     results, c = [], 0
-    for source in self.es.all_articles():
+    for source in self.es.all_documents():
       source["ts_in"] = str(source["ts_in"])
       results.append( source )
       c += 1
-    print("loaded:",c,"documents from:", self.count())
+    print("loaded:",c,"documents")
 
     backup_dir = "{}/{}.json".format( backup_path(), date_today() )
     with open(backup_dir, "w+") as f:

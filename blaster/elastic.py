@@ -40,12 +40,12 @@ class Elastic():
     indices = self.es.indices.stats()["indices"]
     return map(str, sorted(map(int, indices)))
 
-  def all_documents(self, doc_type, query={"query" : {"match_all" : {}}}, per_page=10):
+  def all_documents(self, doc_type="article", query={"query" : {"match_all" : {}}}, per_page=10):
     for index in self.all_indices():
-      for doc in self.all_docs_by_index(index, doc_type, per_page):
+      for doc in self.all_docs_by_index(index, doc_type, query, per_page):
         yield doc
 
-  def all_docs_by_index(self, index, doc_type, query={"query" : {"match_all" : {}}}, per_page=10):
+  def all_docs_by_index(self, index, doc_type="article", query={"query" : {"match_all" : {}}}, per_page=10):
     for hit in self.paginate(index, doc_type, query, per_page):
       source = hit["_source"]
       source["id"] = hit["_id"]
