@@ -8,6 +8,25 @@ def get_configured_ner_tagger(tokens):
   return NerTagger(stanford_tagger, tokens)
 
 
+class NerSentence():
+
+  def __init__(self, sno):
+    self.sno = sno
+    self.entities = []
+    self._buffer = []
+
+  def iob_stream(self, word, tag):
+    self._buffer.append( (word, tag) )
+
+  def iob_flush_entity(self):
+    if self._buffer:
+      self.entities.append( self._buffer )
+    self._buffer = []
+
+  def has_entities(self):
+    return self.entities != []
+
+
 class NerTagger():
 
   def __init__(self, tagger, tokens):
@@ -16,35 +35,29 @@ class NerTagger():
     self.tagged = None
 
   def tag(self):
-    self.tagged = self.tagger.tag( self.tokens )
+    if not self.is_tagged():
+      self.tagged = self.tagger.tag( self.tokens )
     return self.tagged
 
-  def isTagged(self):
+  def is_tagged(self):
     return self.tagged != None
 
   def extract(self):
-
     result = []
+    for sno, sentence in enumerate(self.tagged):
 
-    for sentenceno, sentence in enumerate(self.tagged):
+      ners = NerSentence( sno + 1 )
 
-      named_entities = []
-      current_entity = []
-
-      for (w, tag) in sentence:
+      for (word, tag) in sentence:
         if tag != "O":
-          current_entity.append( (w, tag) ) 
+          ners.iob_stream( word, tag ) 
         else:
-          if current_entity:
-            named_entities.append( current_entity )
-            current_entity = []
+          ners.iob_flush_entity()
 
-      if current_entity:
-        named_entities.append( current_entity )
+      ners.iob_flush_entity()
 
-      if named_entities:
-        new_sentence = (sentenceno + 1, named_entities)
-        result.append( new_sentence )
+      if ners.has_entities():
+        result.append( ners )
 
     return result
 

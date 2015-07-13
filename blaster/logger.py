@@ -21,3 +21,6 @@ class Logger():
   def log_path(self, name):
     log_dir = path.dirname(path.abspath(__file__))
     return "{}/log/{}.log".format(log_dir, name)
+
+if __name__ == "__main__":
+  pass

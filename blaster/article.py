@@ -26,7 +26,6 @@ class Article(DocType):
   def save(self, ** kwargs):
     return super(Article, self).save(** kwargs)
 
-
 def article_from_data(d):
   a = Article(
     meta={'id' : d.normalized_title}, 

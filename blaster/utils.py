@@ -63,7 +63,7 @@ def date_range(from_date, to_date):
   start = split_by_date(from_date)
   end = split_by_date(to_date)
 
-  assert (len(start) == 3 or len(end) == 3), "from_date and/or to_date is malformed. Use YYYYMMDD (e.g. 20150711) only! input: {} {}".format( start, end )
+  assert (len(start) == 3 and len(end) == 3), "from_date and/or to_date is malformed. Use YYYYMMDD (e.g. 20150711) only! input: {} {}".format( start, end )
 
   year, month, day = start
   start_date = datetime.date(year, month, day)

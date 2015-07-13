@@ -10,17 +10,12 @@ EXTRACTOR = ConllExtractor()
 
 class Preprocessor():
 
-  def __init__(self, text, tokens):
-    self.text = text
-    self.tokens = tokens
-    self.blob = None
-    self.ner_tagger = None
-
-  def set_blob(self, new_blob):
-    self.blob = new_blob
-
-  def set_ner_tagger(self, new_tagger):
-    self.ner_tagger = new_tagger
+  def __init__(self, chunk, tokenizer):
+    self.text = chunk.text
+    self.tokenizer = tokenizer
+    self.tokens = self.tokenizer( self.text )
+    self.blob = TextBlob(self.text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
+    self.ner_tagger = get_configured_ner_tagger(self.tokens)
 
   def pos_tags(self):
     return self.blob.tags
@@ -28,17 +23,12 @@ class Preprocessor():
   def noun_phrases(self):
     return self.blob.noun_phrases
 
-  def ner_tags(self):
-    if not self.ner_tagger.isTagged():
-      self.ner_tagger.tag()
-    return self.ner_tagger.tagged
-
   def ner_extract(self):
-    self.ner_tags()
+    self.ner_tagger.tag()
     return self.ner_tagger.extract()
 
 
-def preprocess(text, tokenizer=None):
+def preprocess(chunk, tokenizer=None):
   
   def default_tokenizer(text):
     return [word for sentence in sentence_tokenize( text ) for word in sentence]
@@ -46,13 +36,11 @@ def preprocess(text, tokenizer=None):
   if not tokenizer:
     tokenizer = default_tokenizer
 
-  tokens = tokenizer(text)
-  pre = Preprocessor(text, tokens)
-  blob = TextBlob(text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
-  pre.set_blob(blob)
-  ner_tagger = get_configured_ner_tagger(tokens)
-  pre.set_ner_tagger(ner_tagger)
-
+  pre = Preprocessor(chunk, tokenizer)
+  pre.pos_tags()
+  pre.noun_phrases()
+  pre.ner_extract()
+  
   return pre
 
 
@@ -65,13 +53,11 @@ if __name__ == "__main__":
   print(prep.tokens)
   print("--------- pos tags: -----")
   print(prep.pos_tags())
-  print("--------- stanford ner: -----")
-  print(prep.ner_tags())
   print("--------- blob ner: -----")
   print(prep.noun_phrases())
   print("--------- stanford ner: -----")
   for e in prep.ner_extract():
-    print(e)
+    print(e.entities)
   print("  finished")
 
 
