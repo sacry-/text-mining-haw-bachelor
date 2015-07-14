@@ -11,6 +11,9 @@ class Elastic():
       connector = EsConnect()
     self.es = connector.getConnection()
 
+  def get(self, _index, _doc_type, _id):
+    return self.es.get(index=_index, doc_type=_doc_type, id=_id)["_source"]
+
   def delete(self, _index, _doc_type, _id):
     self.es.delete(index=_index, doc_type=_doc_type, id=_id)
 
@@ -70,6 +73,34 @@ class Elastic():
 
 
 if __name__ == "__main__":
-  from langdetect import detect_langs, detect
   es = Elastic()
+
+  f = lambda x: "{}/{}".format(x["index"],x["id"])
+  a = list(map(f, es.all_documents("article")))
+  b = list(map(f, es.all_documents("prep")))
+
+  out_a = []
+  for e in a:
+    if not e in b and not e in out_a:
+      out_a.append( e )
+  for o in out_a:
+    print(o)
+  print("articles not preped:",len(out_a))
+
+  out_b = []
+  for e in b:
+    if not e in a and not e in out_b:
+      out_b.append( e )
+  for o in out_b:
+    print(o)
+  print("preps with no article:",len(out_b))
+
+
+
+
+
+
+
+
+
   

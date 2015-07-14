@@ -10,3 +10,4 @@ textblob-aptagger==0.3.0-dev
 elasticsearch>=1.4.0,<2.0.0
 elasticsearch-dsl>=0.0.4
 redis>=2.10.3
+langdetect==1.0.1

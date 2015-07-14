@@ -8,6 +8,8 @@ Scraping and Indexing
 $ pip3 install newspaper
 # Great for any scraping http://scrapy.org/doc/
 $ pip3 install scrapy
+# detecting language of articles
+$ pip3 install langdetect
 ```
 
 Parsing and Text Processing
@@ -46,21 +48,11 @@ pip3 install -U gensim
 pip3 install pandas
 ```
 
-Text Summarization
-```python
-# Maybe this...
-pip3 install https://github.com/miso-belica/sumy
-```
-
 Infrastructure
 ```python
 # Install Redis
 $ brew install redis
 $ pip3 install redis-py
-
-# Install Postgresql
-# http://python.projects.pgfoundry.org/
-# http://python.projects.pgfoundry.org/docs/1.1/admin.html#installation
 
 # Or install Elastic Search
 pip3 install elasticsearch

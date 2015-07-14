@@ -41,14 +41,13 @@ def preprocess_articles(from_date, to_date):
   for a in fetch_articles(from_date, to_date):
     if not a.preprocessed:
       chunks.append( Chunk(a) )
-  print("total articles:",len(chunks))
 
   EsConnect().createConnection()
   Prep.init()
 
+  print("total articles:",len(chunks))
   for chunk in chunks:
     preprocess_and_persist( chunk )
-
   print("all done!")
 
 
