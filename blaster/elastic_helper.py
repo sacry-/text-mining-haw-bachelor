@@ -1,6 +1,6 @@
 import json
 
-from elastic import Elastic
+from esconnect import EsConnect
 
 from article import article_from_hash
 from article import Article
@@ -12,8 +12,11 @@ from os import listdir
 
 class ElasticHelper():
 
-  def __init__(self):
-    self.es = Elastic()
+  def __init__(self, connector=None):
+    if not connector:
+      connector = EsConnect()
+    self.connector = connector
+    self.es = self.connector.getConnection()
 
   def dump_articles(self):
     a = input("Really? (y|n) ").strip()
@@ -37,8 +40,7 @@ class ElasticHelper():
     if a != "y":
       return
 
-    from elasticsearch_dsl.connections import connections
-    connections.create_connection(hosts=['localhost:9200'])
+    self.connector.createConnection()
 
     c = 0
     name = max([int(f.strip(".json")) for f in listdir(backup_path())])

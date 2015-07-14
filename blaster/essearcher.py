@@ -1,15 +1,25 @@
+from esconnect import EsConnect
 from elastic import Elastic
+
 from article import article_from_hash
 from utils import date_range
 
 
+# curl -XDELETE '127.0.0.1:9200/20150712/article/_query?q=newspaper:vice'
+# curl -XDELETE '127.0.0.1:9200/20150712/article/restaurant_report_konyvbar_in_budapest
+
+# curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2
+# curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "20150[678].*"
+
+# curl '127.0.0.1:9200/_nodes/settings?pretty=true'
+# curl '127.0.0.1:9200/_count'
+# curl '127.0.0.1:9200/20150712/article/_search?q=newspaper:theguardian&size=1000'
 class EsSearcher():
 
-  def __init__(self, config=None):
-    host, port = "localhost", 9200
-    if config:
-      host, port = config["host"], config["port"]
-    self.es = Elastic(host, port)
+  def __init__(self, connector=None):
+    if not connector:
+      connector = EsConnect()
+    self.es = Elastic( connector )
 
   def all_articles(self, paper=None):
     query = self._query_scope(paper)
@@ -22,9 +32,17 @@ class EsSearcher():
       yield article_from_hash( source )
 
   def articles_from_to(self, from_date, to_date, paper=None):
-    for d in date_range(from_date, to_date):
-      for a in self.articles_for_date(d, paper):
-        yield a
+    possible_indices = self.es.all_indices()
+    for index in date_range(from_date, to_date):
+      if index in possible_indices:
+        for a in self.articles_for_date(index, paper):
+          yield a
+
+  def count_doc(self, doc_type, matching={"match_all" : {}}):
+    total = 0
+    for index in self.es.all_indices():
+      total += self.es.count(index, doc_type, {"query" : matching})
+    return total
 
   def _query_scope(self, paper=None):
     if not paper:
@@ -33,15 +51,14 @@ class EsSearcher():
 
 
 if __name__ == "__main__":
+  es = EsSearcher()
   from_date, to_date = "20150601", "20150715"
-  single_date = "20150704"
   paper = "nytimes"
 
-  from_to = es.articles_from_to(from_date, to_date, paper)
-  for idx, a in enumerate(from_to):
-    print(idx + 1, "->", a.url) 
-
-  paper = "theguardian"
-  single = es.articles_for_date(single_date, paper)
-  res = ", ".join([str(idx) for idx, _ in enumerate(single)])
-  print(res)
+  article_count = es.count_doc("article")
+  preped_article_count = es.count_doc("article", {"match" : { "preprocessed" : True}})
+  prep_count = es.count_doc("prep")
+  print("article count:",article_count)
+  print("preped article count:",preped_article_count)
+  print("prep count:",prep_count)
+  print("missing:",article_count - prep_count)

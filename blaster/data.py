@@ -1,5 +1,7 @@
 from datetime import datetime
 from utils import normalize_title
+from router import newspaper_conf
+from langdetect import detect_langs
 from logger import Logger
 
 
@@ -42,6 +44,24 @@ class Data():
   def text_valid(self, s):
     return s and s.strip()
 
+  def is_valid(self, paper):
+    if not self.text.strip():
+      return False
+      
+    config = newspaper_conf()
+    if not paper in config:
+      return False
+
+    news_conf = config[paper]
+    whitelisted = news_conf["whitelist"]
+    if self.normalized_title in whitelisted:
+      return False
+    
+    possible_langs = detect_langs(self.title) + detect_langs(self.normalized_title)
+    if not "en" in map(lambda x: x.lang, possible_langs):
+      return False
+
+    return True
 
 if __name__ == "__main__":
   pass

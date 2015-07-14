@@ -57,7 +57,7 @@ class NerTagger():
       ners.iob_flush_entity()
 
       if ners.has_entities():
-        result.append( ners )
+        result.append( ners.entities )
 
     return result
 

@@ -61,7 +61,7 @@ class Download():
       if not article:
         logger.info("could not be parsed: {}".format(title))
         continue
-      
+
       yield Data(article)
 
   @timeit

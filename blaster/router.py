@@ -1,6 +1,5 @@
 # encoding: utf-8
 from os import path
-import ast
 from utils import read_json
 
 
@@ -10,6 +9,7 @@ BACKUPS = path.join(MODULE, 'backups')
 
 NEWSPAPER_CONFIG = "{}/{}".format(RESOURCES, "newspapers.json")
 APP_CONFIG = "{}/{}".format(RESOURCES, "app_config.json")
+
 
 def backup_path():
   return BACKUPS
@@ -30,6 +30,9 @@ def stanford_ner_conf():
     expanded_classifier = path.expanduser(ner_conf["classifier"])
     return ( expanded_ner, expanded_classifier ) 
   return ( None, None )
+
+def elastic_conf():
+  return app_conf()["elasticsearch"]
 
 
 if __name__ == "__main__":

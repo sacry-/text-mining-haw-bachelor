@@ -7,13 +7,12 @@ from article import article_from_data
 
 logger = Logger(__name__).getLogger()
 
-class EsPersister():
+class ArticlePersister():
 
-  def __init__(self, paper, config=None):
-    host, port = "localhost", 9200 # defaults
-    if config:
-      host, port = config["host"], config["port"]
-    connections.create_connection(hosts=['{}:{}'.format(host,port)])
+  def __init__(self, paper, connector=None):
+    if not connector:
+      connector = EsConnect()
+    self.es = connector.createConnection()
     self.paper = paper
 
   def save(self, data):

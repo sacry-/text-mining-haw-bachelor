@@ -1,14 +1,18 @@
 # coding: utf-8
-from elasticsearch import Elasticsearch
+from esconnect import EsConnect
 from datetime import datetime
 
 
 # localhost:9200/index/type/document
 class Elastic():
 
-  def __init__(self, host='localhost', port=9200):
-    self.es = Elasticsearch([{'host': host, 'port' : port}])
-    print("connection established to %s:%s" % (host, port))
+  def __init__(self, connector=None):
+    if not connector:
+      connector = EsConnect()
+    self.es = connector.getConnection()
+
+  def delete(self, _index, _doc_type, _id):
+    self.es.delete(index=_index, doc_type=_doc_type, id=_id)
 
   def update(self, _index, _doc_type, _id, script):
     self.es.update(index=_index, doc_type=_doc_type, id=_id, body=script)
@@ -64,8 +68,8 @@ class Elastic():
       total_updates += 1
     print("updated:", total_updates)
 
+
 if __name__ == "__main__":
+  from langdetect import detect_langs, detect
   es = Elastic()
-
-
-
+  

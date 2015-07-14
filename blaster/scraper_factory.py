@@ -2,10 +2,10 @@ import threading
 import queue
 
 from utils import timeit
-from espersister import EsPersister
-from newspaper_scraper import Source
-from newspaper_scraper import Download
-from router import newspaper_conf, app_conf
+from articlepersister import ArticlePersister
+from esconnect import EsConnect
+from newspaper_scraper import Source, Download
+from router import newspaper_conf, elastic_conf
 
 
 def download_papers_from_sources():
@@ -39,10 +39,13 @@ def download_paper_from_source(name, url, memoize, q):
 
 @timeit
 def persist_articles(source_name, download):
-  conf = app_conf()
-  persister = EsPersister(source_name, conf["elasticsearch"])
+  connector = EsConnect( elastic_conf() )
+  persister = ArticlePersister(source_name, connector)
   actual = 0
   for data in download.start():
+    if not data.is_valid(source_name):
+      print("data invalid:", data.normalized_title)
+      continue
     data.newspaper = source_name
     saved = persister.save(data)
     if saved: 

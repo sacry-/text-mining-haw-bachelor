@@ -51,6 +51,8 @@ def article_from_data(d):
 def article_from_hash(h):
   if not isinstance(h["ts_in"], datetime):
     h["ts_in"] = dateutil.parser.parse(h["ts_in"])
+  if not "preprocessed" in h:
+    h["preprocessed"] = False
   a = Article(
     meta={'id' : h["id"]}, 
     ts_in=h["ts_in"], 

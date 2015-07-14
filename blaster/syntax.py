@@ -54,6 +54,7 @@ SENTENCE_DETECTOR = data.load('tokenizers/punkt/english.pickle')
   WRB Wh­adverb
 '''
 
+
 def is_num(s):
   try:
     float(s)

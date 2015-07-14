@@ -1,26 +1,39 @@
 import os
-import multiprocessing
 import time
 
-from preprocessor import preprocess
-from essearcher import EsSearcher
+from preprocessor import prep_from_chunk
+from preprocessor import Prep
 from utils import timeit
 
+from logger import Logger
+from essearcher import EsSearcher
+from esconnect import EsConnect
+
+
+logger = Logger(__name__).getLogger()
 
 class Chunk():
 
   def __init__(self, a):
+    self.a = a
+    self.index = a._index
     self.id = a.meta.id
     self.title = a.title
     self.text = a.text
     self.article_html = a.article_html
 
-def persist(prep):
-  print("persistence magic here")
+  def update_article(self):
+    self.a.preprocessed = True
+    self.a.save()
 
-def threaded_preprocess(chunk):
-  prep = preprocess( chunk, tokenizer=None )
-  persist(prep)
+def preprocess_and_persist(chunk):
+  try:
+    prep = prep_from_chunk( chunk, tokenizer=None )
+    prep.save()
+    chunk.update_article()
+    logger.info("preprocessed: {}/prep/{}".format(chunk.index, chunk.id))
+  except Exception as e:
+    logger.error("prep could not be created: " + e)
 
 @timeit
 def preprocess_articles(from_date, to_date):
@@ -30,11 +43,14 @@ def preprocess_articles(from_date, to_date):
       chunks.append( Chunk(a) )
   print("total articles:",len(chunks))
 
-  cpu_count = max(2, os.cpu_count() - 1)
-  with multiprocessing.Pool(cpu_count) as p:
-    p.map(threaded_preprocess, chunks)
+  EsConnect().createConnection()
+  Prep.init()
+
+  for chunk in chunks:
+    preprocess_and_persist( chunk )
 
   print("all done!")
+
 
 def fetch_articles(from_date, to_date):
   articles = []
