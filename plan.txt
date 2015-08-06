@@ -1,0 +1,39 @@
+
+1. continuous scraping
+2. normalizing the results 
+  html cleanup, timestamps, meta data, invalid results
+3. continuous persistence
+  using elasticsearch
+  make it battle proof
+  build a raw_data dump facility to save data
+4. preprocess data
+  tokenize, pos_tags, noun_phrases/ner_tags, use best suitable for the job (library)
+  persist this (should be fast to access)
+    - redis as an elastic cache, mapping index and id to different namespaces
+      -> date-id-pos
+      -> date-id-tokens
+      -> date-id-ner
+    - elasticsearch again?
+      -> date/article/id
+      -> date/pre/id
+
+5. feature extraction (repeatable)
+
+6. clustering based on features 
+    clustering strategies
+      clustering strategies combined with features
+    persist/cache clusters
+    feature extraction on clusters for meta categorization
+      e.g. semantic modelling:
+        use wordnet or wikipedia to enhance ner tagged features
+
+7. continuous clustering:
+    do all the above for all articles per day
+    all generated clusters over time are then merged via same procedure
+    VS.
+    start with one date and continuously assign articles to clusters and create new ones
+
+8. present result by?
+
+
+NO SUMMARIZATION, too much

@@ -13,8 +13,8 @@ EXTRACTOR = ConllExtractor()
 
 class Preprocessor():
 
-  def __init__(self, chunk, tokenizer):
-    self.text = str(chunk.text)
+  def __init__(self, text, tokenizer):
+    self.text = str(text)
     self.tokenizer = tokenizer
     self.tokens = self.tokenizer( self.text )
     self.blob = TextBlob(self.text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
@@ -68,7 +68,7 @@ def preprocess(chunk, tokenizer=None):
     tokenizer = default_tokenizer
 
   print("preprocessing start", chunk.index, chunk.id)
-  pre = Preprocessor(chunk, tokenizer)
+  pre = Preprocessor(chunk.text, tokenizer)
   pre.pos_tags()
   pre.noun_phrases()
   pre.ner_extract()

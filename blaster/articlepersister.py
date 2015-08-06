@@ -1,5 +1,5 @@
 from logger import Logger
-from elasticsearch_dsl.connections import connections
+from esconnect import EsConnect
 
 from article import Article
 from article import article_from_data

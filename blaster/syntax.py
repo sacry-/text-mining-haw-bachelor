@@ -63,18 +63,17 @@ def is_num(s):
     return False
 
 def is_noisy(x):
-  if x:
-    x = x.strip().lower()
-    return (
-      # not be in stopwords
-      x in STOPS or 
-      # not be in specials
-      re.match('(^\W+|\W+$)', x) or 
-      # should be larger than 1 i.e. not "a" etc.
-      len(x) <= 1
-    )
-  else:
+  if not x:
     return False
+  x = x.strip().lower()
+  return (
+    # not be in stopwords
+    x in STOPS or 
+    # not be in specials
+    re.match('(^\W+|\W+$)', x) or 
+    # should be larger than 1 i.e. not "a" etc.
+    len(x) <= 1
+  )
 
 def word_is_valid(word):
   return (

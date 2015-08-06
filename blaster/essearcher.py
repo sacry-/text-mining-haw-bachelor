@@ -38,11 +38,14 @@ class EsSearcher():
         for a in self.articles_for_date(index, paper):
           yield a
 
-  def count_doc(self, doc_type, matching={"match_all" : {}}):
+  def count_all(self, doc_type, matching={"match_all" : {}}):
     total = 0
     for index in self.es.all_indices():
       total += self.es.count(index, doc_type, {"query" : matching})
     return total
+
+  def count_index(self, index, doc_type):
+    return self.es.count(index, doc_type, self._query_scope())
 
   def _query_scope(self, paper=None):
     if not paper:
@@ -52,13 +55,20 @@ class EsSearcher():
 
 if __name__ == "__main__":
   es = EsSearcher()
-  from_date, to_date = "20150601", "20150715"
-  paper = "nytimes"
 
-  article_count = es.count_doc("article")
-  preped_article_count = es.count_doc("article", {"match" : { "preprocessed" : True}})
-  prep_count = es.count_doc("prep")
+  article_count = es.count_all("article")
+  preped_article_count = es.count_all("article", {"match" : { "preprocessed" : True}})
+  prep_count = es.count_all("prep")
   print("article count:",article_count)
   print("preped article count:",preped_article_count)
   print("prep count:",prep_count)
   print("missing:",article_count - prep_count)
+
+  from_date, to_date = "20150701", "20150716"
+  total = 0
+  for index in date_range(from_date, to_date):
+    c = es.count_index(index, "article")
+    print(index, c)
+    total += c
+  print("total", total)
+

@@ -51,25 +51,11 @@ def preprocess_mode(args):
   if not args:
     return None, None
 
-  from utils import date_today
+  elif len(args) == 1:
+    return args[0], None
 
-  if args[0] == "all":
-    return "all", None
-
-  elif args[0] == "at":
-    date = args[1]
-    return date, None
-
-  elif args[0] == "from":
-    from_date = args[1]
-    if args[2] == "to":
-      to_date = None
-      if args[3] == "now":
-        to_date = date_today()
-      else:
-        to_date = args[3]
-      print("from:",from_date,"to:",to_date)
-      return from_date, to_date
+  elif len(args) == 2:
+    return args[0], args[1]
 
   return None, None
 
@@ -100,7 +86,6 @@ def not_implemented(cmd):
 
 def not_available(cmd, tail):
   out = "Command invalid: {command} -> {args}".format(command=cmd, args=tail)
-  print(out)
   logger.error(out)
 
 def consolify(args):
