@@ -1,6 +1,7 @@
 import json
 
 from esconnect import EsConnect
+from elastic import Elastic
 
 from article import article_from_hash
 from article import Article
@@ -15,8 +16,7 @@ class ElasticHelper():
   def __init__(self, connector=None):
     if not connector:
       connector = EsConnect()
-    self.connector = connector
-    self.es = self.connector.getConnection()
+    self.es = Elastic(connector)
 
   def dump_articles(self):
     a = input("Really? (y|n) ").strip()
