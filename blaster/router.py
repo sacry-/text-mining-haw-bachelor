@@ -34,6 +34,8 @@ def stanford_ner_conf():
 def elastic_conf():
   return app_conf()["elasticsearch"]
 
+def log_path():
+  return app_conf()["logpath"]
 
 if __name__ == "__main__":
   pass

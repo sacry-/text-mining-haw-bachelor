@@ -1,5 +1,6 @@
 import logging
 from os import path
+from router import log_path
 
 
 class Logger():
@@ -10,7 +11,7 @@ class Logger():
 
   def getLogger(self):
     self.logger = logging.getLogger(self.name)
-    handler = logging.FileHandler(self.log_path(self.name))
+    handler = logging.FileHandler("{}/{}.log".format(log_path(), self.name))
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -18,9 +19,6 @@ class Logger():
     self.logger.setLevel(logging.INFO)
     return self.logger
 
-  def log_path(self, name):
-    log_dir = path.dirname(path.abspath(__file__))
-    return "{}/log/{}.log".format(log_dir, name)
 
 if __name__ == "__main__":
   pass

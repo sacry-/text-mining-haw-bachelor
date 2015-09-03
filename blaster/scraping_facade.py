@@ -2,10 +2,12 @@ import threading
 import queue
 
 from utils import timeit
-from articlepersister import ArticlePersister
-from esconnect import EsConnect
-from newspaper_scraper import Source, Download
-from router import newspaper_conf, elastic_conf
+from es import EsConnect
+from scraping import ArticlePersister
+from scraping import Source
+from scraping import Download
+from router import newspaper_conf
+from router import elastic_conf
 
 
 def download_papers_from_sources():

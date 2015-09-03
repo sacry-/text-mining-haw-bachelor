@@ -1,16 +1,16 @@
 import os
 import time
 
-from preppersister import PrepPersister
-from essearcher import EsSearcher
-from preprocessor import prep_from_chunk
+from preprocessing import PrepPersister
+from preprocessing import Chunk
+from preprocessing import preprocessor_from_chunk
+from es import EsSearcher
 
 from utils import timeit
 from logger import Logger
 
 
 logger = Logger(__name__).getLogger()
-
 
 @timeit
 def preprocess_articles(from_date, to_date):
@@ -27,14 +27,13 @@ def preprocess_articles(from_date, to_date):
   print("all done!")
 
 
-def preprocess_and_persist(prepper, chunk):
-  prep = prep_from_chunk( chunk, tokenizer=None )
-  if preper.save(chunk):
+def preprocess_and_persist(preper, chunk):
+  prep = preprocessor_from_chunk( chunk, tokenizer=None )
+  if preper.save(prep):
     try:
       chunk.update_article()
     except Exception as e:
       logger.error("article for chunk could not be updated: " + e)
-
 
 def fetch_articles(from_date, to_date):
   searcher = EsSearcher()
@@ -44,21 +43,6 @@ def fetch_articles(from_date, to_date):
     return searcher.articles_from_to(from_date, to_date)
   else:
     return searcher.all_articles()
-
-
-class Chunk():
-
-  def __init__(self, a):
-    self.a = a
-    self.index = a._index
-    self.id = a.meta.id
-    self.title = a.title
-    self.text = a.text
-    self.article_html = a.article_html
-
-  def update_article(self):
-    self.a.preprocessed = True
-    self.a.save()
 
 
 if __name__ == "__main__":

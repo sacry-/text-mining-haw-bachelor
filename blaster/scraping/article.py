@@ -1,7 +1,9 @@
 import dateutil.parser
 from datetime import datetime
-from elasticsearch_dsl import DocType, String, Boolean, Date, Nested, analysis
-from utils import date_for_index, date_today
+from elasticsearch_dsl import DocType, Nested, analysis
+from elasticsearch_dsl import String, Boolean, Date
+from utils import date_for_index
+from utils import date_today
 
 
 class Article(DocType):

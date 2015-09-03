@@ -1,8 +1,7 @@
 from logger import Logger
-from esconnect import EsConnect
+from es import EsConnect
 
-from preprocessor import prep_from_chunk
-from preprocessor import Prep
+from preprocessing.preprocessor import Prep
 
 
 logger = Logger(__name__).getLogger()

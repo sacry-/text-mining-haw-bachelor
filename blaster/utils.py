@@ -6,10 +6,6 @@ import hashlib
 import time
 import datetime
 
-from logger import Logger
-
-
-logger = Logger(__name__).getLogger()
 
 def timeit(method):
   def timed(*args, **kw):
@@ -20,7 +16,6 @@ def timeit(method):
     te = time.time()
     time_s = '{:s} {:2.2f} sec'.format( name, te-ts )
     print( time_s )
-    logger.info( time_s )
     return result
   return timed
   

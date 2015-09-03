@@ -7,7 +7,6 @@ def get_configured_ner_tagger(tokens):
   stanford_tagger = NERTagger( classifier, ner_jar )
   return NerTagger(stanford_tagger, tokens)
 
-
 class NerSentence():
 
   def __init__(self, sno):

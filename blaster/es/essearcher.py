@@ -1,7 +1,8 @@
-from esconnect import EsConnect
-from elastic import Elastic
+from scraping import article
 
-from article import article_from_hash
+from es.esconnect import EsConnect
+from es.elastic import Elastic
+
 from utils import date_range
 
 
@@ -24,12 +25,12 @@ class EsSearcher():
   def all_articles(self, paper=None):
     query = self._query_scope(paper)
     for source in self.es.all_documents("article", query):
-      yield article_from_hash( source )
+      yield article.article_from_hash( source )
 
   def articles_for_date(self, index, paper=None):
     query = self._query_scope(paper)
     for source in self.es.all_docs_by_index(index, "article", query):
-      yield article_from_hash( source )
+      yield article.article_from_hash( source )
 
   def articles_from_to(self, from_date, to_date, paper=None):
     possible_indices = self.es.all_indices()

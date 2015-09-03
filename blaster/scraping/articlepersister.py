@@ -1,8 +1,8 @@
 from logger import Logger
-from esconnect import EsConnect
+from es import EsConnect
 
-from article import Article
-from article import article_from_data
+from scraping.article import Article
+from scraping.article import article_from_data
 
 
 logger = Logger(__name__).getLogger()
@@ -12,7 +12,7 @@ class ArticlePersister():
   def __init__(self, paper, connector=None):
     if not connector:
       connector = EsConnect()
-    self.es = connector.createConnection()
+    connector.createConnection()
     self.paper = paper
 
   def save(self, data):

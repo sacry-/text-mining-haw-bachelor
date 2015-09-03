@@ -1,17 +1,16 @@
 import json
 
-from esconnect import EsConnect
-from elastic import Elastic
+from es import EsConnect
+from es import Elastic
 
-from article import article_from_hash
-from article import Article
+from scraping import article
 
 from router import backup_path
 from utils import date_today
 from os import listdir
 
 
-class ElasticHelper():
+class ElasticSnapper():
 
   def __init__(self, connector=None):
     if not connector:
@@ -49,13 +48,13 @@ class ElasticHelper():
       all_data = json.load(f)
       for h in all_data:
         Article.init()
-        a = article_from_hash( h )
+        a = article.article_from_hash( h )
         a.save()
         c += 1
     print("imported:",c,"documents")
 
 
 if __name__ == "__main__":
-  eh = ElasticHelper()
-  eh.dump_articles()
+  eS = ElasticSnapper()
+  eS.dump_articles()
   

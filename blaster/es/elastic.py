@@ -1,5 +1,5 @@
 # coding: utf-8
-from esconnect import EsConnect
+from es.esconnect import EsConnect
 from datetime import datetime
 
 
