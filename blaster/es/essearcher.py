@@ -2,8 +2,7 @@ from scraping import article
 
 from es.esconnect import EsConnect
 from es.elastic import Elastic
-
-from utils import date_range
+from es.helpers import date_range
 
 
 # curl -XDELETE '127.0.0.1:9200/20150712/article/_query?q=newspaper:vice'
