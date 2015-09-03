@@ -1,8 +1,8 @@
 from datetime import datetime
-from utils import normalize_title
-from router import newspaper_conf
 from langdetect import detect_langs
-from logger import Logger
+from utils.logger import Logger
+from utils.helpers import normalize_title
+from router import newspaper_conf
 
 
 logger = Logger(__name__).getLogger()

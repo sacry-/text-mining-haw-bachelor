@@ -7,7 +7,7 @@ from preprocessing import preprocessor_from_chunk
 from es import EsSearcher
 
 from utils import timeit
-from logger import Logger
+from utils import Logger
 
 
 logger = Logger(__name__).getLogger()

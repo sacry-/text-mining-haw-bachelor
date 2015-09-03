@@ -1,4 +1,4 @@
-from logger import Logger
+from utils.logger import Logger
 from es import EsConnect
 
 from scraping.article import Article

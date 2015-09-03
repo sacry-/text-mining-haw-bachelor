@@ -1,6 +1,6 @@
 # encoding: utf-8
 from os import path
-from utils import read_json
+from utils.helpers import read_json
 
 
 MODULE = path.dirname(path.abspath(__file__))

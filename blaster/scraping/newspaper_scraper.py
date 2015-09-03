@@ -2,8 +2,8 @@ import newspaper
 
 from newspaper import Article
 from scraping.data import Data
-from utils import timeit
-from logger import Logger
+from utils.helpers import timeit
+from utils.logger import Logger
 
 
 logger = Logger(__name__).getLogger()

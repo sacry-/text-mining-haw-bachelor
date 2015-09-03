@@ -6,7 +6,7 @@ from es import Elastic
 from scraping import article
 
 from router import backup_path
-from utils import date_today
+from utils.helpers import date_today
 from os import listdir
 
 

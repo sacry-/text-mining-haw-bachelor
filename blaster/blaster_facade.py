@@ -1,8 +1,8 @@
 import os
 import sys
 
-from logger import Logger
-from elastic_snapper import ElasticSnapper
+from utils import Logger
+from utils import ElasticSnapper
 from scraping_facade import download_papers_from_sources
 from preprocessing_facade import preprocess_articles
 from termcolor import colored
