@@ -31,10 +31,10 @@ def usage():
 
 def blaster_facade(cmd, args):
   if cmd == "dump":
-    ElasticSnapper().dump_articles()
+    ElasticSnapper().dump()
 
-  elif cmd == "import":
-    ElasticSnapper().import_articles()
+  elif cmd == "reimport":
+    ElasticSnapper().reimport()
 
   elif cmd == "scrape": 
     logger.info("scrape")
