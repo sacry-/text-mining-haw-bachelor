@@ -19,7 +19,7 @@ def usage():
     ["scrape", ["for scraping newspapers defined in your newspaper config found under 'resources'"]],
     ["preprocess (None|from_date|from_date to_date)", ["for preprocessing articles from to a time period, or all if none provided", "e.g. blaster preprocess 20150712 20150716"]],
     ["features", ["create features for articles (not implemented)"]],
-    ["cluster", ["cluster preprocess articles (not implemented)"]],
+    ["cluster", ["cluster preprocessed articles (not implemented)"]],
     ["dump", ["dumps all articles persisted in elasticsearch to a json document"]],
     ["import", ["imports all articles from a JSON into elasticsearch"]],
   ]

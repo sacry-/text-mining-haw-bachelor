@@ -15,6 +15,10 @@ $ pip3 install langdetect
 Parsing and Text Processing
 ```python
 # Python version 3.4.2 used
+# Scientific computing in python
+$ pip3 install numpy
+$ pip3 install scipy
+$ pip3 install matplotlib
 # Python NLTK 3.0 http://www.nltk.org/install.html
 # Installing the SciPy Stack — SciPy.org
 
@@ -30,8 +34,8 @@ $ pip3 install pyenchant
 $ pip3 install -U git+https://github.com/sloria/textblob-aptagger.git@dev
 
 # http://honnibal.github.io/spaCy/index.html
-$ pip3 install spacy
-$ python -m spacy.en.download
+# $ pip3 install spacy
+# $ python -m spacy.en.download
 
 # https://textblob.readthedocs.org/
 $ pip3 install textblob
@@ -44,8 +48,6 @@ Clustering
 ```python
 # https://radimrehurek.com/gensim/install.html
 pip3 install -U gensim
-# Data Analysis http://pandas.pydata.org/pandas-docs/stable/install.html
-pip3 install pandas
 ```
 
 Infrastructure
@@ -54,7 +56,7 @@ Infrastructure
 $ brew install redis
 $ pip3 install redis-py
 
-# Or install Elastic Search
+# Install Elastic Search
 pip3 install elasticsearch
 pip3 install elasticsearch-dsl
 ```
