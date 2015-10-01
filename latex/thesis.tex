@@ -1,0 +1,104 @@
+\documentclass[
+  draft=true,
+  paper=a4,
+  twoside=false,
+  fontsize=11pt,
+  headsepline,
+  BCOR10mm,
+  DIV11
+]{scrbook}
+
+\input{imports_definitions.tex}
+
+\makeindex
+\makenomenclature
+
+\begin{document}
+  \selectlanguage{english}
+
+  \HAWThesisProperties{
+    Author={Matthias Nitsche},
+    Title={Continuous Clustering for a Daily News Summarization System},
+    EnglishTitle={Continuous Clustering for a Daily News Summarization System},
+    ThesisType={Bachelorarbeit},
+    ExaminationType={Bachelorprüfung},
+    DegreeProgramme={Bachelor of Science Angewandte Informatik},
+    ThesisExperts={Prof. Dr. Michael Neitzke \and Prof. Dr. Olaf Zukunft},
+    ReleaseDate={02. February 2016}
+  }
+
+
+  \frontmatter
+    \maketitle
+    \onehalfspacing
+
+    \input{abstract.tex}
+    \newpage
+
+    \singlespacing
+    \tableofcontents
+
+    \newpage
+    \listoftables
+    \listoffigures
+    %\lstlistoflistings
+
+
+  \mainmatter
+    \onehalfspacing
+    \typeout{===== File: chapter 1}
+
+    \chapter{Introduction}
+      \cite{ClusterAlgoSurveyIBM} 
+      \cite{TextMiningReport2005} 
+      \cite{TheNLPBook}
+
+    \chapter{State of the Art}
+      \label{chapter:state_of_the_arts}
+      \lipsum
+
+    \chapter{Data pipeline}
+      \label{chapter:data_pipeline}
+      \lipsum
+
+    \chapter{Preprocessing}
+      \label{chapter:preprocessing}
+      \lipsum
+
+    \chapter{Feature Selection}
+      \label{chapter:feature_selection}
+      \lipsum
+
+    \chapter{Clustering algorithms}
+      \label{chapter:clustering_algorithms}
+      \lipsum
+
+    \chapter{Implementation}
+      \label{chapter:implementation}
+      \lipsum
+
+    \chapter{Results and Discussion}
+      \label{chapter:results}
+      \lipsum
+
+    \chapter{Outlook}
+      \label{chapter:outlook}
+      \lipsum
+
+  \backmatter
+    \typeout{===== Section: literature}
+    \bibliographystyle{apalike}
+    \bibliography{thesis}
+
+    \addcontentsline{toc}{chapter}{Glossary}
+    \renewcommand{\nomname}{Glossary}
+    \markboth{\nomname}{\nomname}
+    \printnomenclature
+    \clearpage
+
+    \typeout{===== Section: index}
+    \printindex
+
+    \HAWasurency
+
+\end{document}

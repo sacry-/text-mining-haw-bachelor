@@ -1,0 +1,64 @@
+\usepackage[ngerman,english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{libertine}
+\usepackage{pifont}
+\usepackage{microtype}
+\usepackage{textcomp}
+\usepackage[german,refpage]{nomencl}
+\usepackage{setspace}
+\usepackage{makeidx}
+\usepackage{listings}
+\usepackage{natbib}
+\usepackage[ngerman,colorlinks=true]{hyperref}
+\usepackage{soul}
+\usepackage{hawstyle}
+\usepackage{lipsum}
+
+\colorlet{BackgroundColor}{gray!20}
+\colorlet{KeywordColor}{blue}
+\colorlet{CommentColor}{black!60}
+\colorlet{HeadColor}{gray!60}
+\colorlet{Color1}{blue!10}
+\colorlet{Color2}{white}
+
+\HAWifprinter{
+  \colorlet{BackgroundColor}{gray!20}
+  \colorlet{KeywordColor}{black}
+  \colorlet{CommentColor}{gray}
+  \colorlet{HeadColor}{gray!60}
+  \colorlet{Color1}{gray!40}
+  \colorlet{Color2}{white}
+}{}
+
+\lstset{
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{KeywordColor}\bfseries,
+  identifierstyle=\color{black},
+  commentstyle=\color{CommentColor},
+  backgroundcolor=\color{BackgroundColor},
+  captionpos=b,
+  fontadjust=true
+}
+
+\lstset{escapeinside={(*@}{@*)}, % used to enter latex code inside listings
+  morekeywords={uint32_t, int32_t}
+}
+
+\ifpdfoutput{
+  \hypersetup{bookmarksopen=false,bookmarksnumbered,linktocpage}
+}{}
+
+\DeclareRobustCommand{\cxx}{C\raisebox{0.25ex}{{\scriptsize +\kern-0.25ex +}}}
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+\hyphenation{}
+
+\typearea[current]{last}
