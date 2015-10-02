@@ -14,23 +14,16 @@ function copy_resources_to_out {
   cp ../*.tex .
 }
 
-function copy_thesis {
-  if [ -f thesis.pdf ]
-  then
-    mv thesis.pdf ..
-  else
-    mv thesis.dvi ..
-  fi
+function tex_thesis {
+  latex -interaction=batchmode thesis.tex
 }
 
 function compile {
-  latex -interaction=batchmode thesis.tex
+  tex_thesis
   bibtex thesis.aux
   # makeglossaries thesis
-  for i in 1 2
-  do
-    latex -interaction=batchmode thesis.tex
-  done
+  tex_thesis
+  tex_thesis
 }
 
 function to_pdf {
@@ -38,6 +31,6 @@ function to_pdf {
   ps2pdf thesis.ps
 }
 
+cd "out" && copy_resources_to_out && clear && compile
 
-cd "out" && copy_resources_to_out && clear && compile || copy_thesis
 
