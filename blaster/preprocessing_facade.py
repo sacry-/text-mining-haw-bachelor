@@ -1,4 +1,3 @@
-import os
 import time
 
 from preprocessing import PrepPersister
@@ -16,15 +15,16 @@ logger = Logger(__name__).getLogger()
 def preprocess_articles(from_date, to_date):
   chunks = []
   for a in fetch_articles(from_date, to_date):
+
     if not a.preprocessed:
       chunks.append( Chunk(a) )
 
   preper = PrepPersister()
 
-  print("total articles:",len(chunks))
+  print("Total articles:",len(chunks))
   for chunk in chunks:
     preprocess_and_persist( preper, chunk )
-  print("all done!")
+  print("Finished Job!")
 
 
 def preprocess_and_persist(preper, chunk):

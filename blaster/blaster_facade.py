@@ -1,11 +1,13 @@
 import os
 import sys
 
+from termcolor import colored
+
 from utils import Logger
 from utils import ElasticSnapper
-from scraping_facade import download_papers_from_sources
+
+from scraping_facade import download_and_persist_sources
 from preprocessing_facade import preprocess_articles
-from termcolor import colored
 
 
 logger = Logger("blaster").getLogger()
@@ -33,12 +35,12 @@ def blaster_facade(cmd, args):
   if cmd == "dump":
     ElasticSnapper().dump()
 
-  elif cmd == "reimport":
+  elif cmd == "import":
     ElasticSnapper().reimport()
 
   elif cmd == "scrape": 
     logger.info("scrape")
-    download_papers_from_sources()
+    download_and_persist_sources()
 
   elif cmd == "preprocess": 
     logger.info("preprocess")

@@ -11,7 +11,7 @@ class PrepPersister():
   def __init__(self, connector=None):
     if not connector:
       connector = EsConnect()
-    self.es = connector.createConnection()
+    connector.createConnection()
 
   def save(self, prep):
     try:

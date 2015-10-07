@@ -5,70 +5,63 @@ from utils import timeit
 from es import EsConnect
 from scraping import ArticlePersister
 from scraping import Source
+from scraping import get_sources
 from scraping import Download
-from router import newspaper_conf
-from router import elastic_conf
 
 
-def download_papers_from_sources():
-  pool, q = [], queue.Queue()
+def download_and_persist_sources( sources=None ):
+  if not sources:
+    sources = get_sources()
 
-  conf = newspaper_conf()
-  for name, data in conf.items():
-    memoize = data["memoize"]
-    for url in data["urls"]:
-      thr = threading.Thread(
-        target=download_paper_from_source, 
-        args=(name, url, memoize, q), 
-        kwargs={}
-      )
-      thr.start()
-      pool.append(thr)
+  running_threads = []
+  dispatch_queue = queue.Queue()
 
-  [t.join() for t in pool]
-  print_queue_count(q)
+  for source in sources:
+    thr = threading.Thread(
+      target=download_and_persist_source, 
+      args=(source, dispatch_queue), 
+      kwargs={}
+    )
+    thr.start()
+    running_threads.append(thr)
 
-def download_paper_from_source(name, url, memoize, q):
-  print("paper: ", name, " with: ", url)
+  [t.join() for t in running_threads]
 
-  source = Source(name, url, memoize)
+  print("Finished job!")
+
+
+def download_and_persist_source(source, dispatch_queue):
+  print("paper: ", source.name, " with: ", source.url)
+
   source.build()
 
   download = Download(source)
-  actual = persist_articles(source.name, download)
+  actual = persist_articles(source, download)
 
-  count_queue(q, source.size, actual)
+  if not actual:
+    print("did not download any articles")
+
+  else:
+    print("total:", source.size, "actual:", actual)
 
 @timeit
-def persist_articles(source_name, download):
-  connector = EsConnect( elastic_conf() )
-  persister = ArticlePersister(source_name, connector)
+def persist_articles(source, download):
+  persister = ArticlePersister( source.name )
+
   actual = 0
   for data in download.start():
-    if not data.is_valid(source_name):
+
+    if not data.is_valid(source.whitelist):
       print("data invalid:", data.normalized_title)
       continue
-    data.newspaper = source_name
-    saved = persister.save(data)
-    if saved: 
+
+    data.newspaper = source.name
+    if persister.save(data): 
       actual += 1
+
   return actual
-
-def count_queue(q, total, actual):
-  h = {"total" : 0, "actual" : 0}
-  if not q.empty():
-    h = q.get()
-  h["total"] += total
-  h["actual"] += actual
-  q.put(h)
-
-def print_queue_count(q):
-  if not q.empty():
-    h = q.get()
-    print("total:",h["total"],"actual:",h["actual"])
-  else:
-    print("No count! W00t?!")
 
 
 if __name__ == "__main__":
-  pass
+  download_and_persist_sources()
+

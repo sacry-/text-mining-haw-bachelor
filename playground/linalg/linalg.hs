@@ -94,10 +94,14 @@ instance Num a => Monoid (Matrix a) where
   mempty = Matrix []  
   Matrix x `mappend` Matrix y = Matrix (map (\(r1, r2) -> r1 `mappend` r2) (zip x y))
 
+
 {- Float specific Matrice functions -}
 type FMat = Matrix Float
 
-{- Examples Matrices -}
-m1 = Matrix [[1..5],[1..5],[1..5],[1..5],[1..5]] :: FMat
+mmul :: FMat -> FVec -> FVec
+mmul (Matrix rows) v = Vector $ map (\row -> dotProduct (Vector row) v) rows
 
+{- Examples Matrices -}
+m1 = Matrix [[1,1],[2,-1]] :: FMat
+m2 = Matrix [[2,2],[3,4]] :: FMat
 

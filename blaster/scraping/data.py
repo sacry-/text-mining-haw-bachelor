@@ -1,8 +1,8 @@
 from datetime import datetime
 from langdetect import detect_langs
+
 from utils.logger import Logger
 from utils.helpers import normalize_title
-from router import newspaper_conf
 
 
 logger = Logger(__name__).getLogger()
@@ -14,15 +14,7 @@ class Data():
     self.ts_in = datetime.now()
 
     self.title = article.title
-    if not self.text_valid(self.title):
-      self.title = "invalid_title"
-      logger.info("has no title: " + article.url)
-
     self.text = article.text
-    if not self.text_valid(self.title):
-      self.text = "invalid_text"
-      logger.info("has no text: " + article.url)
-
     self.url = article.url
 
     self.normalized_title = normalize_title(self.title)
@@ -41,24 +33,22 @@ class Data():
     if not self.publish_date:
       self.publish_date = str(datetime.now())
 
-  def text_valid(self, s):
-    return s and s.strip()
+  def is_valid(self, whitelist):
+    if not self.title.strip():
+      logger.info("has invalid title: " + self.url)
+      return False
 
-  def is_valid(self, paper):
     if not self.text.strip():
+      logger.info("has invalid text: " + self.url)
       return False
       
-    config = newspaper_conf()
-    if not paper in config:
-      return False
-
-    news_conf = config[paper]
-    whitelisted = news_conf["whitelist"]
-    if self.normalized_title in whitelisted:
+    if self.normalized_title in whitelist:
+      logger.info("is whitelisted: " + self.url)
       return False
     
     possible_langs = detect_langs(self.title) + detect_langs(self.normalized_title)
     if not "en" in map(lambda x: x.lang, possible_langs):
+      logger.info("could not detect english language: " + self.url)
       return False
 
     return True
