@@ -1,5 +1,5 @@
-import scraping.article as article
-import scraping.data as data
+from scraping.data import Data
+from scraping.article import article_from_data, article_from_hash, article_to_hash
 
 from scraping.articlepersister import ArticlePersister
 from scraping.source import Source

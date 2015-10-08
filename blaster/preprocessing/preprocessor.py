@@ -67,7 +67,7 @@ def preprocess(chunk, tokenizer=None):
   if not tokenizer:
     tokenizer = default_tokenizer
 
-  print("preprocessing start", chunk.index, chunk.id)
+  print("Preprocessing start", chunk.index, chunk.id)
   pre = Preprocessor(chunk.text, tokenizer)
   pre.pos_tags()
   pre.noun_phrases()
