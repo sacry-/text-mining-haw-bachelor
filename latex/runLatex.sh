@@ -14,16 +14,16 @@ function copy_resources_to_out {
   cp ../*.tex .
 }
 
-function tex_thesis {
-  latex -interaction=batchmode thesis.tex
+function texify {
+  /usr/texbin/latex -interaction=batchmode thesis.tex
 }
 
 function compile {
-  tex_thesis
-  bibtex thesis.aux
+  texify
+  /usr/texbin/bibtex thesis.aux
   # makeglossaries thesis
-  tex_thesis
-  tex_thesis
+  texify
+  texify
 }
 
 function to_pdf {
