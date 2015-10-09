@@ -9,10 +9,10 @@ logger = Logger(__name__).getLogger()
 
 class Source():
 
-  def __init__(self, name, url, memoize=True, whitelist=[]):
+  def __init__(self, name, url, memoize, whitelist=[]):
     self.name = name
     self.url = url
-    self.memoize = memoize
+    self.memoize = True
     self.whitelist = whitelist
     self.paper = None
     self.size = 0

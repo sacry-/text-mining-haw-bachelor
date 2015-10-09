@@ -38,6 +38,13 @@ class EsSearcher():
         for a in self.articles_for_date(index, paper):
           yield a
 
+  def nps_for_index(self, _index, _id):
+    try:
+      source = self.es.get(_index, "prep", _id)
+      return source["noun_phrases"]
+    except:
+      return []
+
   def count_all(self, doc_type, matching={"match_all" : {}}):
     total = 0
     for index in self.es.all_indices():
