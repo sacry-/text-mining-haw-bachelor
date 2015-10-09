@@ -1,9 +1,12 @@
+import random
+
 from scraping.article import article_from_hash
 
 from es.esconnect import EsConnect
 from es.elastic import Elastic
 from es.helpers import date_range
 
+from collections import Counter
 
 # curl -XDELETE '127.0.0.1:9200/20150712/article/_query?q=newspaper:vice'
 # curl -XDELETE '127.0.0.1:9200/20150712/article/restaurant_report_konyvbar_in_budapest
@@ -37,6 +40,15 @@ class EsSearcher():
       if index in possible_indices:
         for a in self.articles_for_date(index, paper):
           yield a
+
+  def choose_k(self, indices, paper=None):
+    articles = []
+    for (index, count) in Counter(indices).items():
+      intermediate = []
+      for a in self.articles_for_date(index, paper):
+        intermediate.append( a )
+      articles += random.sample(intermediate, count)
+    return articles
 
   def nps_for_index(self, _index, _id):
     try:

@@ -1,9 +1,10 @@
 import hashlib
+import random
 
 from prepare import Prepare
 
 from es import EsSearcher
-from langdetect import detect
+from es import Elastic
 from gensim import corpora, models, similarities
 from nltk import data
 from nltk import FreqDist
@@ -20,75 +21,111 @@ def md5_hex(seq):
   s = "".join(seq)
   return hashlib.md5(s.encode('utf-8')).hexdigest()
 
-SENTENCE_DETECTOR = data.load('tokenizers/punkt/english.pickle')
-def dtokenize(sent):
-  sentences = []
-  for sentence in SENTENCE_DETECTOR.tokenize(doc):
-    try:
-      if detect(sentence) == "en":
-        sentences += stokenize(sentence)
-    except:
-      pass
-  return sentences
 
-def ctokenize(docs):
-  docs_ = []
-  for doc in docs:
-    docs_.append( stokenize(doc) )
-  return docs_
+class TfIdf():
 
-# "20150719"
-def get_docs():
+  def __init__(self, from_, to_="20150719", paper=None):
+    self.from_ = from_
+    self.to_ = to_
+    self.paper = paper
+    self.documents = None
+    self.articles = None
+    self.nps = None
+    self.corpus = None
+    self.dictionary = None
+    self.tfidf = None
+    self.index = None
+
+  def run(self):
+    self.__get_docs__()
+    self.__init_corpus__()
+    self.tfidf = models.TfidfModel(self.corpus)
+    self.index = similarities.MatrixSimilarity(self.tfidf[self.corpus], num_features=1000000)
+
+  def search_space(self, title, n=10, threshold=0.0):
+    doc = Prepare(title).tokens()
+    vec = self.dictionary.doc2bow(doc)
+    sims = self.index[self.tfidf[vec]]
+    sorted_space = sorted(list(enumerate(sims)), key=lambda x: -x[1])
+    for (idx, score) in sorted_space[:n]:
+      if score <= threshold:
+        break
+      yield (self.articles[md5_hex(self.documents[idx])], score)
+
+  def __get_docs__(self):
+    searcher = EsSearcher()
+    documents = []
+    noun_phrases = {}
+    article_names = {}
+    for article in searcher.articles_from_to(self.from_, self.to_, self.paper):
+      nps = searcher.nps_for_index(article._index, article.meta.id)
+
+      noun_tokens = flatten([Prepare(np).tokens() for np in nps])
+      title_tokens = Prepare(article.title).tokens()
+      unique_tokens = unique(noun_tokens + title_tokens)
+      md5_article = md5_hex(unique_tokens)
+
+      noun_phrases[article.title] = unique_tokens
+      article_names[md5_article] = article.title
+      documents.append(unique_tokens)
+
+    self.documents = documents
+    self.articles = article_names
+    self.nps = noun_phrases
+
+  def __init_corpus__(self):
+    sents = flatten(self.documents)
+    freqs = FreqDist(sents)
+    freq_sents = [[token for token in text if freqs[token] > 1] 
+                  for text in self.documents]
+
+    dictionary = corpora.Dictionary(freq_sents)
+    dictionary.save('/tmp/20150629.dict')
+
+    corpus = [dictionary.doc2bow(text) for text in freq_sents if text]
+    corpora.MmCorpus.serialize('/tmp/20150629.mm', corpus)
+
+    self.dictionary = dictionary
+    self.corpus = corpus
+
+
+def collect_indices(indices, collected, k):
+  if k > len(indices):
+    collected += indices
+    return collect_indices(indices, collected, k - len(indices))
+  elif k == 0:
+    return collected
+  else:
+    return (collected + random.sample( indices, k ))
+
+def pick_k_random_articles(_from, _to, k=10):
+  elastic = Elastic()
   searcher = EsSearcher()
-  documents = []
-  noun_phrases = {}
-  article_names = {}
-  for article in searcher.articles_from_to("20150629", "20150701"):
-    nps = searcher.nps_for_index(article._index, article.meta.id)
-
-    noun_tokens = flatten([Prepare(np).tokens() for np in nps])
-    title_tokens = Prepare(article.title).tokens()
-    unique_tokens = unique(noun_tokens + title_tokens)
-    md5_article = md5_hex(unique_tokens)
-
-    noun_phrases[article.title] = unique_tokens
-    article_names[md5_article] = article.title
-    documents.append(unique_tokens)
-
-  return documents, noun_phrases, article_names
-
-def highest_n_matches(tfidf, dictionary, index, title, n=10):
-  doc = Prepare(title).tokens()
-  vec = dictionary.doc2bow(doc)
-  step = tfidf[vec]
-  sims = index[step]
-  assorted = sorted(list(enumerate(sims)), key=lambda x: -x[1])
-  for (idx, score) in assorted[:10]:
-    yield articles[md5_hex(documents[idx])]
-
-def setup(documents):
-  sents = flatten(documents)
-  freqs = FreqDist(sents)
-  freq_sents = [[token for token in text if freqs[token] > 1] for text in documents]
-
-  dictionary = corpora.Dictionary(freq_sents)
-  dictionary.save('/tmp/20150629.dict')
-
-  corpus = [dictionary.doc2bow(text) for text in freq_sents if text]
-  corpora.MmCorpus.serialize('/tmp/20150629.mm', corpus)
-
-  return corpus, dictionary
+  all_indices = list( elastic.all_indices() )
+  f = all_indices.index(_from)
+  t = all_indices.index(_to)
+  indices = all_indices[f:t]
+  picked = collect_indices(indices, [], k)
+  return searcher.choose_k(picked)
 
 if __name__ == "__main__": 
-  documents, nps, articles = get_docs()
-  corpus, dictionary = setup(documents)
+  _from, _to = "20150629", "20150705"
+  tfidf = TfIdf(_from, _to)
+  tfidf.run()
 
-  tfidf = models.TfidfModel(corpus)
-  index = similarities.MatrixSimilarity(tfidf[corpus], num_features=1000000)
+  titles = [
+    "More than 100 asylum seekers to walk free after detention system quashed"
+  ]
 
-  k = "More than 100 asylum seekers to walk free after detention system quashed"
-  matches = highest_n_matches(tfidf, dictionary, index, k, 5)
-  pprint( list(matches) )
+  seed = pick_k_random_articles(_from, _to, 10)
+  for article in seed:
+    print(article.title)
+    matches = tfidf.search_space(title=article.title, n=5, threshold=0.1)
+    pprint( list(matches) )
+
+
+
+
 
 
 
