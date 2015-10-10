@@ -65,5 +65,11 @@ $ pip3 install redis-py
 # Install Elastic Search
 pip3 install elasticsearch
 pip3 install elasticsearch-dsl
+
+# Wikipedia
+# dump
+https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
+# Libraries for working on wikipedia dumps or APIs
+http://pythonhosted.org/mediawiki-utilities/
 ```
 
