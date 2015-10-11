@@ -9,6 +9,7 @@ from gensim import corpora, models, similarities
 from nltk import data
 from nltk import FreqDist
 from pprint import pprint
+from utils.helpers import timeit
 
 
 def flatten(seq):
@@ -108,7 +109,9 @@ def pick_k_random_articles(_from, _to, k=10):
   picked = collect_indices(indices, [], k)
   return searcher.choose_k(picked)
 
-if __name__ == "__main__": 
+
+@timeit
+def run():
   _from, _to = "20150629", "20150705"
   tfidf = TfIdf(_from, _to)
   tfidf.run()
@@ -122,6 +125,10 @@ if __name__ == "__main__":
     print(article.title)
     matches = tfidf.search_space(title=article.title, n=5, threshold=0.1)
     pprint( list(matches) )
+    print("-"*40)
+
+if __name__ == "__main__": 
+  run()
 
 
 
