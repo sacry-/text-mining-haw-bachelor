@@ -1,6 +1,7 @@
 # coding: utf-8
 import re
 import enchant # pip install pyenchant
+from langdetect import detect
 from nltk import word_tokenize
 from nltk import data
 from nltk import PorterStemmer
@@ -95,7 +96,12 @@ def remove_special(token):
 def sentence_tokenize(s):
   sentences = []
   for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
-    sentences.append( word_tokenize(sentence) )
+    try:
+      if detect(sentence) == "en":
+        words = word_tokenize(sentence)
+        sentences.append( words )
+    except:
+      pass
   return sentences
 
 def stemmatize(tokens): # work heavy!

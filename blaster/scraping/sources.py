@@ -1,5 +1,5 @@
-from scraping.guardian import Guardian
-from scraping.nytimes import NyTimes
+from scraping.papers.guardian import Guardian
+from scraping.papers.nytimes import NyTimes
 
 
 class Sources():
