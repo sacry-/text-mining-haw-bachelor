@@ -1,6 +1,7 @@
 from preprocessing.syntax import sentence_tokenize
 from preprocessing.ner_tagger import get_configured_ner_tagger
 from preprocessing.chunk import Chunk
+from preprocessing.prepare import Prepare
 
 from utils import date_today
 from textblob import TextBlob
@@ -68,6 +69,7 @@ def preprocess(chunk, tokenizer=None):
     tokenizer = default_tokenizer
 
   print("Preprocessing start", chunk.index, chunk.id)
+  chunk.text = Prepare(chunk.text).s
   pre = Preprocessor(chunk.text, tokenizer)
   pre.pos_tags()
   pre.noun_phrases()

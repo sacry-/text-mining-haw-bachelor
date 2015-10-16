@@ -59,9 +59,12 @@ class EsSearcher():
 
   def count_all(self, doc_type, matching={"match_all" : {}}):
     total = 0
-    for index in self.es.all_indices():
+    for index in self.indices():
       total += self.es.count(index, doc_type, {"query" : matching})
     return total
+
+  def indices(self):
+    return self.es.all_indices()
 
   def count_index(self, index, doc_type):
     return self.es.count(index, doc_type, self._query_scope())
@@ -83,11 +86,14 @@ if __name__ == "__main__":
   print("prep count:",prep_count)
   print("missing:",article_count - prep_count)
 
-  from_date, to_date = "20150701", "20150716"
-  total = 0
-  for index in date_range(from_date, to_date):
-    c = es.count_index(index, "article")
-    print(index, c)
-    total += c
-  print("total", total)
+  if False:
+    from_date, to_date = "20010129", "20151207"
+    total = 0
+    all_indices = list(es.indices())
+    for index in date_range(from_date, to_date):
+      if index in all_indices:
+        c = es.count_index(index, "article")
+        print(index, c)
+        total += c
+    print("total", total)
 
