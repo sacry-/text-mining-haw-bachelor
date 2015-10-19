@@ -12,7 +12,7 @@ from collections import Counter
 # curl -XDELETE '127.0.0.1:9200/20150712/article/restaurant_report_konyvbar_in_budapest
 
 # curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2
-# curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "20150[678].*"
+# curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "2015[067891]{2}.*"
 
 # curl '127.0.0.1:9200/_nodes/settings?pretty=true'
 # curl '127.0.0.1:9200/_count'
@@ -40,6 +40,9 @@ class EsSearcher():
       if index in possible_indices:
         for a in self.articles_for_date(index, paper):
           yield a
+
+  def article_at(self, a_date, doc, title):
+    return article_from_hash( self.es.get(a_date, doc, title) )
 
   def choose_k(self, indices, paper=None):
     articles = []
@@ -80,20 +83,17 @@ if __name__ == "__main__":
 
   article_count = es.count_all("article")
   preped_article_count = es.count_all("article", {"match" : { "preprocessed" : True}})
-  prep_count = es.count_all("prep")
   print("article count:",article_count)
   print("preped article count:",preped_article_count)
-  print("prep count:",prep_count)
-  print("missing:",article_count - prep_count)
+  print("missing:", article_count - preped_article_count)
 
   if False:
     from_date, to_date = "20010129", "20151207"
-    total = 0
-    all_indices = list(es.indices())
-    for index in date_range(from_date, to_date):
-      if index in all_indices:
-        c = es.count_index(index, "article")
-        print(index, c)
-        total += c
-    print("total", total)
+    missing = []
+    for a in es.articles_from_to(from_date, to_date):
+      try:
+        elastic.article_at(a._index, "prep", a.meta.id)
+      except:
+        missing.append( [a._index, a.meta.id] )
+    print(missing)
 

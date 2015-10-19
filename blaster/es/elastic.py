@@ -12,7 +12,11 @@ class Elastic():
     self.es = connector.getConnection()
 
   def get(self, _index, _doc_type, _id):
-    return self.es.get(index=_index, doc_type=_doc_type, id=_id)["_source"]
+    doc = self.es.get(index=_index, doc_type=_doc_type, id=_id)
+    source = doc["_source"]
+    source["id"] = doc["_id"]
+    source["index"] = _index
+    return source
 
   def delete(self, _index, _doc_type, _id):
     self.es.delete(index=_index, doc_type=_doc_type, id=_id)

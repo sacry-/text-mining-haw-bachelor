@@ -15,7 +15,6 @@ logger = Logger(__name__).getLogger()
 def preprocess_articles(from_date, to_date):
   chunks = []
   for a in fetch_articles(from_date, to_date):
-
     if not a.preprocessed:
       chunks.append( Chunk(a) )
 
