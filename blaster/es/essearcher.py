@@ -77,15 +77,17 @@ class EsSearcher():
       return {"query" : {"match_all" : {}}}
     return {"query" : {"match" : { "newspaper" : paper}}}
 
+  def ping(self):
+    return self.es.ping()
 
 if __name__ == "__main__":
   es = EsSearcher()
-
+  
   article_count = es.count_all("article")
   preped_article_count = es.count_all("article", {"match" : { "preprocessed" : True}})
   print("article count:",article_count)
   print("preped article count:",preped_article_count)
-  print("missing:", article_count - preped_article_count)
+  print("article_count - preped_articles =", article_count - preped_article_count)
 
   if False:
     from_date, to_date = "20010129", "20151207"

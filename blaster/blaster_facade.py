@@ -8,6 +8,7 @@ from utils import ElasticSnapper
 
 from scraping_facade import download_and_persist_sources
 from preprocessing_facade import preprocess_articles
+from es import EsSearcher
 
 
 logger = Logger("blaster").getLogger()
@@ -24,21 +25,26 @@ def usage():
     ["cluster", ["cluster preprocessed articles (not implemented)"]],
     ["dump", ["dumps all articles persisted in elasticsearch to a json document"]],
     ["import", ["imports all articles from a JSON into elasticsearch"]],
+    ["count", ["provides some general counts and es information"]],
   ]
   for cmd, descr in cmds:
     print("  blaster", 
       colored(cmd, "yellow"), 
       colored("\n\t" + "\n\t".join(descr), "magenta"), "\n")
 
+def check_db_is_up():
+  es = None
+  try:
+    es = EsSearcher()
+  except:
+    pass
+  if not es or (es and not es.ping()):
+    raise Exception("Failed to connect to elasticsearch at localhost:9200!")
 
 def blaster_facade(cmd, args):
-  if cmd == "dump":
-    ElasticSnapper().dump()
+  check_db_is_up()
 
-  elif cmd == "import":
-    ElasticSnapper().reimport()
-
-  elif cmd == "scrape": 
+  if cmd == "scrape": 
     logger.info("scrape")
     download_and_persist_sources()
 
@@ -53,8 +59,25 @@ def blaster_facade(cmd, args):
   elif cmd == "cluster": 
     usage()
 
+  elif cmd == "dump":
+    ElasticSnapper().dump()
+
+  elif cmd == "import":
+    ElasticSnapper().reimport()
+
+  elif cmd == "count":
+    do_count()
+
   else:
     usage()
+
+def do_count():
+  es = EsSearcher()
+  article_count = es.count_all("article")
+  preped_article_count = es.count_all("article", {"match" : { "preprocessed" : True}})
+  print("article count:",article_count)
+  print("preped article count:",preped_article_count)
+  print("missing:", article_count - preped_article_count)
 
 def pick_date_range(args):
   if not args or len(args) > 2:

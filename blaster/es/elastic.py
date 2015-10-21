@@ -18,6 +18,9 @@ class Elastic():
     source["index"] = _index
     return source
 
+  def ping(self):
+    return self.es.ping()
+
   def delete(self, _index, _doc_type, _id):
     self.es.delete(index=_index, doc_type=_doc_type, id=_id)
 
