@@ -1,6 +1,5 @@
 from preprocessing.syntax import sentence_tokenize
 from preprocessing.ner_tagger import get_configured_ner_tagger
-from preprocessing.chunk import Chunk
 from preprocessing.prepare import Prepare
 
 from utils import date_today
@@ -10,19 +9,36 @@ from textblob.np_extractors import ConllExtractor
 from elasticsearch_dsl import DocType, String
 
 
-def preprocessor_from_chunk(chunk, tokenizer=None):
-  pre = preprocess(chunk, tokenizer)
+def preprocess(a, tokenizer=None):
+  pre = preprocessor_for_article(a, tokenizer)
 
   prep = Prep(
-    meta={'id' : chunk.id}, 
+    meta={'id' : a.meta.id}, 
     tokens=pre.tokens,
     pos_tags=pre.pos_tags(),
     noun_phrases=pre.noun_phrases(),
     ner_tags=pre.ner_extract()
   )
 
-  prep._index = chunk.index
+  prep._index = a._index
   return prep
+
+def preprocessor_for_article(a, tokenizer=None):
+  
+  def default_tokenizer(text):
+    return [word for sentence in sentence_tokenize( text ) for word in sentence]
+  
+  if not tokenizer:
+    tokenizer = default_tokenizer
+
+  print("Preprocessing", str(a))
+  text = Prepare(a.text, options=["remove_alpha"]).s
+  pre = Preprocessor(a.text, tokenizer)
+  pre.pos_tags()
+  pre.noun_phrases()
+  pre.ner_extract()
+  
+  return pre
 
 
 TAGGER = PerceptronTagger()
@@ -60,22 +76,8 @@ class Prep(DocType):
   def save(self, ** kwargs):
     return super(Prep, self).save(** kwargs)
 
-def preprocess(chunk, tokenizer=None):
-  
-  def default_tokenizer(text):
-    return [word for sentence in sentence_tokenize( text ) for word in sentence]
-  
-  if not tokenizer:
-    tokenizer = default_tokenizer
-
-  print("Preprocessing start", chunk.index, chunk.id)
-  chunk.text = Prepare(chunk.text, options={"remove_alpha" : False}).s
-  pre = Preprocessor(chunk.text, tokenizer)
-  pre.pos_tags()
-  pre.noun_phrases()
-  pre.ner_extract()
-  
-  return pre
+  def __repr__(self):
+    return "{}/prep/{}".format(self._index, self.meta.id)
 
 
 if __name__ == "__main__":

@@ -38,11 +38,10 @@ RE_NUMERIC = re.compile(r"[0-9]+", re.UNICODE)
 
 class Prepare():
 
-  def __init__(self, sentence, options={"remove_alpha" : True, 
-             "remove_stops" : True, "remove_numeric" : True}):
-    self.remove_alpha = options["remove_alpha"]
-    self.remove_stops = options["remove_stops"]
-    self.remove_numeric = options["remove_numeric"]
+  def __init__(self, sentence, options=[]):
+    self.remove_alpha = not ("remove_alpha" in options)
+    self.remove_stops = not ("remove_stops" in options)
+    self.remove_numeric = not ("remove_numeric" in options)
     self.s = self.filter(sentence)
 
   def tokens(self):

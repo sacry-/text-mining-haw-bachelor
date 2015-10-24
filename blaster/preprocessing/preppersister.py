@@ -17,14 +17,14 @@ class PrepPersister():
     try:
       Prep.init()
       prep.save()
-      logger.info(self.logging_text(prep))
+      logger.info(self.log_text("preprocessed", prep))
     except Exception as e:
-      logger.error("article could not be created: " + e)
+      logger.error(self.log_text("article could not be created", prep, str(e)))
       return False
     return True
 
-  def logging_text(self, prep):
-    return "preprocessed: {}/prep/{}".format(prep._index, prep.meta.id)
+  def log_text(self, msg, prep, err=""):
+    return "{}: {}/prep/{} - {}".format(msg, prep._index, prep.meta.id, err)
 
 
 if __name__ == "__main__":

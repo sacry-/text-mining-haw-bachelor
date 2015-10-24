@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from langdetect import detect_langs
 
@@ -52,6 +53,7 @@ class Data():
       return False
 
     return True
+
 
 if __name__ == "__main__":
   pass

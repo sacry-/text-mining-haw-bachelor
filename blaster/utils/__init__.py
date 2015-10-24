@@ -1,3 +1,5 @@
+import utils.shell_tools as shell_tools
+
 from utils.elastic_snapper import ElasticSnapper
 from utils.logger import Logger
 

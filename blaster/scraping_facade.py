@@ -2,7 +2,6 @@ import threading
 import queue
 
 from utils import timeit
-from es import EsConnect
 from scraping import ArticlePersister
 from scraping import Source
 from scraping import get_sources

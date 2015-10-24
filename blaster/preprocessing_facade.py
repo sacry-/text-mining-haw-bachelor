@@ -1,8 +1,8 @@
 import time
+import signal
 
 from preprocessing import PrepPersister
-from preprocessing import Chunk
-from preprocessing import preprocessor_from_chunk
+from preprocessing import preprocess
 from es import EsSearcher
 
 from utils import timeit
@@ -13,26 +13,41 @@ logger = Logger(__name__).getLogger()
 
 @timeit
 def preprocess_articles(from_date, to_date):
-  chunks = []
+  signal.signal(signal.SIGALRM, timeout_handler)
+
+  to_process = []
   for a in fetch_articles(from_date, to_date):
     if not a.preprocessed:
-      chunks.append( Chunk(a) )
+      to_process.append( a )
 
-  preper = PrepPersister()
+  print("Total articles: {}".format(len(to_process)))
 
-  print("Total articles:",len(chunks))
-  for chunk in chunks:
-    preprocess_and_persist( preper, chunk )
+  prep_persister = PrepPersister()
+
+  unprocessed = []
+  for a in to_process:
+
+    preprocessor = None
+    try:
+      signal.alarm(10)
+      preprocessor = preprocess( a, tokenizer=None )
+    except Exception as e:
+      logger.error("{} - {}".format(str(e), str(a)))
+      unprocessed.append( str(a) )
+    signal.alarm(0)
+
+    if preprocessor and prep_persister.save(preprocessor):
+      try:
+        a.preprocessed = True
+        a.save()
+      except Exception as e:
+        logger.error("article could not be updated: {} - {}".format(str(e), str(a)))
+  
+  print("Could not preprocess:")
+  for uri in unprocessed:
+    print("  ", uri)
   print("Finished Job!")
 
-
-def preprocess_and_persist(preper, chunk):
-  prep = preprocessor_from_chunk( chunk, tokenizer=None )
-  if preper.save(prep):
-    try:
-      chunk.update_article()
-    except Exception as e:
-      logger.error("article for chunk could not be updated: " + e)
 
 def fetch_articles(from_date, to_date):
   searcher = EsSearcher()
@@ -43,6 +58,9 @@ def fetch_articles(from_date, to_date):
   else:
     return searcher.all_articles()
 
+def timeout_handler(signum, frame):
+  print("Timeout: could not preprocess article")
+  raise Exception("Timeout: article is not processable!")
 
 if __name__ == "__main__":
   preprocess_articles("20150712", None)
