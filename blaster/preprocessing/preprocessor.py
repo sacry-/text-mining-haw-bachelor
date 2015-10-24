@@ -69,7 +69,7 @@ def preprocess(chunk, tokenizer=None):
     tokenizer = default_tokenizer
 
   print("Preprocessing start", chunk.index, chunk.id)
-  chunk.text = Prepare(chunk.text).s
+  chunk.text = Prepare(chunk.text, options={"remove_alpha" : False}).s
   pre = Preprocessor(chunk.text, tokenizer)
   pre.pos_tags()
   pre.noun_phrases()

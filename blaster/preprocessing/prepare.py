@@ -38,30 +38,42 @@ RE_NUMERIC = re.compile(r"[0-9]+", re.UNICODE)
 
 class Prepare():
 
-  def __init__(self, sentence):
+  def __init__(self, sentence, options={"remove_alpha" : True, 
+             "remove_stops" : True, "remove_numeric" : True}):
+    self.remove_alpha = options["remove_alpha"]
+    self.remove_stops = options["remove_stops"]
+    self.remove_numeric = options["remove_numeric"]
     self.s = self.filter(sentence)
 
   def tokens(self):
-    words = word_tokenize(self.s.lower())
-    return [word for word in words if not word.strip() in NLTK_STOPS]
+    return word_tokenize(self.s.lower())
 
   def filter(self, s):
-    s = self.remove_stopwords(s)
-    s = self.strip_non_alphanum(s)
-    s = self.split_alphanum(s)
-    s = self.strip_numeric(s)
+    if self.remove_stops:
+      s = self._remove_stopwords(s)
+    
+    if self.remove_alpha:
+      s = self._strip_non_alphanum(s)
+      s = self._split_alphanum(s)
+
+    if self.remove_numeric:
+      s = self._strip_numeric(s)
+
     return s
 
-  def strip_non_alphanum(self, s):
+  def _strip_non_alphanum(self, s):
     return RE_NONALPHA.sub(" ", s)
 
-  def remove_stopwords(self, s):
-    return " ".join(w for w in word_tokenize(s) if w not in STOPWORDS or len(w) > 1)
+  def _remove_stopwords(self, s):
+    return " ".join(w for w in word_tokenize(s) if self._is_not_noise(w))
 
-  def split_alphanum(self, s):
+  def _split_alphanum(self, s):
     s = RE_AL_NUM.sub(r"\1 \2", s)
     return RE_NUM_AL.sub(r"\1 \2", s)
 
-  def strip_numeric(self, s):
+  def _strip_numeric(self, s):
     return RE_NUMERIC.sub("", s)
 
+  def _is_not_noise(self, w):
+    w = w.strip()
+    return (w not in STOPWORDS or len(w) > 1 or not w.strip() in NLTK_STOPS)
