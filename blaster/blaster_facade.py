@@ -14,10 +14,11 @@ def usage():
   description = "Process newspaper articles and cluster them with blaster!"
   cmds = [
     ["(--help | -h)", ["prints this summary"]],
-    ["scrape", ["for scraping newspapers defined in your newspaper config found under 'resources'"]],
+    ["scrape", ["for scraping newspapers defined in scraping.papers"]],
     ["preprocess (None|from_date|from_date to_date)", ["for preprocessing articles from to a time period, or all if none provided", "e.g. blaster preprocess 20150712 20150716"]],
     ["features", ["create features for articles (not implemented)"]],
     ["cluster", ["cluster preprocessed articles (not implemented)"]],
+    ["optimize", ["optimize clustering parameters with respect to a cost function (not implemented)"]],
     ["dump", ["dumps all articles persisted in elasticsearch to a json document"]],
     ["import", ["imports all articles from a JSON into elasticsearch"]],
     ["count", ["provides some general counts and es information"]],
