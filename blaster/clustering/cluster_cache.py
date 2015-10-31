@@ -3,6 +3,8 @@ import ast
 
 
 LEVAL = ast.literal_eval
+def leval(o):
+  return LEVAL(str(o))
 
 class Rediss(object):
 
@@ -13,60 +15,35 @@ class Rediss(object):
       self.config = None
 
   def __repr__(self):
-    return "{ host='%s' port='%s' }" % (self.host, self.port)
+    return "{ host='%s' port='%s' " % (self.host, self.port)
 
   def keys(self, pattern="*"):
     for key in self.rs.keys(pattern): 
-      yield key
+      yield str(key)
 
-  def real_title(self, redis_title):
-    return redis_title.split(":", 1)[1]
+  def values(self, key_names, ordered=False):
+    keys = self.key_names(key_names)
+    return self.values_by_keys(keys, ordered)
 
-  def values_by_pattern(self, pattern):
-    for value in self.rs.mget(self.keys(pattern)):
-      if value:
-        yield LEVAL(value)
-
-  def key_value_by_pattern(self, pattern):
-    pattern_keys = list(self.keys(pattern))
-    all_values = self.rs.mget(pattern_keys)
-    for (key, value) in zip(pattern_keys, all_values):
-      if key and value:
-        yield (self.real_title(key), LEVAL(value))
-
-  def values_by_titles(self, category, titles, ordered=False):
-    keys = map(lambda title: self.key_name(category, title), titles)
-    # ordered returns as many elemts as the input list was
-    for key in self.rs.mget(keys):
-      if key:
-        yield LEVAL(key)
+  def values_by_keys(self, keys, ordered=False):
+    for val in self.rs.mget(keys):
+      if val:
+        yield leval(val)
       else:
         if ordered:
           yield {}
 
-  def key_value_by_titles(self, category, titles):
-    keys = map(lambda title: self.key_name(category, title), titles)
-    all_values = self.rs.mget(keys)
-    for (key, value) in zip(keys, all_values):
-      if key and value:
-        yield (self.real_title(key), LEVAL(value))
+  def keys_values(self, key_names):
+    keys = self.key_names(key_names)
+    values = self.values_by_keys(keys, True)
+    for (idx, val) in enumerate(values):
+      if keys[idx] and val:
+        yield (keys[idx], leval(val))
 
-  def value_by_title(self, category, title):
-    val = self.rs.get(self.key_name(category, title))
-    if val:
-      return LEVAL(val)
-    return {}
-
-  def put(self, category, title, content):
-    r = redis
-    self.rs.set(self.key_name(category, title), content)
-
-  def puts(self, category, mapping):
-    self.rs.mset(
-      dict(
-        (self.key_name(category, title), str(value)) for title, value in mapping.iteritems()
-      )
-    )
+  def values_by_pattern(self, pattern):
+    for val in self.rs.mget(list(self.keys(pattern))):
+      if val:
+        yield leval(val)
 
   def pipeline(self, _transaction=False):
     return self.rs.pipeline(transaction=_transaction)
@@ -76,48 +53,54 @@ class Rediss(object):
 
   def delete(self, keys):
     self.rs.delete(keys)
-    return self.exists(keys[0])
-
-  def take_by_pattern(self, pattern, n):
-    for key, value in self.key_value_by_pattern(pattern):
-      if n > 1:
-        yield (key, value)
-      else:
-        break
-      n -= 1
+    return not self.exists(keys[0])
 
   def exists(self, key_name):
     return self.rs.exists(key_name)
 
   def ping(self):
-    print("ping: %s from: %s" % (self.rs.ping(), self))
-
-  def flushdb(self):
-    if raw_input("type 'flush' to kill data") == "flush":
-      self.rs.flushdb()
-      print("successfully flushed redis!")
-    else:
-      print("not flushed!")
+    try:
+      print("ping: %s from: %s" % (self.rs.ping(), self))
+      return True
+    except:
+      print("ping to %s failed!" % (str(self)))
+      return False
 
 
 class ClusterCache(Rediss):
 
   def __init__(self, host="localhost", port=6379):
-    super(RCache, self).__init__(host, port)
+    super(ClusterCache, self).__init__(host, port)
     self.db = 0
     self.rs = redis.StrictRedis(host=self.host, port=self.port, db=self.db)
 
-  def key_name(self, category, title):
-    return "%s-cache:%s" % (category, title)
+  def key_name(self, index, _id):
+    return "{}/cluster/{}".format(index, _id)
 
-  def put(self, category, title, content):
-    super(RCache, self).put(category, title, content)
+  def key_names(self, docs):
+    return [self.key_name(index, _id) for (index, _id) in docs]
+
+  def get(self, index, _id):
+    key = self.key_name(index, _id)
+    val = self.rs.get(key)
+    return leval(str(val))
+
+  def put(self, index, _id, content):
+    self.rs.set(self.key_name(index, _id), content)
 
   def __repr__(self):
-    return "RCache%s, db: %s" % (super(RCache, self).__repr__(), self.db)
+    return "ClusterCache%s db=%s }" % (super(ClusterCache, self).__repr__(), self.db)
 
 
 if __name__ == "__main__":
-  rcache = RCache()
-  print(rcache)
+  rcache = ClusterCache()
+  if rcache.ping():
+    rcache.put("a", "b", "c")
+    rcache.put("d", "e", "f")
+    print(rcache.get("a", "b"))
+    l = [("a", "b"), ("d", "e")]
+    for e in rcache.keys_values(l):
+      print(e)
+
+
 
