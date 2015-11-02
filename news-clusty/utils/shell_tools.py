@@ -13,7 +13,7 @@ def consolify():
 def to_shell(description, cmds):
   print("\n", colored(description, "green", attrs=["underline"]))
   for cmd, descr in cmds:
-    print("  blaster", 
+    print("  news-clusty", 
       colored(cmd, "yellow"), 
       colored("\n\t" + "\n\t".join(descr), "magenta"), "\n")
 

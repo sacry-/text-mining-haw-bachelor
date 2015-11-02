@@ -8,14 +8,14 @@ from es import check_es_is_up
 from stats import diff_count
 
 
-logger = Logger("blaster").getLogger()
+logger = Logger("news-clusty").getLogger()
 
 def usage():
-  description = "Process newspaper articles and cluster them with blaster!"
+  description = "Process newspaper articles and cluster them with news-clusty!"
   cmds = [
     ["(--help | -h)", ["prints this summary"]],
     ["scrape", ["for scraping newspapers defined in scraping.papers"]],
-    ["preprocess (None|from_date|from_date to_date)", ["for preprocessing articles from to a time period, or all if none provided", "e.g. blaster preprocess 20150712 20150716"]],
+    ["preprocess (None|from_date|from_date to_date)", ["for preprocessing articles from to a time period, or all if none provided", "e.g. news-clusty preprocess 20150712 20150716"]],
     ["features", ["create features for articles (not implemented)"]],
     ["cluster", ["cluster preprocessed articles (not implemented)"]],
     ["optimize", ["optimize clustering parameters with respect to a cost function (not implemented)"]],
@@ -25,7 +25,7 @@ def usage():
   ]
   shell_tools.to_shell(description, cmds)
 
-def blaster_facade(cmd, args):
+def news_clusty_facade(cmd, args):
 
   logger.info("{} with: {}".format(cmd, args))
   if cmd == "scrape": 
@@ -61,5 +61,5 @@ def blaster_facade(cmd, args):
 
 if __name__ == "__main__":
   cmd, args = shell_tools.consolify()
-  blaster_facade(cmd, args)
+  news_clusty_facade(cmd, args)
 
