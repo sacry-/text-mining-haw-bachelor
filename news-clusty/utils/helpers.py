@@ -10,12 +10,10 @@ import datetime
 def timeit(method):
   def timed(*args, **kw):
     name = method.__name__
-    arguments = ", ".join(map(lambda x: str(x), list(args)))
     ts = time.time()
     result = method(*args, **kw)
     te = time.time()
-    time_s = '{:s} {:2.2f} sec'.format( name, te-ts )
-    print( time_s )
+    print( '{:s} {:2.2f} sec'.format( name, te-ts ) )
     return result
   return timed
   
@@ -43,6 +41,11 @@ def freadlines(abs_path):
 def date_today():
   return datetime.date.today().strftime("%Y%m%d")
 
+def flatten(seq):
+  return sum(seq,[])
 
+def unique(seq):
+  return list(set(seq))
+  
 if __name__ == "__main__":
   pass

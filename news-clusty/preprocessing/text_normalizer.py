@@ -36,18 +36,18 @@ RE_NUM_AL = re.compile(r"([0-9]+)([a-z]+)", flags=re.UNICODE)
 RE_NUMERIC = re.compile(r"[0-9]+", re.UNICODE)
 
 
-class Prepare():
+class TextNormalizer():
 
-  def __init__(self, sentence, options=[]):
+  def __init__(self, options=[]):
     self.remove_alpha = not ("remove_alpha" in options)
     self.remove_stops = not ("remove_stops" in options)
     self.remove_numeric = not ("remove_numeric" in options)
-    self.s = self.filter(sentence)
 
-  def tokens(self):
-    return word_tokenize(self.s.lower())
+  def tnormalize(self, s):
+    s = self.normalize(s)
+    return word_tokenize(s.lower())
 
-  def filter(self, s):
+  def normalize(self, s):
     if self.remove_stops:
       s = self._remove_stopwords(s)
     

@@ -22,7 +22,7 @@ class ElasticSnapper():
     self.es = Elastic( self.connector )
 
   def dump(self):
-    if not self.should_proceed():
+    if not self.should_proceed("dump"):
       return
 
     logger.info("proceeding with dumping!")
@@ -42,10 +42,10 @@ class ElasticSnapper():
 
 
   def reimport(self):
-    if not self.should_proceed():
+    if not self.should_proceed("import"):
       return
 
-    logger.info("proceeding with reimport!")
+    logger.info("proceeding with import!")
 
     self.connector.createConnection() 
 
@@ -70,9 +70,9 @@ class ElasticSnapper():
     logger.info(msg)
     print(msg)
 
-  def should_proceed(self):
-    a = input("Are you sure? (y|n) ").strip()
-    return a == "y"
+  def should_proceed(self, method):
+    message = "Are you sure you want to {}? (yes|anything) ".format( method )
+    return "yes" == input( message ).strip()
 
   def backup(self, name):
     return "{}/{}.json".format( backup_path(), name )

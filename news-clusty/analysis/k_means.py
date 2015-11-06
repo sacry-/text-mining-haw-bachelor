@@ -5,13 +5,10 @@ import math
 import random
 import time
 import sys
-import six
 
 import sklearn.decomposition as deco
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import colors
+from visualize import cluster_plot_2d
 
 
 # Helper
@@ -106,52 +103,14 @@ def find_optimum(x, k=2, k_iter=10, num_iter=5):
 
 # Reduce dimensions
 def reduce_dimensions(x, dims=3):
-  x = (x - np.mean(x, 0)) / np.std(x, 0)
+  try:
+    x = (x - np.mean(x, 0)) / np.std(x, 0)
+  except:
+    pass
   pca = deco.PCA(dims)
   y = pca.fit(x).transform(x)
   print("Reduced dims from {} to {}".format( x.shape, y.shape ))
   return y
-
-
-# Print out
-def get_colors(k):
-  ugly_colors = set(["white", "black", "cyan", "magenta", "pink"])
-  colors_ = set([x[0] for x in list(six.iteritems(colors.cnames))]) - ugly_colors
-  return list(set(random.sample(colors_, k)))
-
-def cluster_plot_3d(x, centroids, c, k):
-  fig = plt.figure()
-  fig.canvas.set_window_title("K means")
-  ax = fig.add_subplot(111, projection='3d')
-  fig.suptitle("k = {}".format(k), fontsize=12)
-  point_colors = get_colors(k)
-
-  for i, cidx in enumerate(c):
-    ax.scatter(x[i,0], x[i,1], x[i,2], 
-      c=point_colors[cidx], marker='o', zorder=-1
-    )
-  for i in range(0, k):
-    ax.scatter(centroids[i,0], centroids[i,1], centroids[i,2], 
-      s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
-    )
-  plt.show()
-
-def cluster_plot_2d(x, centroids, c, k):  
-  fig = plt.figure()
-  fig.canvas.set_window_title("K means")
-  fig.suptitle("k = {}".format(k), fontsize=12)
-  point_colors = get_colors(k)
-
-  for i, cidx in enumerate(c):
-    plt.scatter(x[i,0], x[i,1], 
-      c=point_colors[cidx], marker='o', zorder=-1
-    )
-  for i in range(0, k):
-    plt.scatter(centroids[i,0], centroids[i,1], 
-      s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
-    )
-  
-  plt.show()
 
 
 if __name__ == "__main__":

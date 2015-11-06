@@ -78,6 +78,9 @@ class Elastic():
       total_updates += 1
     print("updated:", total_updates)
 
+  def search(self, _index, doc_type, query):
+    return self.es.search(index=_index, doc_type=doc_type, body=query)
+
 
 if __name__ == "__main__":
   es = Elastic()

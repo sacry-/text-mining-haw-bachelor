@@ -14,6 +14,8 @@ from collections import Counter
 # curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2
 # curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "2015[067891]{2}.*"
 
+# curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "20150[78]{2}.*"
+
 # curl '127.0.0.1:9200/_nodes/settings?pretty=true'
 # curl '127.0.0.1:9200/_count'
 # curl '127.0.0.1:9200/20150712/article/_search?q=newspaper:theguardian&size=1000'
@@ -53,12 +55,24 @@ class EsSearcher():
       articles += random.sample(intermediate, count)
     return articles
 
-  def nps_for_index(self, _index, _id):
+  def prep_for_index(self, _index, _id):
     try:
       source = self.es.get(_index, "prep", _id)
-      return source["noun_phrases"]
+      return source
     except:
-      return []
+      return {}
+
+  def prep_for_date(self, index, paper=None):
+    query = self._query_scope(paper)
+    for source in self.es.all_docs_by_index(index, "prep", query):
+      yield source
+
+  def prep_from_to(self, from_date, to_date, paper=None):
+    possible_indices = self.es.all_indices()
+    for index in date_range(from_date, to_date):
+      if index in possible_indices:
+        for source in self.prep_for_date(index, paper):
+          yield source
 
   def count_all(self, doc_type, matching={"match_all" : {}}):
     total = 0
@@ -79,6 +93,21 @@ class EsSearcher():
 
   def ping(self):
     return self.es.ping()
+
+  def ids_for_index(self, _index, doc_type):
+    query = {
+      "query": {"match_all": {}}, 
+      "size": 1000, 
+      "fields": ["_id"]
+    }
+    res = self.es.search(_index, doc_type, query)
+    return [d['_id'] for d in res['hits']['hits']]
+
+  def possible_indices(self, from_date, to_date):
+    possible_indices = self.es.all_indices()
+    for index in date_range(from_date, to_date):
+      if index in possible_indices:
+        yield index
 
 if __name__ == "__main__":
   es = EsSearcher()

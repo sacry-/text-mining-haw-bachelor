@@ -10,6 +10,8 @@ from utils.helpers import evaluate
 from utils.helpers import read_json
 from utils.helpers import freadlines
 from utils.helpers import date_today
+from utils.helpers import unique
+from utils.helpers import flatten
 
 if __name__ == "__main__":
   pass

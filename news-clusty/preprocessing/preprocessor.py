@@ -1,6 +1,6 @@
 from preprocessing.syntax import sentence_tokenize
 from preprocessing.ner_tagger import get_configured_ner_tagger
-from preprocessing.prepare import Prepare
+from preprocessing.text_normalizer import TextNormalizer
 
 from utils import date_today
 from textblob import TextBlob
@@ -31,8 +31,9 @@ def preprocessor_for_article(a, tokenizer=None):
   if not tokenizer:
     tokenizer = default_tokenizer
 
+  tn = TextNormalizer(options=["remove_alpha"])
   print("Preprocessing", str(a))
-  text = Prepare(a.text, options=["remove_alpha"]).s
+  text = tn.normalize(a.text)
   pre = Preprocessor(a.text, tokenizer)
   pre.pos_tags()
   pre.noun_phrases()
