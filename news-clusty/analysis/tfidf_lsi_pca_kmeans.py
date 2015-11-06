@@ -1,13 +1,12 @@
 import logging
-#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 import numpy as np
 
 from sklearn.cluster import KMeans
-from visualize import cluster_plot_2d
-from visualize import cluster_plot_3d
-from visualize import reduce_dimensions
-from visualize import create_sample
+from clustering import cluster_plot_2d
+from clustering import cluster_plot_3d
+from clustering import reduce_dimensions
+from clustering import create_sample
 
 from utils.helpers import unique
 from utils.helpers import flatten
@@ -32,6 +31,8 @@ sents = flatten( features )
 freqs = FreqDist(sents)
 freq_sents = [[token for token in text if freqs[token] > 1] 
               for text in features]
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 dictionary = corpora.Dictionary(freq_sents)
 dictionary.save('/tmp/20150629.dict')
