@@ -48,15 +48,15 @@ class TextNormalizer():
     return word_tokenize(s.lower())
 
   def normalize(self, s):
-    if self.remove_stops:
-      s = self._remove_stopwords(s)
-    
     if self.remove_alpha:
       s = self._strip_non_alphanum(s)
       s = self._split_alphanum(s)
 
     if self.remove_numeric:
       s = self._strip_numeric(s)
+
+    if self.remove_stops:
+      s = self._remove_stopwords(s)
 
     return s
 
@@ -75,4 +75,14 @@ class TextNormalizer():
 
   def _is_not_noise(self, w):
     w = w.strip()
-    return (w not in STOPWORDS or len(w) > 1 or not w.strip() in NLTK_STOPS)
+    return (w not in STOPWORDS and len(w) > 1 and not w in NLTK_STOPS)
+
+
+if __name__ == "__main__":
+  s = " it "
+  s = s.strip()
+  no_noise = lambda x: (x not in STOPWORDS and len(x) > 1 and not x in NLTK_STOPS) 
+  res = [w for w in word_tokenize(s) if no_noise(w)]
+  print( res )
+
+

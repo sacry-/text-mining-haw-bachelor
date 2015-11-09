@@ -45,7 +45,9 @@ def flatten(seq):
   return sum(seq,[])
 
 def unique(seq):
-  return list(set(seq))
+  seen = set()
+  seen_add = seen.add
+  return [ x for x in seq if not (x in seen or seen_add(x))]
   
 if __name__ == "__main__":
   pass

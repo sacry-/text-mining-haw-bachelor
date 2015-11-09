@@ -29,6 +29,7 @@ def new_doc(searcher, article):
       "index" : index,
       "title" : article.title,
       "keywords" : article.meta_keywords,
+      "pos" : prep["pos_tags"],
       "np" : prep["noun_phrases"],
       "ner" : prep["ner_tags"],
       "tokens" : prep["tokens"]

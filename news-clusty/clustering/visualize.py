@@ -6,13 +6,14 @@ import sklearn.decomposition as deco
 
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import colors
+import matplotlib.cm as cm
 
 
 def get_colors(k):
   ugly_colors = set(["white", "black", "cyan", "magenta", "pink"])
   colors_ = set([x[0] for x in list(six.iteritems(colors.cnames))]) - ugly_colors
-  return list(set(random.sample(colors_, k)))
-
+  sample = random.sample(colors_, min(len(colors_), k))
+  return list(set(sample))
 
 def cluster_plot_3d(x, centroids, c, k):
   fig = plt.figure()
@@ -47,6 +48,26 @@ def cluster_plot_2d(x, centroids, c, k):
       s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
     )
   plt.show()
+
+
+def big_clusterd_plot_2d(x, centroids, c, k):
+  fig = plt.figure()
+  fig.canvas.set_window_title("K means")
+  fig.suptitle("k = {}".format(k), fontsize=12)
+  point_colors = list(cm.rainbow(np.linspace(0, 1, k + 1)))
+
+  for i, cidx in enumerate(c):
+    plt.scatter(x[i,0], x[i,1], 
+      c=point_colors[cidx], marker='o', zorder=-1
+    )
+  
+  for i in range(0, k):
+    plt.scatter(centroids[i,0], centroids[i,1], 
+      s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
+    )
+  
+  plt.show()
+
 
 def create_sample(num_docs, features):
   splitted = num_docs / 5
