@@ -81,7 +81,7 @@ def do_lda(index, corpus, dictionary, n_topics):
   except:
     print("no corpus_lda found for: {}".format( lda_path ))
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    lda_model = models.LdaModel(corpus, id2word=dictionary, num_topics=n_topics, iterations=50, passes=5)
+    lda_model = models.LdaModel(corpus, id2word=dictionary, num_topics=n_topics, iterations=100, update_every=0, passes=10)
     lda_model.save( lda_path )
     lda_corpus = lda_model[corpus]
   
@@ -93,8 +93,7 @@ def do_lda(index, corpus, dictionary, n_topics):
 def convert_lda(corpus_lda, n_topics):
   return matutils.corpus2dense(corpus_lda, num_terms=n_topics, dtype=np.float32).T
 
-def cluster(x, dims=2, num_clusters=1):
-  x = reduce_dimensions(x, dims)
+def cluster(x, num_clusters=1):
   km = KMeans(init='k-means++',n_clusters=num_clusters, max_iter=40, n_init=20, copy_x=True)
   km.fit(x)
   centroids = km.cluster_centers_
@@ -102,9 +101,18 @@ def cluster(x, dims=2, num_clusters=1):
   k = km.n_clusters
   return centroids, c, k
 
+def print_doc(lda_model, doc, _id):
+  print(_id)
+  bow = dictionary.doc2bow(doc)
+  some_docs = lda_model.get_document_topics(bow, minimum_probability=0.1)
+  for doc, sim in sorted(some_docs, key=lambda x: -x[1]):
+    print( lda_model.print_topic(doc, topn=10) )
+    print("  sim:", sim)
+  print("-"*40)
+
 if __name__ == "__main__":
   s_index = "20150701"
-  e_index = "20150703"
+  e_index = "20150705"
   features, ids = extract_features(s_index, e_index)
   features_as_list = sorted(features.items(), key=lambda x: x[0])
   ids_as_list = flatten(list(map(lambda x: x[1], sorted(ids.items(), key=lambda x: x[0]))))
@@ -113,23 +121,36 @@ if __name__ == "__main__":
   all_features = []
   for index, feature in features_as_list:
     all_features += feature
-    round_topics = int( len(feature) / 10 ) + 1
+    round_topics = int( len(feature) / 25 ) + 1
     n_topics += round_topics
 
   dictionary, corpus = get_corpus(index, all_features)
-  x, lda_model, lda_corpus = do_lda("20150703", corpus, dictionary, n_topics)
+  # x, lda_model, lda_corpus = do_lda("20150703", corpus, dictionary, n_topics)
 
+  '''
   print(len(ids_as_list))
-  s = 20
-  for idx, doc in enumerate(all_features[s:s+5]):
-    print(ids_as_list[s+idx])
-    bow = dictionary.doc2bow(doc)
-    some_docs = lda_model.get_document_topics(bow, minimum_probability=0.2)
-    for doc, sim in sorted(some_docs, key=lambda x: -x[1]):
-      print( lda_model.print_topic(doc, topn=20) )
-      print("  sim:", sim)
+  s = 50
+  for idx, doc in enumerate(all_features[s:s+3]):
+    print_doc(lda_model, doc, ids_as_list[s+idx])
+
+  '''
+  print("--"*40)
+  print(len(corpus))
+  m = 0
+  for doc in corpus:
+    m = max(m, len(doc))
+  x = matutils.corpus2dense(corpus, num_terms=m, dtype=np.float32).T
+  # x = reduce_dimensions(x, dims)
+  centroids, c, k = cluster(x, n_topics)
+  # cluster_plot_2d(x, centroids, c, k)
+  clusters = {}
+  for idx, el in enumerate(c):
+    if not el in clusters:
+      clusters[el] = []
+    clusters[el].append( idx )
+
+  for key, doc in clusters.items():
+    for _id in doc[:5]:
+      print(_id)
     print("-"*40)
 
-  # print("sims#shape", x.shape)
-  # centroids, c, k = cluster(x, 3, n_topics)
-  # cluster_plot_2d(x, centroids, c, k)
