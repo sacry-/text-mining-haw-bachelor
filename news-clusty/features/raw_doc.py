@@ -38,3 +38,11 @@ def new_doc(searcher, article):
   except Exception as e:
     print(str(e), " -> ", e.__doc__) 
     return None
+
+
+
+if __name__ == "__main__":
+  pass
+
+
+  

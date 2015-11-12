@@ -19,11 +19,11 @@ def get_colors(k):
   sample = random.sample(colors_, min(len(colors_), k))
   return list(set(sample))
 
-def cluster_plot_3d(x, centroids, c, k):
+def cluster_plot_3d(x, centroids, c, k, name):
   fig = plt.figure()
-  fig.canvas.set_window_title("K means")
+  fig.canvas.set_window_title(name)
   ax = fig.add_subplot(111, projection='3d')
-  fig.suptitle("k = {}".format(k), fontsize=12)
+  fig.suptitle("n clusters = {}".format(k), fontsize=12)
   point_colors = get_colors(k)
 
   for i, cidx in enumerate(c):
@@ -39,10 +39,11 @@ def cluster_plot_3d(x, centroids, c, k):
   plt.show()
 
 
-def cluster_plot_2d(x, centroids, c, k):  
+def cluster_plot_2d(x, centroids, c, k, name):  
   fig = plt.figure()
-  fig.canvas.set_window_title("K means")
-  fig.suptitle("k = {}".format(k), fontsize=12)
+  print(name)
+  fig.canvas.set_window_title(name)
+  fig.suptitle("n clusters = {}".format(k), fontsize=12)
   point_colors = get_colors(k)
 
   for i, cidx in enumerate(c):
@@ -58,10 +59,10 @@ def cluster_plot_2d(x, centroids, c, k):
   plt.show()
 
 
-def big_clusterd_plot_2d(x, centroids, c, k):
+def big_clusterd_plot_2d(x, centroids, c, k, name):
   fig = plt.figure()
-  fig.canvas.set_window_title("K means")
-  fig.suptitle("k = {}".format(k), fontsize=12)
+  fig.canvas.set_window_title(name)
+  fig.suptitle("n clusters = {}".format(k), fontsize=12)
   point_colors = list(cm.rainbow(np.linspace(0, 10, 10 * (k + 1))))
 
   for i, cidx in enumerate(c):
@@ -77,7 +78,6 @@ def big_clusterd_plot_2d(x, centroids, c, k):
   
   plt.show()
 
-
 def create_sample(num_docs, features):
   splitted = num_docs / 5
   a = 5 * np.random.random_sample((splitted, features))
@@ -87,12 +87,24 @@ def create_sample(num_docs, features):
   e = np.random.normal(0, 4, (splitted, features))
   return np.concatenate((a,b,c,d,e))
 
-def reduce_dimensions(x, dims=3):
-  x = (x - np.mean(x, 0)) / np.std(x, 0)
-  pca = deco.PCA(dims)
-  y = pca.fit(x).transform(x)
-  print("Reduced dims from {} to {}".format( x.shape, y.shape ))
-  return y
+def print_clusters(c, fids):
+  clusters = {}
+  for doc, cid in enumerate(c):
+    if not cid in clusters:
+      clusters[cid] = []  
+    clusters[cid].append( doc )
+
+  for cid, docs in list(clusters.items()):
+    if len(docs) <= 3:
+      continue
+    print("Cluster {}".format(cid))
+    collection = []
+    for doc in docs:
+      collection.append( fids[doc] )
+    for doc in collection:
+      print(doc)
+    print("-"*40)
+    
 
 if __name__ == "__main__":
   get_colors(200)

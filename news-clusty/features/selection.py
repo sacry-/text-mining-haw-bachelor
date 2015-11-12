@@ -1,14 +1,30 @@
-from preprocessing import TextNormalizer
-from clustering.cluster_data import get_days_by_list
-from clustering.feature_cache import FeatureCache
+from nltk import PorterStemmer
+
 from es import EsSearcher
+from preprocessing import TextNormalizer
+
+from features.raw_doc import get_days_by_list
+from features.cache import Cache
 
 from utils.helpers import unique
 from utils.helpers import flatten
 
 
+
+def flattened_features( s_index, e_index ):
+  features, ids = extract_features(s_index, e_index)
+  features_as_list = list( map(lambda e: " ".join(e), unfold( features.items() )) )
+  ids_as_list = unfold( ids.items() )
+  return features_as_list, ids_as_list
+
+def indexed_features( s_index, e_index ):
+  features, ids = extract_features(s_index, e_index)
+  features_as_list = list(sorted(features.items(), key=lambda x: x[0]))
+  ids_as_list = unfold( ids.items() )
+  return features_as_list, ids_as_list
+  
 def get_features(s_index, e_index):
-  fcache = FeatureCache()
+  fcache = Cache()
   searcher = EsSearcher()
 
   indices = list( searcher.possible_indices(s_index, e_index) )
@@ -23,6 +39,7 @@ def get_features(s_index, e_index):
     yield index, _id, feature
 
 
+# initial feature strategies
 def noun_phrase_features(doc):
   tn = TextNormalizer()
   noun_tokens = flatten([tn.tnormalize(np) for np in doc["np"]])
@@ -39,7 +56,26 @@ def without_nouns_features(doc):
         )
   return list( res )
 
-from nltk import PorterStemmer
+
+# private Helpers
+def extract_features(s_index, e_index):
+  features = {}
+  ids = {}
+  for index, _id, feature in get_features(s_index, e_index):
+    if index in features:
+      features[index].append( feature )
+      ids[index].append( _id )
+    else:
+      features[index] = [ feature ]
+      ids[index] = [ _id ]
+
+  flattened = flatten(features.values())
+  print(len(flattened))
+
+  return features, ids
+
+def unfold(data):
+  return flatten(list(map(lambda x: x[1], sorted(data, key=lambda x: x[0]))))
 
 PORTER = PorterStemmer()
 def stem(tokens):
@@ -66,3 +102,7 @@ def _get_index_to_id(searcher, indices):
     for _id in searcher.ids_for_index(index, "article"):
       yield (index, _id)
       
+
+if __name__ == "__main__":
+  pass
+

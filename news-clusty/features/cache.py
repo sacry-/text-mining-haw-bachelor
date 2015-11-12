@@ -1,10 +1,10 @@
-from clustering.rediss import Rediss
+from features.rediss import Rediss
 
 
-class FeatureCache(Rediss):
+class Cache(Rediss):
 
   def __init__(self, db=0, host="localhost", port=6379):
-    super(FeatureCache, self).__init__(db, host, port)
+    super(Cache, self).__init__(db, host, port)
 
   def key_name(self, index, _id):
     return "{}/features/{}".format(index, _id)
@@ -34,9 +34,9 @@ class FeatureCache(Rediss):
           yield (_id, None)
 
   def __repr__(self):
-    return "FeatureCache %s" % super(FeatureCache, self).__repr__()
+    return "FeatureCache %s" % super(Cache, self).__repr__()
 
 
 if __name__ == "__main__":
-  fcache = FeatureCache()
+  fcache = Cache()
   print(fcache)
