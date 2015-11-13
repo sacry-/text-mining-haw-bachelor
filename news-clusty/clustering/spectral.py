@@ -1,6 +1,7 @@
 import numpy as np
 
 from sklearn.cluster import SpectralClustering
+from sklearn.cluster import AffinityPropagation
 
 
 def spectral(x, num_clusters):
@@ -19,6 +20,24 @@ def spectral(x, num_clusters):
   k = len(np.unique(c))
 
   return None, c, k
+
+
+def affinity_propagation(x, damping=0.5):
+  ap = AffinityPropagation(
+    damping=damping, 
+    max_iter=400, 
+    convergence_iter=30, 
+    copy=True, 
+    preference=None, 
+    affinity='euclidean', 
+    verbose=False
+  )
+  ap.fit(x)
+  centroids = ap.cluster_centers_
+  c = ap.labels_
+  k = len(centroids)
+  
+  return centroids, c, k
 
 
 if __name__ == "__main__":

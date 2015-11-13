@@ -16,6 +16,8 @@ from clustering import dbscan
 from clustering import mean_shift
 from clustering import birch
 from clustering import spectral
+from clustering import affinity_propagation
+
 
 from features import flattened_features
 from features import term_vector
@@ -58,13 +60,14 @@ def pick_algo(a_index=0):
     2 : ("Birch", birch, 1),
     3 : ("DBSCAN", dbscan, 0),
     4 : ("Mean Shift", mean_shift, 0),
-    5 : ("Spectral", spectral, 1)
+    5 : ("Spectral", spectral, 1),
+    6 : ("Affinity Propagation", affinity_propagation, 0)
   }[a_index]
 
 def run_algo(ffeatures, name_algo, n_topics=100, pca_dim=2, n_clusters=60):
   (cluster_algo_name, clusterer, has_args) = name_algo
   x = term_vector( ffeatures, ngram=(1,2), max_feat=100000, max_df=0.9, min_df=0.1 )
-  x = lsa( x, n_topics )
+  x = lda( x, n_topics, n_iter=100 )
   x_red = pca(x, pca_dim)
 
   if has_args:
@@ -100,7 +103,7 @@ if __name__ == "__main__":
   ffeatures, fids = flattened_features( 
     "20150703", "20150704" 
   )
-  main( ffeatures, fids, 4 )
+  main( ffeatures, fids, 1 )
 
 
 

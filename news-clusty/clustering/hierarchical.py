@@ -1,22 +1,24 @@
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import Birch
-
+from sklearn.neighbors import kneighbors_graph
 
 
 def ward_linkage(x, num_clusters=20):
-  return __agglomerative__(x, num_clusters, "ward")
+  knn_graph = kneighbors_graph(x, 40, include_self=False)
+  return __agglomerative__(x, num_clusters, "ward", knn_graph)
 
 def average_linkage(x, num_clusters=20):
-  return __agglomerative__(x, num_clusters, "average")
+  return __agglomerative__(x, num_clusters, "average", None)
 
 def complete_linkage(x, num_clusters=20):
-  return __agglomerative__(x, num_clusters, "complete")
+  return __agglomerative__(x, num_clusters, "complete", None)
 
 
-def __agglomerative__(x, num_clusters, _linkage):
+def __agglomerative__(x, num_clusters, linkage, connectivity):
   ac = AgglomerativeClustering(
     n_clusters=num_clusters,
-    linkage=_linkage
+    connectivity=connectivity,
+    linkage=linkage
   )
   ac.fit(x)
   c = ac.labels_

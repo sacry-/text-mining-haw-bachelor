@@ -8,6 +8,7 @@ from clustering.hierarchical import birch
 
 from clustering.density import dbscan
 from clustering.spectral import spectral
+from clustering.spectral import affinity_propagation
 
 
 from clustering.visualize import cluster_plot_2d

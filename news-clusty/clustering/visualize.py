@@ -41,7 +41,6 @@ def cluster_plot_3d(x, centroids, c, k, name):
 
 def cluster_plot_2d(x, centroids, c, k, name):  
   fig = plt.figure()
-  print(name)
   fig.canvas.set_window_title(name)
   fig.suptitle("n clusters = {}".format(k), fontsize=12)
   point_colors = get_colors(k)
