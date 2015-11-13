@@ -23,8 +23,8 @@ def kmeans(x, num_clusters=1):
 
 
 
-def mean_shift(x, quantile=0.3):
-  bandwidth = estimate_bandwidth(x, quantile=0.3)
+def mean_shift(x, quantile=0.01):
+  bandwidth = estimate_bandwidth(x, quantile=quantile)
   ms = MeanShift(bandwidth=bandwidth)
   ms.fit(x)
 

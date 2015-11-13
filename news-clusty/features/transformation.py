@@ -6,6 +6,8 @@ from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import scale
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import PCA
+from sklearn.random_projection import johnson_lindenstrauss_min_dim
+from sklearn.random_projection import SparseRandomProjection
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -22,7 +24,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 # ... 
 def term_vector(features, 
                 ngram=(1,1),
-                max_feat=100000, 
+                max_feat=None, 
                 max_df=0.8, min_df=0.1):
   vectorizer = CountVectorizer(
     analyzer='word', 
@@ -53,6 +55,9 @@ def tfidf(features,
   )
   return vectorizer.fit_transform( features )
 
+def corpus_gensim(x):
+  pass
+
 # n x m
 def lsa(x, topics=3):
   svd = TruncatedSVD(topics)
@@ -66,7 +71,7 @@ def lsa(x, topics=3):
 
   return x_red
 
-def lsi_alternate(x, topics=20):
+def lsi_gensim(x, topics=20):
   pass
   
 # n x m
@@ -74,8 +79,10 @@ def lda(x, topics=20, n_iter=150):
   lda_model = lda_alg.LDA(n_topics=topics, n_iter=n_iter, random_state=1)
   return lda_model.fit_transform( to_ndarray(x) )
 
-def lda_alternate(x, topics=20, n_iter=150):
+
+def lda_gensim(x, topics=20, n_iter=150):
   pass
+
 
 def pca(x, dims=3):
   x = to_ndarray(x)
@@ -85,8 +92,11 @@ def pca(x, dims=3):
   print("Reduced dims from {} to {}".format( x.shape, y.shape ))
   return y
 
-# ?
-def random_projections():
+
+def random_projections(x):
+  return SparseRandomProjection().fit_transform(x)
+
+def rp_gensim(x):
   pass
 
 # ?
