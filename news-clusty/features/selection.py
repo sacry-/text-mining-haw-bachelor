@@ -59,41 +59,55 @@ def get_features(s_index, e_index, feature_func=None):
 
 
 # initial feature strategies
-def noun_phrase_func(doc):
-  tn = TextNormalizer()
-  noun_tokens = flatten([tn.tnormalize(np) for np in doc["np"]])
-  title_tokens = tn.tnormalize(doc["title"])
-  keyword_tokens = flatten([tn.tnormalize(kw) for kw in doc["keywords"]])
-  return unique(noun_tokens + title_tokens + keyword_tokens)
-
 def without_noun_func(doc):
-  tn = TextNormalizer()
-  tokens = [tn.normalize(word) for word, pos in doc["pos"] 
-            if pos != 'NNP' and pos != 'NNPS']
-  res = filter(lambda x: x and len(x.strip()) > 1, 
-              [tn.normalize(token) for token in __stem__(tokens)]
-        )
-  return list( res )
+  tn = TextNormalizer(options=["keep_numeric"])
 
+  return __stem__( tn.fmap( 
+    [word for word, pos in doc["pos"] 
+     if pos != 'NNP' and pos != 'NNPS'] 
+  ))
 
 # private Helpers
+def __ners(seq):
+  r = []
+  for entities in seq:
+    entities = flatten( flatten( entities ) )
+
+    fst = [x for idx, x in enumerate(entities) 
+           if idx % 2 == 0]
+    snd = [x for idx, x in enumerate(entities) 
+           if (idx + 1) % 2 == 0]
+
+    if all(x==snd[0] for x in snd):
+      r.append( " ".join(fst) )
+
+  return unique( r )
+
+
 def __unfold(data):
-  return flatten(list(map(lambda x: x[1], sorted(data, key=lambda x: x[0]))))
+  return flatten(
+    [y for _, y in sorted(data, key=lambda x: x[0])]
+  )
 
 __PORTER__ = PorterStemmer()
 def __stem__(tokens):
   for token in tokens:
     if token and len(token) > 0:
-      yield __PORTER__.stem(token).lower()
+      stemmed = __PORTER__.stem(token).lower()
+      if stemmed and len(stemmed) > 0:
+        yield __PORTER__.stem(token).lower()
 
-# Private
 def __get_data(fcache, searcher, indices):
-  cached = list( fcache.get_features( indices ) )
-  cached_ids = {_id: feature for (_id, feature) in cached if feature}
+  cached_ids = {_id: feature for (_id, feature) in fcache.get_features( indices )
+                if feature}
+
   all_ids = list( __get_index_to_id(searcher, indices) )
 
-  docs2get = [(index, _id) for index, _id in all_ids if not _id in cached_ids.keys()]
-  docs_in_cache = [(index, _id, cached_ids[_id]) for index, _id in all_ids if _id in cached_ids.keys()]
+  docs2get = [(idx, _id) for (idx, _id) in all_ids
+              if not _id in cached_ids.keys()]
+
+  docs_in_cache = [(index, _id, cached_ids[_id]) for index, _id in all_ids 
+                   if _id in cached_ids.keys()]
 
   print("Already got:", len(docs_in_cache), " docs from redis")
   print("Need to get:", len(docs2get), " docs from es")
@@ -104,7 +118,6 @@ def __get_index_to_id(searcher, indices):
   for index in indices:
     for _id in searcher.ids_for_index(index, "article"):
       yield (index, _id)
-      
 
 if __name__ == "__main__":
   pass

@@ -15,6 +15,7 @@ from collections import Counter
 # curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "2015[067891]{2}.*"
 
 # curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "20150[78]{2}.*"
+# curl '127.0.0.1:9200/_cat/indices?v' | sort -rnk2 | grep "201511.*"
 
 # curl '127.0.0.1:9200/_nodes/settings?pretty=true'
 # curl '127.0.0.1:9200/_count'

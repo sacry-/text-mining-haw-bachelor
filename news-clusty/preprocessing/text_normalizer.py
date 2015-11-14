@@ -39,13 +39,13 @@ RE_NUMERIC = re.compile(r"[0-9]+", re.UNICODE)
 class TextNormalizer():
 
   def __init__(self, options=[]):
-    self.remove_alpha = not ("remove_alpha" in options)
-    self.remove_stops = not ("remove_stops" in options)
-    self.remove_numeric = not ("remove_numeric" in options)
+    self.remove_alpha = not ("keep_alpha" in options)
+    self.remove_stops = not ("keep_stops" in options)
+    self.remove_numeric = not ("keep_numeric" in options)
 
-  def tnormalize(self, s):
-    s = self.normalize(s)
-    return word_tokenize(s.lower())
+  def fmap(self, seq):
+    return [y for y in [self.normalize(x) for x in seq] 
+            if y and len(y.strip()) > 1]
 
   def normalize(self, s):
     if self.remove_alpha:
@@ -64,7 +64,8 @@ class TextNormalizer():
     return RE_NONALPHA.sub(" ", s)
 
   def _remove_stopwords(self, s):
-    return " ".join(w for w in word_tokenize(s) if self._is_not_noise(w))
+    return " ".join(w for w in word_tokenize(s) 
+                    if self._is_not_noise(w))
 
   def _split_alphanum(self, s):
     s = RE_AL_NUM.sub(r"\1 \2", s)

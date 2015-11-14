@@ -75,7 +75,7 @@ def lsi_gensim(x, topics=20):
   pass
   
 # n x m
-def lda(x, topics=20, n_iter=150):
+def lda(x, topics=20, n_iter=100):
   lda_model = lda_alg.LDA(n_topics=topics, n_iter=n_iter, random_state=1)
   return lda_model.fit_transform( to_ndarray(x) )
 

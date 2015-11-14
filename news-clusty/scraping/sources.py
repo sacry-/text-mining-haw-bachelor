@@ -1,5 +1,8 @@
 from scraping.papers.guardian import Guardian
 from scraping.papers.nytimes import NyTimes
+from scraping.papers.bbc import BBC
+from scraping.papers.cnn import CNN
+from scraping.papers.reuters import Reuters
 
 
 class Sources():
@@ -29,5 +32,5 @@ class Sources():
 
 def get_sources():
   return Sources( 
-    Guardian(), NyTimes() 
+    Guardian(), NyTimes(), BBC(), CNN(), Reuters() 
   )

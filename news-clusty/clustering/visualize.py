@@ -38,7 +38,6 @@ def cluster_plot_3d(x, centroids, c, k, name):
       )
   plt.show()
 
-
 def cluster_plot_2d(x, centroids, c, k, name):  
   fig = plt.figure()
   fig.canvas.set_window_title(name)
@@ -56,7 +55,6 @@ def cluster_plot_2d(x, centroids, c, k, name):
         s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
       )
   plt.show()
-
 
 def big_clusterd_plot_2d(x, centroids, c, k, name):
   fig = plt.figure()
@@ -86,7 +84,7 @@ def create_sample(num_docs, features):
   e = np.random.normal(0, 4, (splitted, features))
   return np.concatenate((a,b,c,d,e))
 
-def print_clusters(c, fids):
+def print_clusters(c, fids, word=None, threshold=5):
   clusters = {}
   for doc, cid in enumerate(c):
     if not cid in clusters:
@@ -96,14 +94,17 @@ def print_clusters(c, fids):
   for cid, docs in list(clusters.items()):
     if len(docs) <= 3:
       continue
-    print("Cluster {}".format(cid))
     collection = []
     for doc in docs:
       collection.append( fids[doc] )
-    for doc in collection:
-      print(doc)
-    print("-"*40)
+    if titles_contain_word(word, collection, threshold):
+      print("Cluster {}".format(cid))
+      for doc in collection:
+        print(doc)
+      print("-"*40)
     
+def titles_contain_word(word, col, threshold):
+  return (word and sum([1 for x in col if word in x]) > threshold)
 
 if __name__ == "__main__":
   get_colors(200)

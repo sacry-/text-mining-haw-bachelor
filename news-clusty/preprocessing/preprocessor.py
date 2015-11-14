@@ -31,7 +31,7 @@ def preprocessor_for_article(a, tokenizer=None):
   if not tokenizer:
     tokenizer = default_tokenizer
 
-  tn = TextNormalizer(options=["remove_alpha"])
+  tn = TextNormalizer(options=["keep_alpha"])
   print("Preprocessing", str(a))
   text = tn.normalize(a.text)
   pre = Preprocessor(a.text, tokenizer)

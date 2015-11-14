@@ -38,7 +38,7 @@ def process_output(x_red, centroids, c, k, cluster_algo_name, dim, fids=None):
   else:
     cluster_plot_3d(x_red, centroids, c, k, cluster_algo_name)
   if fids:
-    print_clusters(c, fids)
+    print_clusters(c, fids, word="paris", threshold=3)
 
   print_measure(cluster_algo_name, "silhouette", silhouette(x_red, c))
 
@@ -67,7 +67,7 @@ def pick_algo(a_index=0):
 def run_algo(ffeatures, name_algo, n_topics=100, pca_dim=2, n_clusters=60):
   (cluster_algo_name, clusterer, has_args) = name_algo
   x = term_vector( ffeatures, ngram=(1,2), max_feat=100000, max_df=0.9, min_df=0.1 )
-  x = lda( x, n_topics, n_iter=100 )
+  x = lda( x, n_topics )
   x_red = pca(x, pca_dim)
 
   if has_args:
@@ -86,9 +86,9 @@ def main(ffeatures, fids, a_index=0):
   
   print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
 
-  n_topics=100
+  n_topics=200
   pca_dim=2
-  n_clusters=60
+  n_clusters=50
   
   x_red, centroids, c, k = run_algo(ffeatures, 
                                     name_algo, 
@@ -101,9 +101,9 @@ def main(ffeatures, fids, a_index=0):
 
 if __name__ == "__main__":
   ffeatures, fids = flattened_features( 
-    "20150703", "20150704" 
+    "20151114", "20151114" 
   )
-  main( ffeatures, fids, 1 )
+  main( ffeatures, fids, 0 )
 
 
 

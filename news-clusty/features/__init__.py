@@ -6,7 +6,6 @@ from features.selection import get_features
 from features.selection import flattened_features
 from features.selection import indexed_features
 from features.selection import without_noun_func
-from features.selection import noun_phrase_func
 
 
 from features.transformation import tfidf
