@@ -2,10 +2,13 @@ from utils import shell_tools
 from utils import Logger
 from utils import ElasticSnapper
 
+from es import check_es_is_up
+
 from scraping_facade import download_and_persist_sources
 from preprocessing_facade import preprocess_articles
-from es import check_es_is_up
-from stats import diff_count
+from features_facade import features_to_cache
+
+from stats import cat_indices
 
 
 logger = Logger("news-clusty").getLogger()
@@ -21,7 +24,7 @@ def usage():
     ["optimize", ["optimize clustering parameters with respect to a cost function (not implemented)"]],
     ["dump", ["dumps all articles persisted in elasticsearch to a json document"]],
     ["import", ["imports all articles from a JSON into elasticsearch"]],
-    ["count", ["provides some general counts and es information"]],
+    ["count index (None|from_date|to_date)", ["no args = general overview, from and to_date for counting each indice"]],
   ]
   shell_tools.to_shell(description, cmds)
 
@@ -38,7 +41,9 @@ def news_clusty_facade(cmd, args):
     preprocess_articles(from_date, to_date)
 
   elif cmd == "features": 
-    usage()
+    check_es_is_up()
+    from_date, to_date = shell_tools.pick_date_range(args)
+    features_to_cache(from_date, to_date)
 
   elif cmd == "cluster": 
     usage()
@@ -53,7 +58,11 @@ def news_clusty_facade(cmd, args):
 
   elif cmd == "count":
     check_es_is_up()
-    diff_count()
+    doctype = args[0] if len(args) >= 1 else "article"
+    from_date = args[1] if len(args) >= 2 else None
+    to_date = args[2] if len(args) >= 3 else None
+    
+    cat_indices(from_date, _to=to_date, doctype=doctype)
 
   else:
     usage()

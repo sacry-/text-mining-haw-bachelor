@@ -1,1 +1,5 @@
-from stats.general import diff_count
+from stats.general import cat_indices
+
+
+if __name__ == "__main__":
+  pass
