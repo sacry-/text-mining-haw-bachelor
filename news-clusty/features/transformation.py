@@ -13,6 +13,7 @@ from sklearn.random_projection import SparseRandomProjection
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
 
 
 # m = documents
@@ -26,7 +27,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 # ... 
 def term_vector(features, 
                 ngram=(1,1),
-                max_feat=None, 
+                n_features=None, 
                 max_df=0.95, min_df=2):
   vectorizer = CountVectorizer(
     analyzer='word', 
@@ -34,7 +35,7 @@ def term_vector(features,
     stop_words = 'english',
     max_df=max_df,
     min_df=min_df,
-    max_features=max_feat
+    max_features=n_features
   )
   fitted = vectorizer.fit( features )
   return fitted.transform( features ), fitted
@@ -42,13 +43,13 @@ def term_vector(features,
 
 def distance_matrix(features, 
                     ngram=(1,1),
-                    max_feat=None, 
+                    n_features=None, 
                     max_df=0.8, min_df=0.1):
   vectorizer = TfidfVectorizer(
     analyzer='word', 
     ngram_range=ngram,
     stop_words = 'english',
-    max_features=max_feat,
+    max_features=n_features,
     max_df=max_df,
     min_df=min_df, 
     norm='l2', 
@@ -65,13 +66,13 @@ def distance_matrix(features,
 # tfidf transformation
 def tfidf(features, 
           ngram=(1,1),
-          max_feat=None, 
+          n_features=None, 
           max_df=0.8, min_df=0.1):
   vectorizer = TfidfVectorizer(
     analyzer='word', 
     ngram_range=ngram,
     stop_words = 'english',
-    max_features=max_feat,
+    max_features=n_features,
     max_df=max_df,
     min_df=min_df, 
     use_idf=True,
@@ -80,6 +81,22 @@ def tfidf(features,
   )
   fitted = vectorizer.fit( features )
   return fitted.transform( features ), fitted
+
+def hash_vector(features, 
+                ngram=(1,1),
+                n_features=1048576, **kwargs):
+  vectorizer = HashingVectorizer(
+    analyzer='word', 
+    ngram_range=ngram,
+    stop_words = 'english',
+    norm='l2', 
+    non_negative=True, 
+    lowercase=True,
+    n_features=n_features
+  )
+  fitted = vectorizer.fit( features )
+  return fitted.transform( features ), fitted
+
 
 def corpus_gensim(x):
   pass

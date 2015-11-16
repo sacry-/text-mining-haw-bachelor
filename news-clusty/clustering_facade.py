@@ -23,6 +23,8 @@ from features import flattened_features
 from features import term_vector
 from features import distance_matrix
 from features import tfidf
+from features import hash_vector
+
 from features import pca
 from features import nmf
 from features import lsa
@@ -58,13 +60,13 @@ def pick_algo(a_index):
     6 : ("Affinity Propagation", affinity_propagation, 0)
   }[a_index]
 
-def run_algo(ffeatures, name_algo, n_topics, pca_dim, n_clusters):
+def cluster_it(ffeatures, name_algo, n_topics, pca_dim, n_clusters):
   (cluster_algo_name, clusterer, has_args) = name_algo
   x, vsmodel = term_vector( 
     ffeatures, 
-    ngram=(1,2), 
+    ngram=(1,2),
     max_df=0.95, 
-    min_df=5 
+    min_df=1
   )
   
   x, topic_model = lda( x, n_topics )
@@ -84,7 +86,7 @@ def run_algo(ffeatures, name_algo, n_topics, pca_dim, n_clusters):
   return x_red, centroids, c, k
 
 
-def main(ffeatures, fids, a_index):
+def run_algo(ffeatures, fids, a_index):
   name_algo = (cluster_algo_name, _, _) = pick_algo( a_index )
   
   print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
@@ -93,7 +95,7 @@ def main(ffeatures, fids, a_index):
   pca_dim=2
   n_clusters=15
   
-  x_red, centroids, c, k = run_algo(ffeatures, 
+  x_red, centroids, c, k = cluster_it(ffeatures, 
                                     name_algo, 
                                     n_topics=n_topics, 
                                     pca_dim=pca_dim, 
@@ -104,11 +106,13 @@ def main(ffeatures, fids, a_index):
   print_measure(cluster_algo_name, "silhouette", silhouette(x_red, c))
 
 
-if __name__ == "__main__":
+def cluster_main(_from="20151113", _to="20151114"):
   ffeatures, fids = flattened_features( 
-    "20151113", "20151114" 
+    _from, _to
   )
-  main( ffeatures, fids, 0 )
+  run_algo( ffeatures, fids, 0 )
 
+if __name__ == "__main__":
+  cluster_main("20151113", "20151114")
 
 
