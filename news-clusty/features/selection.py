@@ -38,10 +38,10 @@ def hashed_features(s_index, e_index, feature_func):
 
 
 def without_noun_func(doc):
-  tn = TextNormalizer(options=["keep_numeric"])
+  tn = TextNormalizer()
   return __stem__( tn.fmap( 
     [word for word, pos in doc["pos"] 
-     if pos != 'NNP' and pos != 'NNPS'] 
+     if pos != 'NNP' and pos != 'NNPS'] + __ners(doc["ner"])
   ))
 
 def __sort_by_index(seq):

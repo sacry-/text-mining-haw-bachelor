@@ -6,6 +6,8 @@ from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import scale
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import PCA
+from sklearn.decomposition import NMF
+from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.random_projection import johnson_lindenstrauss_min_dim
 from sklearn.random_projection import SparseRandomProjection
 
@@ -25,7 +27,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 def term_vector(features, 
                 ngram=(1,1),
                 max_feat=None, 
-                max_df=0.8, min_df=0.1):
+                max_df=0.95, min_df=2):
   vectorizer = CountVectorizer(
     analyzer='word', 
     ngram_range=ngram,
@@ -34,7 +36,28 @@ def term_vector(features,
     min_df=min_df,
     max_features=max_feat
   )
-  return vectorizer.fit_transform( features )
+  fitted = vectorizer.fit( features )
+  return fitted.transform( features ), fitted
+
+
+def distance_matrix(features, 
+                    ngram=(1,1),
+                    max_feat=None, 
+                    max_df=0.8, min_df=0.1):
+  vectorizer = TfidfVectorizer(
+    analyzer='word', 
+    ngram_range=ngram,
+    stop_words = 'english',
+    max_features=max_feat,
+    max_df=max_df,
+    min_df=min_df, 
+    norm='l2', 
+    use_idf=False,
+    sublinear_tf=False
+  )
+  fitted = vectorizer.fit( features )
+  return fitted.transform( features ), fitted
+
 
 
 # m x d | very sparse in case d gets large
@@ -42,7 +65,7 @@ def term_vector(features,
 # tfidf transformation
 def tfidf(features, 
           ngram=(1,1),
-          max_feat=100000, 
+          max_feat=None, 
           max_df=0.8, min_df=0.1):
   vectorizer = TfidfVectorizer(
     analyzer='word', 
@@ -51,9 +74,12 @@ def tfidf(features,
     max_features=max_feat,
     max_df=max_df,
     min_df=min_df, 
-    use_idf=True
+    use_idf=True,
+    smooth_idf=True,
+    sublinear_tf=False
   )
-  return vectorizer.fit_transform( features )
+  fitted = vectorizer.fit( features )
+  return fitted.transform( features ), fitted
 
 def corpus_gensim(x):
   pass
@@ -62,26 +88,53 @@ def corpus_gensim(x):
 def lsa(x, topics=3):
   svd = TruncatedSVD(topics)
   normalizer = Normalizer(copy=False)
-  lsa = make_pipeline(svd, normalizer)
-  x_red = lsa.fit_transform( to_ndarray(x) )
+  lsa_model = make_pipeline(svd, normalizer)
+  x_red = lsa_model.fit_transform( to_ndarray(x) )
 
   explained_variance = svd.explained_variance_ratio_.sum()
   print("Explained variance of the SVD step: {}% and topics={}".format(
       int(explained_variance * 100), topics))
 
-  return x_red
+  return x_red, None
 
 def lsi_gensim(x, topics=20):
   pass
-  
-# n x m
+
+
+def lda_sklearn(x, n_topics=20, max_iter=5):
+  ldam = LatentDirichletAllocation(
+    n_topics=n_topics, 
+    max_iter=max_iter,
+    learning_method='online',
+    learning_offset=50.,
+    random_state=0
+  )
+  x = to_ndarray(x)
+  lda_fitted = ldam.fit( x )
+  return lda_fitted.transform( x ), lda_fitted
+
+
 def lda(x, topics=20, n_iter=100):
   lda_model = lda_alg.LDA(n_topics=topics, n_iter=n_iter, random_state=1)
-  return lda_model.fit_transform( to_ndarray(x) )
+  x = to_ndarray(x)
+  lda_fitted = lda_model.fit( x )
+  return lda_fitted.transform( x ), lda_fitted
 
 
 def lda_gensim(x, topics=20, n_iter=150):
   pass
+
+
+def nmf(x, n_topics):
+  nmf = NMF(
+    n_components=n_topics, 
+    random_state=1, 
+    alpha=.1, 
+    l1_ratio=.5
+  )
+  x = to_ndarray(x)
+  nmf_fitted = nmf.fit( x )
+  return nmf_fitted.transform(x), nmf_fitted
 
 
 def pca(x, dims=3):
@@ -94,14 +147,10 @@ def pca(x, dims=3):
 
 
 def random_projections(x):
-  return SparseRandomProjection().fit_transform(x)
+  x = to_ndarray(x)
+  rp_fitted = SparseRandomProjection().fit( x )
+  return rp_fitted.transform(x), rp_fitted
 
-def rp_gensim(x):
-  pass
-
-# ?
-def word2vec():
-  pass
 
 def to_ndarray(x):
   if not isinstance(x, np.ndarray):

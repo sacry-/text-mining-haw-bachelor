@@ -21,39 +21,33 @@ from clustering import affinity_propagation
 
 from features import flattened_features
 from features import term_vector
+from features import distance_matrix
 from features import tfidf
 from features import pca
+from features import nmf
 from features import lsa
 from features import lda
+from features import lda_sklearn
 from features import random_projections
-
 
 
 def print_measure(cluster_algo_name, measure_name, measure):
   print( "-"*40, "\n", cluster_algo_name, "-", measure_name, "-", measure, "\n","-"*40 )
 
-def process_output(x_red, centroids, c, k, cluster_algo_name, dim, fids=None):
+def plot(x_red, centroids, c, k, cluster_algo_name, dim):
   if dim == 2:
     cluster_plot_2d(x_red, centroids, c, k, cluster_algo_name)
   else:
     cluster_plot_3d(x_red, centroids, c, k, cluster_algo_name)
-  if fids:
-    print_clusters(c, fids, word="paris", threshold=3)
 
-  print_measure(cluster_algo_name, "silhouette", silhouette(x_red, c))
-
-def simple_example():
-  return np.array([
-    [1,1],[1.1,1.1],
-    [-1.1,-1.1],[-1,-1],
-    [0,0],[0.2,0.2], 
-    [1,-1],[1.2,-1.2],
-    [-1,1],[-1.2,1.2]], dtype=np.float32
-  )
-
+def print_top_words(model, feature_names, n_top_words):
+  for topic_idx, topic in enumerate(model.components_):
+    print("Topic #%d:" % topic_idx)
+    print(" ".join([feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]))
+  print()
 
 # Main
-def pick_algo(a_index=0):
+def pick_algo(a_index):
   return {
     0 : ("K-Means", kmeans, 1),
     1 : ("Ward Agglomerative", ward_linkage, 1),
@@ -64,10 +58,19 @@ def pick_algo(a_index=0):
     6 : ("Affinity Propagation", affinity_propagation, 0)
   }[a_index]
 
-def run_algo(ffeatures, name_algo, n_topics=100, pca_dim=2, n_clusters=60):
+def run_algo(ffeatures, name_algo, n_topics, pca_dim, n_clusters):
   (cluster_algo_name, clusterer, has_args) = name_algo
-  x = term_vector( ffeatures, ngram=(1,2), max_feat=100000, max_df=0.9, min_df=0.1 )
-  x = lda( x, n_topics )
+  x, vsmodel = term_vector( 
+    ffeatures, 
+    ngram=(1,2), 
+    max_df=0.95, 
+    min_df=5 
+  )
+  
+  x, topic_model = lda( x, n_topics )
+  if topic_model:
+    print_top_words( topic_model, vsmodel.get_feature_names(), 20 )
+
   x_red = pca(x, pca_dim)
 
   if has_args:
@@ -81,14 +84,14 @@ def run_algo(ffeatures, name_algo, n_topics=100, pca_dim=2, n_clusters=60):
   return x_red, centroids, c, k
 
 
-def main(ffeatures, fids, a_index=0):
+def main(ffeatures, fids, a_index):
   name_algo = (cluster_algo_name, _, _) = pick_algo( a_index )
   
   print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
 
-  n_topics=200
+  n_topics=15
   pca_dim=2
-  n_clusters=50
+  n_clusters=15
   
   x_red, centroids, c, k = run_algo(ffeatures, 
                                     name_algo, 
@@ -96,7 +99,9 @@ def main(ffeatures, fids, a_index=0):
                                     pca_dim=pca_dim, 
                                     n_clusters=n_clusters)
 
-  process_output(x_red, centroids, c, k, cluster_algo_name, pca_dim, fids)
+  plot(x_red, centroids, c, k, cluster_algo_name, pca_dim)
+  # if fids: print_clusters(c, fids, word="paris", threshold=3)
+  print_measure(cluster_algo_name, "silhouette", silhouette(x_red, c))
 
 
 if __name__ == "__main__":

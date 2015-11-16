@@ -11,17 +11,19 @@ from features.selection import without_noun_func
 
 
 from features.transformation import tfidf
+from features.transformation import distance_matrix
 from features.transformation import term_vector
+from features.transformation import corpus_gensim
+
+
 from features.transformation import pca
 from features.transformation import lsa
-from features.transformation import lda
-from features.transformation import random_projections
-
-
 from features.transformation import lsi_gensim
-from features.transformation import rp_gensim
+from features.transformation import lda
+from features.transformation import lda_sklearn
 from features.transformation import lda_gensim
-from features.transformation import corpus_gensim
+from features.transformation import nmf
+from features.transformation import random_projections
 
 
 from features.gensim_abstract import single_lda
