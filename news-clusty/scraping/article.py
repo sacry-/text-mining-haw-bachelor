@@ -31,6 +31,7 @@ class Article(DocType):
   def __repr__(self):
     return "{}/article/{}".format(self._index, self.meta.id)
 
+
 def article_from_data(d):
   a = Article(
     meta={'id' : d.normalized_title}, 
@@ -53,11 +54,18 @@ def article_from_data(d):
     a._index = date_index
   return a
 
+
 def article_from_hash(h):
   if not isinstance(h["ts_in"], datetime):
     h["ts_in"] = dateutil.parser.parse(h["ts_in"])
+
   if not "preprocessed" in h:
     h["preprocessed"] = False
+
+  for field in ["keywords", "meta_keywords", "tags", "authors"]:
+    if not field in h:
+      h[field] = []
+
   a = Article(
     meta={'id' : h["id"]}, 
     ts_in=h["ts_in"], 
@@ -75,8 +83,10 @@ def article_from_hash(h):
     publish_date=h["publish_date"],
     categories=[]
   )
+
   a._index = h["index"]
   return a
+
 
 def article_to_hash(a):
   h = a.to_dict()
@@ -84,6 +94,7 @@ def article_to_hash(a):
   h["id"] = a.meta.id
   h["ts_in"] = str(h["ts_in"])
   return h
+
 
 if __name__ == "__main__":
   pass

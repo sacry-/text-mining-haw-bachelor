@@ -25,10 +25,10 @@ class Data():
       self.canonical_link = ""
 
     self.article_html = article.article_html
-    self.keywords = list(article.keywords)
-    self.meta_keywords = list(article.meta_keywords)
-    self.tags = list(article.tags)
-    self.authors = list(article.authors)
+    self.keywords = list(article.keywords) if article.keywords else []
+    self.meta_keywords = list(article.meta_keywords) if article.meta_keywords else []
+    self.tags = list(article.tags) if article.tags else []
+    self.authors = list(article.authors) if article.authors else []
 
     self.publish_date = str(article.publish_date)
     if not self.publish_date:
