@@ -16,8 +16,8 @@ def preprocess(a, tokenizer=None):
     meta={'id' : a.meta.id}, 
     tokens=pre.tokens,
     pos_tags=pre.pos_tags(),
-    noun_phrases=pre.noun_phrases(),
-    ner_tags=pre.ner_extract()
+    noun_phrases=pre.noun_phrases() if pre.noun_phrases() else [],
+    ner_tags=pre.ner_extract() if pre.ner_extract() else []
   )
 
   prep._index = a._index

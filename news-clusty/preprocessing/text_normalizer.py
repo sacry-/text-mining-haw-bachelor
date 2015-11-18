@@ -44,8 +44,11 @@ class TextNormalizer():
     self.remove_numeric = not ("keep_numeric" in options)
 
   def fmap(self, seq):
-    return [y for y in [self.normalize(x) for x in seq] 
+    return [y for y in [self.normalize(x) for x in seq]
             if y and len(y.strip()) > 1]
+
+  def tnormalize(self, s):
+    return word_tokenize( self.normalize(s) )
 
   def normalize(self, s):
     if self.remove_alpha:

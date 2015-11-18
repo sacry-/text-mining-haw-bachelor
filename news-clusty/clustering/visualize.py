@@ -38,6 +38,7 @@ def cluster_plot_3d(x, centroids, c, k, name):
       )
   plt.show()
 
+
 def cluster_plot_2d(x, centroids, c, k, name):  
   fig = plt.figure()
   fig.canvas.set_window_title(name)
@@ -56,24 +57,6 @@ def cluster_plot_2d(x, centroids, c, k, name):
       )
   plt.show()
 
-def big_clusterd_plot_2d(x, centroids, c, k, name):
-  fig = plt.figure()
-  fig.canvas.set_window_title(name)
-  fig.suptitle("n clusters = {}".format(k), fontsize=12)
-  point_colors = list(cm.rainbow(np.linspace(0, 10, 10 * (k + 1))))
-
-  for i, cidx in enumerate(c):
-    plt.scatter(x[i,0], x[i,1], 
-      c=point_colors[cidx], marker='o', zorder=-1
-    )
-  
-  if not centroids == None:
-    for i in range(0, k):
-      plt.scatter(centroids[i,0], centroids[i,1], 
-        s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
-      )
-  
-  plt.show()
 
 def create_sample(num_docs, features):
   splitted = num_docs / 5
@@ -84,7 +67,10 @@ def create_sample(num_docs, features):
   e = np.random.normal(0, 4, (splitted, features))
   return np.concatenate((a,b,c,d,e))
 
-def print_clusters(c, fids, word=None, threshold=5):
+
+def print_clusters(c, fids, word=None, threshold=1):
+  from utils.helpers import flatten, unique
+
   clusters = {}
   for doc, cid in enumerate(c):
     if not cid in clusters:
@@ -92,17 +78,26 @@ def print_clusters(c, fids, word=None, threshold=5):
     clusters[cid].append( doc )
 
   for cid, docs in list(clusters.items()):
-    if len(docs) <= 3:
+    if len(docs) < 1:
       continue
     collection = []
     for doc in docs:
       collection.append( fids[doc] )
-    if titles_contain_word(word, collection, threshold):
+    if (not word) or titles_contain_word(word, collection, threshold):
       print("Cluster {}".format(cid))
       for doc in collection:
         print(doc)
       print("-"*40)
-    
+  
+  features = {}
+  for cid, docs in list(clusters.items()):
+    features[cid] = unique(flatten([fids[doc].split("_") for doc in docs]))
+    print(features[cid])
+
+  for cid, docs in list(clusters.items()):
+    print( "{}. {} | {}".format(cid, len(docs), len(features[cid])))
+
+
 def titles_contain_word(word, col, threshold):
   return (word and sum([1 for x in col if word in x]) > threshold)
 

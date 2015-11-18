@@ -3,6 +3,41 @@ from sklearn.cluster import Birch
 from sklearn.neighbors import kneighbors_graph
 
 
+
+'''
+Name: Agglomerative hierarchical clustering
+  
+  Ward: Minimizes sum of squared differences/variance-minimizing. Similar to k-means
+    only euclidean
+  Maximum/complete linkage: minimizes the maximum distance between observations
+    graph, l1, l2, cosine, euclidean
+  Average linkage: minimizes the average of the distances between observations
+    graph, l1, l2, cosine, euclidean
+
+Params: 
+  number of clusters, 
+  linkage type, 
+  distance
+
+Scale: Large n_samples and n_clusters
+
+Character: 
+  Many clusters
+
+Geometry/Metrics: 
+  Connectivity constraints, 
+  non Euclidean distances 
+  Any pairwise distance
+
+Description:
+  - nearest neighbour searches to find best centroid for sample
+
+  - PCA before, to avoid dimensionality inflation
+  - automatic cluster finding
+
+Sources:
+  - http://scikit-learn.org/stable/modules/clustering.html#hierarchical-clustering
+'''
 def ward_linkage(x, num_clusters=20):
   knn_graph = kneighbors_graph(x, 40, include_self=False)
   return __agglomerative__(x, num_clusters, "ward", knn_graph)
@@ -27,6 +62,35 @@ def __agglomerative__(x, num_clusters, linkage, connectivity):
 
 
 
+'''
+Name: Birch
+  
+Params: 
+  branching factor (limits the number of subclusters in a node), 
+  threshold (limits the distance between the entering sample), 
+  optional global clusterer (n clusters, derived from the structure before)
+
+Scale: 
+  Large n_clusters and n_samples,
+  Large dataset
+
+Character: 
+  outlier removal, 
+  data reduction
+
+Geometry/Metrics: Euclidean distance between points
+
+Description:
+  - nearest neighbour searches to find best centroid for sample
+
+  - PCA before, to avoid dimensionality inflation
+  - automatic cluster finding if global clusterer not set
+
+Sources:
+  - Tian Zhang, Raghu Ramakrishnan, Maron Livny 
+    BIRCH: An efficient data clustering method for large databases
+  - http://scikit-learn.org/stable/modules/clustering.html#birch
+'''
 def birch(x, num_clusters=None, threshold=0.3, branching_factor=10):
   birch_model = Birch(
     threshold=threshold, 

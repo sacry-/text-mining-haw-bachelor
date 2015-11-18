@@ -83,7 +83,7 @@ def new_doc(searcher, article):
     }
 
   except Exception as e:
-    print(str(e), " -> ", e.__doc__) 
+    print(str(e), " -> ", e.__doc__, ":", "{}/article/{}".format(index, _id)) 
     return None
 
 

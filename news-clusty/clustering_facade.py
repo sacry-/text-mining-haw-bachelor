@@ -60,20 +60,31 @@ def pick_algo(a_index):
     6 : ("Affinity Propagation", affinity_propagation, 0)
   }[a_index]
 
+
+def pre_cluster_strategy(ffeatures, n_topics, pca_dim):
+  x, vsmodel = tfidf( 
+    ffeatures, 
+    ngram=(1,1),
+    max_df=0.95, 
+    min_df=0.1
+  )
+
+  topic_model = None
+  # x, topic_model = pca( x, n_topics )
+  # if topic_model:
+  #   print_top_words( topic_model, vsmodel.get_feature_names(), 30 )
+
+  x_red, _ = pca(x, pca_dim)
+
+  return x_red, vsmodel, topic_model
+
+
 def cluster_it(ffeatures, name_algo, n_topics, pca_dim, n_clusters):
   (cluster_algo_name, clusterer, has_args) = name_algo
-  x, vsmodel = term_vector( 
-    ffeatures, 
-    ngram=(1,2),
-    max_df=0.95, 
-    min_df=1
-  )
   
-  x, topic_model = lda( x, n_topics )
-  if topic_model:
-    print_top_words( topic_model, vsmodel.get_feature_names(), 20 )
-
-  x_red = pca(x, pca_dim)
+  x_red, vsmodel, topic_model = pre_cluster_strategy(
+    ffeatures, n_topics, pca_dim
+  )
 
   if has_args:
     centroids, c, k = clusterer(x_red, n_clusters)
@@ -91,8 +102,8 @@ def run_algo(ffeatures, fids, a_index):
   
   print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
 
-  n_topics=15
-  pca_dim=2
+  n_topics=100
+  pca_dim=3
   n_clusters=15
   
   x_red, centroids, c, k = cluster_it(ffeatures, 
@@ -102,7 +113,7 @@ def run_algo(ffeatures, fids, a_index):
                                     n_clusters=n_clusters)
 
   plot(x_red, centroids, c, k, cluster_algo_name, pca_dim)
-  # if fids: print_clusters(c, fids, word="paris", threshold=3)
+  if fids: print_clusters(c, fids, threshold=1)
   print_measure(cluster_algo_name, "silhouette", silhouette(x_red, c))
 
 

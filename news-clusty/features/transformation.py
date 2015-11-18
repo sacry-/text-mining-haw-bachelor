@@ -82,6 +82,7 @@ def tfidf(features,
   fitted = vectorizer.fit( features )
   return fitted.transform( features ), fitted
 
+
 def hash_vector(features, 
                 ngram=(1,1),
                 n_features=1048576, **kwargs):
@@ -101,8 +102,10 @@ def hash_vector(features,
 def corpus_gensim(x):
   pass
 
+
 # n x m
 def lsa(x, topics=3):
+  print("LSA with SVD, topics={}".format(topics))
   svd = TruncatedSVD(topics)
   normalizer = Normalizer(copy=False)
   lsa_model = make_pipeline(svd, normalizer)
@@ -119,6 +122,7 @@ def lsi_gensim(x, topics=20):
 
 
 def lda_sklearn(x, n_topics=20, max_iter=5):
+  print("LDA sklearn: topics={}".format(n_topics))
   ldam = LatentDirichletAllocation(
     n_topics=n_topics, 
     max_iter=max_iter,
@@ -143,6 +147,7 @@ def lda_gensim(x, topics=20, n_iter=150):
 
 
 def nmf(x, n_topics):
+  print("Non Negative Matrix Factorization (NMF), topics={}".format(n_topics))
   nmf = NMF(
     n_components=n_topics, 
     random_state=1, 
@@ -158,9 +163,10 @@ def pca(x, dims=3):
   x = to_ndarray(x)
   s = scale(x, axis=0, with_mean=True, with_std=True, copy=True)
   pca_model = PCA(dims, copy=True, whiten=True)
-  y = pca_model.fit_transform(s)
-  print("Reduced dims from {} to {}".format( x.shape, y.shape ))
-  return y
+  fitted = pca_model.fit(s)
+  y = fitted.transform(s)
+  print("PCA - Reduced dims from {} to {}".format( x.shape, y.shape ))
+  return y, fitted
 
 
 def random_projections(x):
