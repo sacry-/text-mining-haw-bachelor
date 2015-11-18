@@ -1,6 +1,8 @@
 # My Stuff
 latex/out/
 literature/todo/
+knowledge/wikipedia_experiments/*.txt
+knowledge/wikipedia_experiments/enwiki-latest-pages-articles.xml.bz2
 
 # PYTHON
 # Byte-compiled / optimized / DLL files
