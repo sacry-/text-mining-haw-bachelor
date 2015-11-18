@@ -1,8 +1,12 @@
 # My Stuff
 latex/out/
 literature/todo/
-knowledge/wikipedia_experiments/*.txt
-knowledge/wikipedia_experiments/enwiki-latest-pages-articles.xml.bz2
+*/knowledge/wikipedia_experiments/*.txt
+*/knowledge/wikipedia_experiments/enwiki-latest-pages-articles.xml.bz2
+*/resources/app_config.json
+*/resources/newspapers.json
+backups/
+
 
 # PYTHON
 # Byte-compiled / optimized / DLL files
@@ -108,11 +112,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
-# PROJECT SPECIFIC
-*/resources/app_config.json
-*/resources/newspapers.json
-backups/
 
 ## LaTeX
 
