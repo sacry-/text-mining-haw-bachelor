@@ -17,14 +17,13 @@ from features.transformation import term_vector
 from features.transformation import corpus_gensim
 
 
-from features.transformation import pca
-from features.transformation import lsa
-from features.transformation import lsi_gensim
-from features.transformation import lda
-from features.transformation import lda_sklearn
-from features.transformation import lda_gensim
-from features.transformation import nmf
-from features.transformation import random_projections
+from features.decomposition import pca
+from features.decomposition import factor_analysis
+from features.decomposition import nmf
+from features.decomposition import lsa
+from features.decomposition import lsi_gensim
+from features.decomposition import lda
+from features.decomposition import lda_gensim
 
 
 from features.gensim_abstract import single_lda

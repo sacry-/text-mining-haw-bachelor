@@ -29,8 +29,6 @@ from features import pca
 from features import nmf
 from features import lsa
 from features import lda
-from features import lda_sklearn
-from features import random_projections
 
 
 def print_measure(cluster_algo_name, measure_name, measure):
@@ -70,7 +68,7 @@ def pre_cluster_strategy(ffeatures, n_topics, pca_dim):
   )
 
   topic_model = None
-  # x, topic_model = pca( x, n_topics )
+  # x, topic_model = lda( x, n_topics )
   # if topic_model:
   #   print_top_words( topic_model, vsmodel.get_feature_names(), 30 )
 
