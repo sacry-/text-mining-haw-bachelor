@@ -1,8 +1,8 @@
 # My Stuff
 latex/out/
 literature/todo/
-*/knowledge/wikipedia_experiments/*.txt
-*/knowledge/wikipedia_experiments/enwiki-latest-pages-articles.xml.bz2
+*/knowledge/wikipedia_sources/*.txt
+*/knowledge/wikipedia_sources/enwiki-latest-pages-articles.xml.bz2
 */resources/app_config.json
 */resources/newspapers.json
 backups/
