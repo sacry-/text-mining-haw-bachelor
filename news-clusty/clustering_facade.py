@@ -26,6 +26,7 @@ from features import tfidf
 from features import hash_vector
 
 from features import pca
+from features import factor_analysis
 from features import nmf
 from features import lsa
 from features import lda
@@ -59,29 +60,29 @@ def pick_algo(a_index):
   }[a_index]
 
 
-def pre_cluster_strategy(ffeatures, n_topics, pca_dim):
+def pre_cluster_strategy(ffeatures, n_topics, dim):
   x, vsmodel = tfidf( 
     ffeatures, 
-    ngram=(1,1),
-    max_df=0.95, 
-    min_df=0.1
+    ngram=(1,2),
+    max_df=0.99, 
+    min_df=1
   )
 
   topic_model = None
-  # x, topic_model = lda( x, n_topics )
+  x, topic_model = lsa( x, n_topics )
   # if topic_model:
-  #   print_top_words( topic_model, vsmodel.get_feature_names(), 30 )
+  #  print_top_words( topic_model, vsmodel.get_feature_names(), 30 )
 
-  x_red, _ = pca(x, pca_dim)
+  x_red, _ = factor_analysis(x, dim)
 
   return x_red, vsmodel, topic_model
 
 
-def cluster_it(ffeatures, name_algo, n_topics, pca_dim, n_clusters):
+def cluster_it(ffeatures, name_algo, n_topics, dim, n_clusters):
   (cluster_algo_name, clusterer, has_args) = name_algo
   
   x_red, vsmodel, topic_model = pre_cluster_strategy(
-    ffeatures, n_topics, pca_dim
+    ffeatures, n_topics, dim
   )
 
   if has_args:
@@ -101,16 +102,16 @@ def run_algo(ffeatures, fids, a_index):
   print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
 
   n_topics=100
-  pca_dim=3
+  dim=2
   n_clusters=15
   
   x_red, centroids, c, k = cluster_it(ffeatures, 
                                     name_algo, 
                                     n_topics=n_topics, 
-                                    pca_dim=pca_dim, 
+                                    dim=dim, 
                                     n_clusters=n_clusters)
 
-  plot(x_red, centroids, c, k, cluster_algo_name, pca_dim)
+  plot(x_red, centroids, c, k, cluster_algo_name, dim)
   if fids: print_clusters(c, fids, threshold=1)
   print_measure(cluster_algo_name, "silhouette", silhouette(x_red, c))
 

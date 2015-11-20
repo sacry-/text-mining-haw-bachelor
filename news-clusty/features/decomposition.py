@@ -113,7 +113,7 @@ def pca(x, dims=3):
 def factor_analysis(x, dims=3):
   x = to_ndarray(x)
   s = scale(x, axis=0, with_mean=True, with_std=True, copy=True)
-  fa_model = FactorAnalysis(dn_components=ims, svd_method="lapack")
+  fa_model = FactorAnalysis(n_components=dims, svd_method="lapack")
   fitted = fa_model.fit(s)
   y = fitted.transform(s)
   print("Factor Analysis - Reduced dims from {} to {}".format( x.shape, y.shape ))
