@@ -49,7 +49,7 @@ def term_vector(features,
 def distance_matrix(features, 
                     ngram=(1,1),
                     n_features=None, 
-                    max_df=0.8, 
+                    max_df=0.95, 
                     min_df=0.1):
 
   vectorizer = TfidfVectorizer(
@@ -75,7 +75,7 @@ def distance_matrix(features,
 def tfidf(features, 
           ngram=(1,1),
           n_features=None, 
-          max_df=0.8, min_df=0.1):
+          max_df=0.95, min_df=1):
 
   vectorizer = TfidfVectorizer(
     analyzer='word', 

@@ -61,7 +61,7 @@ class TextNormalizer():
     if self.remove_stops:
       s = self._remove_stopwords(s)
 
-    return s
+    return s.lower()
 
   def _strip_non_alphanum(self, s):
     return RE_NONALPHA.sub(" ", s)

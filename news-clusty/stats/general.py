@@ -19,9 +19,9 @@ def cat_indices(_from=None, _to=None, doctype="article"):
 
   else:
     total = 0
-    for index in es.possible_indices(_from, _to):
+    for day_idx, index in enumerate(es.possible_indices(_from, _to)):
       c = es.count_index(index, doctype)
       total += c
-      print( " ", index, "->", c )
-    print( " ", "total ->", total)
+      print( "  {}.".format(day_idx+1), index, "->", c )
+    print( "   ", "total ->", total)
 

@@ -1,12 +1,15 @@
 # coding: utf-8
 import re
-import enchant # pip install pyenchant
+import enchant
+
 from langdetect import detect
+
 from nltk import word_tokenize
 from nltk import data
 from nltk import PorterStemmer
 from nltk import WordNetLemmatizer
 from nltk.corpus import stopwords
+
 
 STOPS = stopwords.words('english')
 EN_US_DICT = enchant.Dict("en_US")
@@ -104,7 +107,7 @@ def sentence_tokenize(s):
       pass
   return sentences
 
-def stemmatize(tokens): # work heavy!
+def stemmatize(tokens):
   for token in tokens:
     if word_is_valid(token):
       yield PORTER.stem(WN_LEMMATIZER.lemmatize(token)).lower()
@@ -115,9 +118,11 @@ def lemmatize(tokens):
       yield WN_LEMMATIZER.lemmatize(token).lower()
 
 def stem(tokens):
-  for token in tokens:
-    if word_is_valid(token):
-      yield PORTER.stem(token).lower()
+  return [stem for stem in 
+            [PORTER.stem(token).lower() for token in tokens 
+             if token and len(token) > 0] 
+          if stem and len(stem) > 0]
+
 
 
 if __name__ == "__main__":
