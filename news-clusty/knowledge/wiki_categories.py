@@ -211,12 +211,14 @@ def get_categories():
 BASE_URL = "https://en.wikipedia.org/w/api.php"
 CATEGORIES = get_categories()
 
+def wiki_base_path():
+  base = "/".join(os.path.abspath(__file__).split("/")[:-1])
+  return "{}/wikipedia_sources".format(base)
 
 def wiki_path(category):
-  base = "/".join(os.path.abspath(__file__).split("/")[:-1])
-  return "{}/wikipedia_sources/wiki_{}.txt".format(base, category)
+  return "{}/wiki_{}.txt".format(wiki_base_path(), category)
 
-def get_lines():
+def get_lines(line_per_category):
   tn = TextNormalizer()
   for category in CATEGORIES.keys():
     with open(wiki_path(category), "r+") as f:
@@ -228,7 +230,7 @@ def get_lines():
           if normalized:
             yield (category, normalized)
           i += 1
-        if i % 1000 == 0:
+        if i % line_per_category == 0:
           break
 
 
@@ -390,12 +392,12 @@ if __name__ == "__main__":
 
   elif arg == 1:
     print( "Pruning duplicated categories..." )
-    category_to_titles = list( get_lines() )
+    category_to_titles = list( get_lines(line_per_category=1000) )
     prune_categories( category_to_titles )
 
   elif arg == 2:
     print( "Get titles for all categories" )
-    category_to_titles = list( get_lines() )
+    category_to_titles = list( get_lines(line_per_category=1000) )
     stream_titles( category_to_titles )
 
   else:
