@@ -27,10 +27,11 @@ function compile {
 }
 
 function to_pdf {
-  dvips thesis.dvi
-  ps2pdf thesis.ps
+  /usr/texbin/dvips thesis.dvi
+  /usr/local/bin/ps2pdf thesis.ps
+  cp thesis.pdf ../
 }
 
 cd "out" && copy_resources_to_out && clear && compile
-
+open thesis.dvi
 
