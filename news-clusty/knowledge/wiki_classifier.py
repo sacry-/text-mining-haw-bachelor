@@ -6,14 +6,18 @@ import json
 from sklearn.externals import joblib
 
 from preprocessing import TextNormalizer
-from preprocessing import stem
 from sklearn.preprocessing import StandardScaler
 
 from transformation import hash_vector
 from transformation import term_vector
 from transformation import tfidf
 
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
 
 from wiki_categories import get_lines
 from wiki_categories import wiki_base_path
@@ -21,6 +25,29 @@ from wiki_categories import wiki_base_path
 from utils.helpers import unique
 
 
+
+def any_model_testing():
+  line_per_category=100
+
+  print("Train Logistic Regression...\n\twith {} features".format(line_per_category))
+  log_reg = LogisticRegression(
+    penalty="l2",
+    C=0.0001, 
+    class_weight="balanced",
+    max_iter=50, 
+    multi_class="multinomial", 
+    solver="lbfgs"
+  )
+  print(log_reg)
+
+  category_to_titles = list( get_lines(line_per_category=line_per_category) )
+  cat_to_id, x_train, y_train, vsmodel = preprocess( category_to_titles )
+  
+  if True: x_train = StandardScaler(with_mean=False).fit_transform(x_train)
+
+  log_reg.fit(x_train, y_train)
+
+  return log_reg, vsmodel, cat_to_id
 
 def disjunctize(features):
   print(" Disjunct...")
@@ -79,75 +106,94 @@ def preprocess(category_to_titles):
     y_train.append( cat_to_id[category] )
 
   print("Hashing..")
-  x_train, vsmodel = hash_vector( [lines for (_, lines) in category_to_titles], ngram=(1,2) )
+  x = [lines for (_, lines) in category_to_titles]
+
+  x_train, vsmodel = hash_vector(x, ngram=(1,2))
+
   return cat_to_id, x_train.toarray(), y_train, vsmodel
 
 
-def best3_probas(bayes, new_text, id_to_cat):
+def best3_probas(model, new_text, id_to_cat):
   r = []
-  for cat_id, prob in enumerate(bayes.predict_proba(new_text)[0]):
+  for cat_id, prob in enumerate(model.predict_proba(new_text)[0]):
     r.append((cat_id, prob))
 
   sproba = sorted(r, key=lambda x: -x[1])
   return [(id_to_cat[cat_id], prob) for cat_id, prob in sproba[0:3]]
 
 
-def train_bayes():
-  path_to_bayes = "{}/mbayes_topics.pkl".format(wiki_base_path())
-  path_to_vsmodel = "{}/hash_vector_topics.pkl".format(wiki_base_path())
-  path_to_cat_id = "{}/cat_id_topics.json".format(wiki_base_path())
 
-  try:
-    print("Loading bayes, vsmodel and id_to_cat mapping..")
-    
-    bayes = joblib.load(path_to_bayes)
-    print("{} - check!".format(bayes))
-    
-    vsmodel = joblib.load(path_to_vsmodel)
-    print("{} - check!".format(vsmodel))
+def path_to_bayes():
+  return "{}/mbayes_topics.pkl".format(wiki_base_path())
 
-    with open(path_to_cat_id, 'r+') as data_file:
-      cat_to_id = json.load(data_file)
+def path_to_vsmodel():
+  return "{}/vsmodel_topics.pkl".format(wiki_base_path())
 
-    print("category mapping - check!")
+def path_to_cat_id():
+  return "{}/cat_id_topics.json".format(wiki_base_path())
 
 
-  except:
-    line_per_category=1000
-
-    print("Could not find bayes model or vsmodel")
-    print("Train Multinomial Bayes...\n\twith {} features".format(line_per_category))
-    bayes = MultinomialNB(alpha=0.0001)
-    print(bayes)
-
-    category_to_titles = list( get_lines(line_per_category=line_per_category) )
-    cat_to_id, x_train, y_train, vsmodel = preprocess( category_to_titles )
+def load_bayes():
+  print("Loading bayes, vsmodel and id_to_cat mapping..")
   
-    print("Fitting..")
-    bayes.fit(x_train, y_train)
+  bayes = joblib.load(path_to_bayes())
+  print("{} - check!".format(bayes))
+  
+  vsmodel = joblib.load(path_to_vsmodel())
+  print("{} - check!".format(vsmodel))
 
-    print("Dumping bayes..")
-    joblib.dump(bayes, path_to_bayes) 
+  with open(path_to_cat_id(), 'r+') as data_file:
+    cat_to_id = json.load(data_file)
 
-    print("Dumping vsmodel..")
-    joblib.dump(vsmodel, path_to_vsmodel) 
-
-    with open(path_to_cat_id, 'w+') as fp:
-      json.dump(cat_to_id, fp)
+  print("category mapping - check!")
 
   return bayes, vsmodel, cat_to_id
 
 
-def show_bayes(bayes, vsmodel, cat_to_id, test_set):
+def save_bayes(bayes, vsmodel, cat_to_id):
+    print("Dumping bayes..")
+    joblib.dump(bayes, path_to_bayes()) 
+
+    print("Dumping vsmodel..")
+    joblib.dump(vsmodel, path_to_vsmodel()) 
+
+    with open(path_to_cat_id(), 'w+') as fp:
+      json.dump(cat_to_id, fp)
+
+
+def train_bayes(preload, persist):
+  if preload:
+    return load_bayes()
+
+  line_per_category=1000
+
+  print("Train Multinomial Bayes...\n\twith {} features".format(line_per_category))
+  bayes = MultinomialNB(alpha=0.0001)
+  print(bayes)
+
+  category_to_titles = list( get_lines(line_per_category=line_per_category) )
+  cat_to_id, x_train, y_train, vsmodel = preprocess( category_to_titles )
+
+  print("Fitting..")
+  bayes.fit(x_train, y_train)
+
+  if persist:
+    save_bayes(bayes, vsmodel, cat_to_id)
+
+  return bayes, vsmodel, cat_to_id
+
+
+def show_bayes(model, vsmodel, cat_to_id, test_set):
   id_to_cat = {v: k for k, v in cat_to_id.items()}
 
   true_labels, false_labels = 0, 0
   for idx, (category, text) in enumerate(test_set):
 
     new_text = vsmodel.fit_transform([text]).toarray()
-    predicted_cat, cat_id = [(id_to_cat[_id], _id) for _id in bayes.predict(new_text)][0]
 
-    best3 = best3_probas(bayes, new_text, id_to_cat)
+    predicted_cat, cat_id = [(id_to_cat[_id], _id) for _id in model.predict(new_text)][0]
+
+    best3 = best3_probas(model, new_text, id_to_cat)
 
     correct = category == predicted_cat
     if correct:
@@ -162,9 +208,12 @@ def show_bayes(bayes, vsmodel, cat_to_id, test_set):
   accuracy = (true_labels / (true_labels + false_labels)) * 100
   print( "True: {}, False: {}, Accuracy: {}%".format(true_labels, false_labels, accuracy) )
 
-
+  
 if __name__ == "__main__":
-  bayes, vsmodel, cat_to_id = train_bayes()
+  model, vsmodel, cat_to_id = train_bayes(
+    preload=True, 
+    persist=False
+  )
   test_set = get_test_set()
-  show_bayes( bayes, vsmodel, cat_to_id, test_set )
+  show_bayes( model, vsmodel, cat_to_id, test_set )
 
