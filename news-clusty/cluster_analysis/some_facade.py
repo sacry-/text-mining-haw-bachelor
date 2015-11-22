@@ -20,9 +20,8 @@ from clustering import affinity_propagation
 
 
 from features import flattened_features
-from features import term_vector
-from features import distance_matrix
-from features import tfidf
+from features import count_vector
+from features import tfidf_vector
 from features import hash_vector
 
 from features import pca
