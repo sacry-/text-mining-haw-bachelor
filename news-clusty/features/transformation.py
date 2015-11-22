@@ -18,7 +18,7 @@ from gensim import corpora
   doc2 :   0    2   2
   ...
 ''' 
-def term_vector(features, 
+def count_vector(features, 
                 ngram=(1,1),
                 n_features=None, 
                 max_df=0.95, 
@@ -37,42 +37,11 @@ def term_vector(features,
 
 
 '''
-  m = documents
-  n = features
-
-  m x m
-          doc1 doc2 ..
-  doc1 :   1    0.5
-  doc2 :   0.5   1   
-  ...
-''' 
-def distance_matrix(features, 
-                    ngram=(1,1),
-                    n_features=None, 
-                    max_df=0.95, 
-                    min_df=0.1):
-
-  vectorizer = TfidfVectorizer(
-    analyzer='word', 
-    ngram_range=ngram,
-    stop_words = 'english',
-    max_features=n_features,
-    max_df=max_df,
-    min_df=min_df, 
-    norm='l2', 
-    use_idf=False,
-    sublinear_tf=False
-  )
-  fitted = vectorizer.fit( features )
-  return fitted.transform( features ), fitted
-
-
-'''
   m x d | very sparse in case d gets large
   transforms bag of words to a sparse
   tfidf transformation
 '''
-def tfidf(features, 
+def tfidf_vector(features, 
           ngram=(1,1),
           n_features=None, 
           max_df=0.95, min_df=1):

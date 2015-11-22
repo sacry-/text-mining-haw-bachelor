@@ -10,10 +10,9 @@ from features.selection import indexed_features
 from features.selection import without_noun_func
 
 
-from features.transformation import tfidf
-from features.transformation import distance_matrix
+from features.transformation import tfidf_vector
 from features.transformation import hash_vector
-from features.transformation import term_vector
+from features.transformation import count_vector
 from features.transformation import corpus_gensim
 
 
