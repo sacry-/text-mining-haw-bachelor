@@ -8,20 +8,35 @@
   DIV11
 ]{scrbook}
 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman, english]{babel}
+\usepackage{libertine}
+\usepackage{pifont}
+\usepackage{microtype}
+\usepackage{textcomp}
+\usepackage[german,refpage]{nomencl}
+\usepackage{setspace}
+\usepackage{makeidx}
+\usepackage{listings}
+\usepackage{natbib}
+\usepackage[ngerman,colorlinks=true]{hyperref}
+\usepackage{soul}
+\usepackage{hawstyle}
+\usepackage{lipsum}
+
 \input{imports_definitions.tex}
 
 \makeindex
 \makenomenclature
 
 \begin{document}
-  \selectlanguage{german}
-
   \HAWThesisProperties{
     Author={Matthias Nitsche},
-    Title={Continuous Clustering\\ for a Daily News Summarization System},
-    EnglishTitle={Continuous Clustering\\ for a Daily News Summarization System},
+    Title={Continuous Clustering for a Daily News Summarization System},
+    EnglishTitle={Continuous Clustering for a Daily News Summarization System},
     ThesisType={Bachelorarbeit},
-    ExaminationType={Bachelorprüfung},
+    ExaminationType={BachelorprÃ¼fung},
     DegreeProgramme={Bachelor of Science Angewandte Informatik},
     ThesisExperts={Prof. Dr. Michael Neitzke \and Prof. Dr. Olaf Zukunft},
     ReleaseDate={02. February 2016}
