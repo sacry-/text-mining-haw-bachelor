@@ -32,15 +32,16 @@ Sources:
 def lsa(x, topics=3):
   print("LSA with SVD, topics={}".format(topics))
   svd = TruncatedSVD(topics)
-  normalizer = Normalizer(copy=False)
-  lsa_model = make_pipeline(svd, normalizer)
-  x_red = lsa_model.fit_transform( to_ndarray(x) )
+  x = to_ndarray(x)
+  fitted = svd.fit(x)
+  x_red = fitted.transform( x )
 
   explained_variance = svd.explained_variance_ratio_.sum()
   print("Explained variance of the SVD step: {}% and topics={}".format(
       int(explained_variance * 100), topics))
 
-  return x_red, None
+  x_norm = Normalizer(copy=False).fit_transform(x_red)
+  return x_norm, fitted
 
 def lsi_gensim(x, topics=20):
   pass

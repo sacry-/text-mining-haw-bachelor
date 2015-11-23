@@ -29,7 +29,14 @@ was we well were what whatever when whence whenever where whereafter whereas whe
 your yours yourself yourselves
 """
 
+NEWSPAPER_STOP_WORDS = """
+  main story continue reading
+"""
+
 STOPWORDS = frozenset(w for w in STOPWORDS.split() if w)
+NEWSPAPER_STOP_WORDS = frozenset(
+  w.replace("_", " ") for w in NEWSPAPER_STOP_WORDS.split() if w
+)
 RE_NONALPHA = re.compile(r"\W", re.UNICODE)
 RE_AL_NUM = re.compile(r"([a-z]+)([0-9]+)", flags=re.UNICODE)
 RE_NUM_AL = re.compile(r"([0-9]+)([a-z]+)", flags=re.UNICODE)
@@ -48,7 +55,7 @@ class TextNormalizer():
             if y and len(y.strip()) > 1]
 
   def tnormalize(self, s):
-    return word_tokenize( self.normalize(s) )
+    return self.fmap( word_tokenize( s ) )
 
   def normalize(self, s):
     if self.remove_alpha:

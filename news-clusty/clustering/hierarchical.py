@@ -91,7 +91,7 @@ Sources:
     BIRCH: An efficient data clustering method for large databases
   - http://scikit-learn.org/stable/modules/clustering.html#birch
 '''
-def birch(x, num_clusters=None, threshold=0.3, branching_factor=10):
+def birch(x, num_clusters=None, threshold=0.5, branching_factor=5):
   birch_model = Birch(
     threshold=threshold, 
     n_clusters=num_clusters, 

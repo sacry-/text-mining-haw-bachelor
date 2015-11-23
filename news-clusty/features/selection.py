@@ -11,7 +11,7 @@ from features.raw_doc import get_features
 
 def flattened_features( s_index, e_index, feature_func=None ):
   if not feature_func:
-    feature_func = noun_phrase_func
+    feature_func = without_noun_func
 
   features, ids = hashed_features(s_index, e_index, feature_func)
   features_as_list = [" ".join(e) for e in __unfold(features.items())]
@@ -21,7 +21,7 @@ def flattened_features( s_index, e_index, feature_func=None ):
 
 def indexed_features( s_index, e_index, feature_func=None ):
   if not feature_func:
-    feature_func = noun_phrase_func
+    feature_func = without_noun_func
 
   features, ids = hashed_features(s_index, e_index, feature_func)
   features_as_list = __sort_by_index( features.items() )
@@ -50,8 +50,8 @@ def noun_phrase_func(doc):
   title_tokens = tn.tnormalize(doc["title"])
   keyword_tokens = tn.fmap(doc["keywords"])
   ners = __ners(doc["ner"])
-  return __stem__(
-    unique(noun_tokens + title_tokens + keyword_tokens + ners)
+  return __stem__( 
+    unique(noun_tokens + title_tokens + keyword_tokens + ners) 
   )
 
 def __sort_by_index(seq):

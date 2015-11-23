@@ -42,6 +42,10 @@ class Data():
     if not self.text.strip():
       logger.info("has invalid text: " + self.url)
       return False
+
+    if len(self.text.split(" ")) < 40:
+      logger.info("text is too short: " + self.url)
+      return False      
       
     if self.normalized_title in whitelist:
       logger.info("is whitelisted: " + self.url)

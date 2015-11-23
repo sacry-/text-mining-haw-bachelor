@@ -23,7 +23,6 @@ def count_vector(features,
                 n_features=None, 
                 max_df=0.95, 
                 min_df=2):
-
   vectorizer = CountVectorizer(
     analyzer='word', 
     ngram_range=ngram,

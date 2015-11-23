@@ -90,7 +90,7 @@ Sources:
     IEEE Transactions on Pattern Analysis and Machine Intelligence
   - http://scikit-learn.org/stable/modules/clustering.html#mean-shift
 '''
-def mean_shift(x, quantile=0.01):
+def mean_shift(x, quantile=0.08):
   bandwidth = estimate_bandwidth(x, quantile=quantile)
   ms = MeanShift(bandwidth=bandwidth)
   ms.fit(x)

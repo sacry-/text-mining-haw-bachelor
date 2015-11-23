@@ -96,7 +96,18 @@ def remove_noise(tokens):
 def remove_special(token):
   return re.sub("[\W\s]", "", token)
 
-def sentence_tokenize(s):
+def sentence_tokenize(s, sentece_processor=None):
+  sentences = []
+  for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
+    try:
+      if detect(sentence) == "en":
+        sentences.append( sentece_processor(sentence) )
+    except:
+      pass
+  return sentences
+
+
+def sentence_word_tokenize(s):
   sentences = []
   for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
     try:

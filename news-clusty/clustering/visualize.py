@@ -68,36 +68,6 @@ def create_sample(num_docs, features):
   return np.concatenate((a,b,c,d,e))
 
 
-def print_clusters(c, fids, word=None, threshold=1):
-  from utils.helpers import flatten, unique
-
-  clusters = {}
-  for doc, cid in enumerate(c):
-    if not cid in clusters:
-      clusters[cid] = []  
-    clusters[cid].append( doc )
-
-  for cid, docs in list(clusters.items()):
-    if len(docs) < 1:
-      continue
-    collection = []
-    for doc in docs:
-      collection.append( fids[doc] )
-    if (not word) or titles_contain_word(word, collection, threshold):
-      print("Cluster {}".format(cid))
-      for doc in collection:
-        print(doc)
-      print("-"*40)
-  
-  features = {}
-  for cid, docs in list(clusters.items()):
-    features[cid] = unique(flatten([fids[doc].split("_") for doc in docs]))
-    print(features[cid])
-
-  for cid, docs in list(clusters.items()):
-    print( "{}. {} | {}".format(cid, len(docs), len(features[cid])))
-
-
 def titles_contain_word(word, col, threshold):
   return (word and sum([1 for x in col if word in x]) > threshold)
 

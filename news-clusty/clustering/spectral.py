@@ -91,7 +91,7 @@ Sources:
     Science Feb. 2007
   - http://scikit-learn.org/stable/modules/clustering.html#affinity-propagation
 '''
-def affinity_propagation(x, damping=0.5):
+def affinity_propagation(x, damping=0.9):
   ap = AffinityPropagation(
     damping=damping, 
     max_iter=400, 
