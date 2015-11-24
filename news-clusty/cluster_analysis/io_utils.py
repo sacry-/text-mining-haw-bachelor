@@ -21,7 +21,7 @@ def print_top_words(model, feature_names, n_top_words):
   print()
 
 
-def print_clusters(c, fids, word=None, threshold=1):
+def print_clusters(c, fids):
   clusters = {}
   for doc, cid in enumerate(c):
     if not cid in clusters:

@@ -36,7 +36,6 @@ def hashed_features(s_index, e_index, feature_func):
     ids[index].append( _id )
   return features, ids
 
-
 def without_noun_func(doc):
   tn = TextNormalizer()
   return __stem__( tn.fmap( 

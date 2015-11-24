@@ -4,11 +4,11 @@ import numpy as np
 from collections import defaultdict
 from sklearn.preprocessing import normalize
 
+
 from clustering import cluster_plot_2d
 from clustering import cluster_plot_3d
 
 from clustering import silhouette
-
 from clustering import kmeans
 from clustering import ward_linkage
 from clustering import dbscan
@@ -39,11 +39,11 @@ from io_utils import plot
 from_date = "20151113"
 to_date = "20151113"
 
-algorithm_id = 2
-n_clusters = 8
+algorithm_id = 0
+n_clusters = 10
 
 decomposer = [lsa, lda, nmf, None][0]
-n_topics = 8
+n_topics = 300
 
 dim_reduction_method = [pca, None][0]
 plot_dimension = 2
@@ -66,14 +66,21 @@ ffeatures, fids = flattened_features(
 
 print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
 
-x, vsmodel = tfidf_vector( 
-  ffeatures, 
-  ngram=(1,2),
-  max_df=0.8, 
-  min_df=2
-)
-# x = normalize(x, norm='l2', axis=1)
 
+if True:
+  x, vsmodel = hash_vector(
+    ffeatures, 
+    ngram=(1,2),
+    n_features=100000
+  )
+
+else:
+  x, vsmodel = tfidf_vector( 
+    ffeatures, 
+    ngram=(1,2),
+    max_df=0.9, 
+    min_df=1
+  )
 
 if decomposer:
   x, topic_model = decomposer( x, n_topics )
@@ -83,14 +90,18 @@ if dim_reduction_method:
 
 if has_args:
   centroids, c, k = clusterer(x, n_clusters)
+
 else:
   centroids, c, k = clusterer(x)
+
+for idx, centroid in enumerate(centroids):
+  print(idx, centroid)
 
 if dim_reduction_method:
   plot(x, centroids, c, k, cluster_algo_name, plot_dimension)
 
-if fids: 
-  print_clusters(c, fids, word="paris", threshold=3)
+if not fids: 
+  print_clusters(c, fids)
 
 print_measure(cluster_algo_name, "silhouette", silhouette(x, c))
 
