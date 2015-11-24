@@ -1,6 +1,9 @@
 import os
 from utils.helpers import flatten, unique
 
+from clustering import cluster_plot_2d
+from clustering import cluster_plot_3d
+
 
 def print_measure(cluster_algo_name, measure_name, measure):
   print( "-"*40, "\n", cluster_algo_name, "-", measure_name, "-", measure, "\n","-"*40 )
@@ -31,11 +34,11 @@ def print_clusters(c, fids, word=None, threshold=1):
     collection = []
     for doc in docs:
       collection.append( fids[doc] )
-    if (not word) or titles_contain_word(word, collection, threshold):
-      print("Cluster {}".format(cid))
-      for doc in collection:
-        print(doc)
-      print("-"*40)
+      
+    print("Cluster {}".format(cid))
+    for doc in collection:
+      print(doc)
+    print("-"*40)
   
   features = {}
   for cid, docs in list(clusters.items()):

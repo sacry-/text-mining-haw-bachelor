@@ -24,8 +24,12 @@
 \usepackage{soul}
 \usepackage{hawstyle}
 \usepackage{lipsum}
+\usepackage{epigraph}
 
 \input{imports_definitions.tex}
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
 
 \makeindex
 \makenomenclature
@@ -65,40 +69,38 @@
 
     \chapter{Introduction}
       \label{chapter:introduction}
-      \input{citations.tex}
-      \ipsum
+      \input{introduction.tex}
 
-    \chapter{State of the Art}
-      \label{chapter:state_of_the_arts}
-      \lipsum
 
-    \chapter{Data pipeline}
+    \chapter{Basics}
+      \label{chapter:basics}
+      \input{basics.tex}
+
+
+    \chapter{Data Pipeline}
       \label{chapter:data_pipeline}
-      \lipsum
+      \input{data_pipeline.tex}
 
-    \chapter{Preprocessing}
-      \label{chapter:preprocessing}
-      \lipsum
 
     \chapter{Feature Selection}
       \label{chapter:feature_selection}
-      \lipsum
+      \input{feature_selection.tex}
+      
 
-    \chapter{Clustering algorithms}
-      \label{chapter:clustering_algorithms}
-      \lipsum
-
-    \chapter{Implementation}
-      \label{chapter:implementation}
-      \lipsum
+    \chapter{Clustering experiments}
+      \label{chapter:clustering_experiments}
+      \input{clustering_experiments.tex}
+      
 
     \chapter{Results and Discussion}
-      \label{chapter:results}
-      \lipsum
+      \label{chapter:results_and_discussion}
+      \input{results_and_discussion.tex}
+
 
     \chapter{Outlook}
       \label{chapter:outlook}
-      \lipsum
+      \input{outlook.tex}
+      
 
   \backmatter
     \typeout{===== Section: literature}

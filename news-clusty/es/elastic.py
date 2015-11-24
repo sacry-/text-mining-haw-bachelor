@@ -30,20 +30,22 @@ class Elastic():
   def count(self, _index="", _doc_type="", le_search={"query" : {"match_all" : {}}}):
     return self.es.count(index=_index, doc_type=_doc_type, body=le_search)["count"]
 
-  def paginate(self, _index, _doc_type, query={"query" : {"match_all" : {}}}, _size=10):
+  def paginate(self, _index, _doc_type, query={"query" : {"match_all" : {}}}, _size=25):
     _id = self.retrieve_scroll_id(_index, _doc_type, query, _size)
     initial_id = _id
     retry = 3
     while retry > 0:
       data = self.scroll_by_id(_index, _doc_type, _id)
-      for entry in data["hits"]["hits"]:
+      hits = data["hits"]["hits"]
+      print(len(hits))
+      for entry in hits:
         yield entry
       _id = data['_scroll_id']
       data = None
       if _id != initial_id:
         retry -= 1
 
-  def retrieve_scroll_id(self, _index, _doc_type, query, _size=10):
+  def retrieve_scroll_id(self, _index, _doc_type, query, _size):
     first_response = self.es.search(index=_index, doc_type=_doc_type, body=query, search_type="scan", scroll="1m", size=_size)  
     return first_response['_scroll_id']
 
@@ -54,12 +56,12 @@ class Elastic():
     indices = self.es.indices.stats()["indices"]
     return map(str, sorted(map(int, indices)))
 
-  def all_documents(self, doc_type="article", query={"query" : {"match_all" : {}}}, per_page=10):
+  def all_documents(self, doc_type="article", query={"query" : {"match_all" : {}}}, per_page=25):
     for index in self.all_indices():
       for doc in self.all_docs_by_index(index, doc_type, query, per_page):
         yield doc
 
-  def all_docs_by_index(self, index, doc_type="article", query={"query" : {"match_all" : {}}}, per_page=10):
+  def all_docs_by_index(self, index, doc_type="article", query={"query" : {"match_all" : {}}}, per_page=25):
     for hit in self.paginate(index, doc_type, query, per_page):
       source = hit["_source"]
       source["id"] = hit["_id"]

@@ -20,6 +20,9 @@ from features import lda
 from io_utils import print_clusters
 from io_utils import print_measure
 from io_utils import append_to_file
+from io_utils import plot
+
+from clustering import silhouette
 
 
 def get_training_set(from_date, to_date, limit=None):
@@ -63,20 +66,11 @@ def important_sentences(topic_model, doc):
 
 
 # Script
-from_date = "20151114"
-to_date = "20151114"
+def topic_model_run(decomposer, n_topics, ffeatures, fids):
+  failed = []
+  x_global = []
 
-decomposer = [lsa, lda, nmf, None][0]
-n_topics = 3
-
-ffeatures, fids = get_training_set( 
-  from_date, to_date
-)
-
-failed = []
-new_features = []
-for idx, doc in enumerate(ffeatures):
-
+  for idx, doc in enumerate(ffeatures):
     try:
       x_hat, _ = count_vector( 
         doc, 
@@ -88,9 +82,6 @@ for idx, doc in enumerate(ffeatures):
       failed.append((fids[idx], doc, "Sparse"))
       continue
 
-    if decomposer == nmf and x_hat.shape[0] <= n_topics:
-      continue
-
     if x_hat.shape[1] > n_topics:
 
       x, topic_model = decomposer( x_hat, n_topics )
@@ -98,29 +89,64 @@ for idx, doc in enumerate(ffeatures):
 
       if feature_set:
         print(feature_set[0])
+        x_global.append( " ".join( feature_set ) )
 
       else:
         failed.append((fids[idx], doc, "Topic Model"))
 
-      new_features.append( 
-        "__PLACE_HOLDER__".join(feature_set) 
-      )
+  try:
+    docs = [doc for (_, doc, _) in failed]
+    sent_docs = [len(doc) for doc in docs]
+    word_docs = [len(" ".join(doc).split(" ")) for doc in docs]
 
-append_to_file("generative_1", new_features)
+    print("-"*40)
+    for idx, (fail, _, reason) in enumerate(failed):
+      print(fail, reason, sent_docs[idx], word_docs[idx] )
 
-if failed:
-  docs = [doc for (_, doc, _) in failed]
-  sent_docs = [len(doc) for doc in docs]
-  word_docs = [len(" ".join(doc).split(" ")) for doc in docs]
+    avg_sent = np.average(sent_docs)
+    avg_word = np.average(word_docs)
+    print("average sent count:", avg_sent)
+    print("average word count:", avg_word)
+  except:
+    print("Something went wrong during failure statistic generation")
 
-  print("-"*40)
-  for idx, (fail, _, reason) in enumerate(failed):
-    print(fail, reason, sent_docs[idx], word_docs[idx] )
-
-  avg_sent = np.average(sent_docs)
-  avg_word = np.average(word_docs)
-  print("average sent count:", avg_sent)
-  print("average word count:", avg_word)
+  return x_global
 
 
+
+if __name__ == "__main__":
+  logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
+  # Data
+  from_date = "20151114"
+  to_date = "20151114"
+  ffeatures, fids = get_training_set( 
+    from_date, to_date
+  )
+
+  # Topic modelling
+  decomposer = [lsa, lda, nmf, None][1]
+  n_topics = 3
+  x_topic = topic_model_run(decomposer, n_topics, ffeatures, fids)
+
+
+  # Clustering
+  from clustering import birch
+  from clustering import kmeans
+
+  x, _ = count_vector( 
+    x_topic, 
+    ngram=(1,2),
+    max_df=0.99, 
+    min_df=0.1
+  )
+
+  plot_dimension = 2
+  x, _ = pca(x, plot_dimension)
+  centroids, c, k = kmeans(x, 8)
+  plot(x, centroids, c, k, "Birch", plot_dimension)
+  if fids: 
+    print_clusters(c, fids)
+
+  print_measure("Birch", "silhouette", silhouette(x, c))
 

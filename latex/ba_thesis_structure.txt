@@ -81,7 +81,7 @@ Table of content:
       F-Measure
       Jaccard index
 
-3.) A News summarization System (News Clusty)
+3.) Data Pipeline
   1.) Python and Libraries (Github Link - make public)
   2.) Databases (Persistence)
   3.) Components
@@ -92,7 +92,7 @@ Table of content:
     Clustering
   4.) What is missing? Problems
 
-4.) Documents and Features
+4.) Feature engineering
   1.) Document domain
     1.) Newspapers
     2.) Metadata

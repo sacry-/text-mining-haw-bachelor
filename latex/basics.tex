@@ -1,0 +1,109 @@
+\epigraph{\emph{
+  ``If I have seen further it is by standing on the shoulders of giants.''
+}}{ Isaac Newton }
+
+The goal of this section is to give some intuition and the necessary theoretical background for the following chapters. The areas where clustering problems arise are huge. It provides solutions to problems like market segmentation, classification, document organization or indexing.\\
+Firstly we will have a look at the definition of clustering and summarization. How they are related and the variety of possibilities this imposes.
+Secondly the vector space model (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by singular value decomposition (SVD).
+Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Mean-Shift) will be presented.
+Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.
+Lastly some quality measures of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth) are explained.
+
+
+\section{Clustering and Summarization}
+  
+  \textbf{Clustering} as defined by \cite{ClusterAlgoSurveyIBM} is finding groups of similar objects in the data with a defined similarity function between objects. The granularity of the features can vary:
+
+  \begin{itemize}
+    \item \emph{Sentence based} - A document d is split into sentences so clustering reveals the most coherent groups of sentences that are closely related.
+    \item \emph{Collection of documents} - A collection of documents d (corpora) is grouped to get groups of documents that are closely related
+    \item \emph{Stream of documents} - The same as clustering copora with the constraint that over time the size of documents grow.
+  \end{enumerate}
+
+  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section.\\
+  \textbf{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user (\cite{SumEvaluation2001}).\\
+  This results in a few possibilities where clustering works great as a preprocessing step for summarization.
+  
+  \begin{description}
+    \item[First] Clustering groups that have a higher density of information resulting in a grouped input for summarizers.
+    \item[Second] Grouping the latent topics accross and within documents to create a meta concept of closely related documents
+    \item[Third] Classify documents into categories in a semi supervised way to construct hierarchies of relationships
+    \item[Fourth] Finding outliers that will not highly contribute to the summarization
+  \end{enumerate}
+
+  \subsection{Summarization}
+
+  \subsection{Supervision}
+    \begin{enumerate}
+      \item \emph{Multinominal/Gaussian) Naive Bayes (NB)} - x
+      \item \emph{(Multivariate) Logistic/Linear Regression} - x
+      \item \emph{Neural Networks (ANN)} - x
+      \item \emph{Support Vector Machines (SVM)} - x
+      \item \emph{Random Forests (RF)} - x
+    \end{enumerate}
+
+\section{Vector Space Model (VSM)}
+  
+  The vector space model
+  \subsection{Bag of words}
+  \subsection{Similarity and Distances}
+  \subsection{Dimensionality and Hashing}
+
+  \subsection{Enhancing the Vector Space Model}
+    \subsubsection{Singular Value Decomposition (SVD)}
+    \subsubsection{Latent Semantic Analysis (LSA)}
+    \subsubsection{Principal Component Analysis (PCA)}
+
+\section{Clustering algorithms}
+
+  \subsection{Objective goal}
+    EM, Cost functions, general clustering scheme
+
+  \subsection{Hierarchical / Agglomerative clustering}
+    \paragraph{Ward, Complete and Average Linkage}
+    \paragraph{Birch}
+
+  \subsection{Partitional clustering}
+    \paragraph{K-Means}
+    \paragraph{Mean-Shift}
+
+    \subsection{Others}
+      \begin{enumerate}
+        \item \emph{Spectral} - x
+        \item \emph{Density} - x
+        \item \emph{Grid} - x
+      \end{enumerate}
+
+
+\section{Generative Models}    
+  
+  \subsection{Topic modelling}
+    \paragrah{Bayes Theorem}
+    \paragraph{Multinominal Distributions}
+    \paragraph{Dirichlet Distributions}
+      Chinese Restaurant Process
+
+  \subsection{Methods}
+    \subsubsection{Latent Dirichlet Allocation (LDA)}
+    \subsubsection{Non Negative Matrix Factorization (NMF)}
+
+
+\section{Clustering quality measures}
+
+  \subsection{Internal measures}
+    Without labels of the ground truth
+
+    \begin{enumerate}
+      \item \emph{Silhouette coefficient} - x
+      \item \emph{Davies–Bouldin index} - x
+      \item \emph{Dunn index} - x
+    \end{enumerate}
+
+  \subsection{External measures}
+    With labels of the ground truth
+
+    \begin{enumerate}
+      \item \emph{F-Measure} - x
+      \item \emph{Jaccard index} - x
+    \end{enumerate}
+
