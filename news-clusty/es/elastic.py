@@ -34,10 +34,12 @@ class Elastic():
     _id = self.retrieve_scroll_id(_index, _doc_type, query, _size)
     initial_id = _id
     retry = 3
+    total = 0
     while retry > 0:
       data = self.scroll_by_id(_index, _doc_type, _id)
       hits = data["hits"]["hits"]
-      print(len(hits))
+      total += len(hits)
+      print(total)
       for entry in hits:
         yield entry
       _id = data['_scroll_id']

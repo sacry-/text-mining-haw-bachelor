@@ -11,8 +11,6 @@ from sklearn.externals import joblib
 
 
 
-
-
 def base_path():
   return "/".join(os.path.abspath(__file__).split("/")[:-1])
 
@@ -45,13 +43,14 @@ def dump_set(docs):
   },..]
 }
 '''
-def get_training_set(from_date, to_date):
+def get_training_set(from_date, to_date=None):
+  if not to_date:
+    to_date = from_date
+
   tn = TextNormalizer()
 
   docs = defaultdict(list)
   for doc in get_days(from_date, to_date):
-    print(doc["id"])
-    sentences = sentence_tokenize(doc["text"], tn.normalize)
     doc["sents"] = sentence_tokenize(doc["text"], tn.normalize)
     doc["ner"] = __ners(doc["ner"])
     p = [doc["id"], doc["title"]] + doc["sents"]
@@ -71,20 +70,17 @@ def __ners(seq):
       r.append( " ".join(fst) )
   return unique( r )
 
+if __name__ == "__main__":
+  base_date = "201511"
+  for idx, n in enumerate([str(i) for i in range(13,19+1)]):
+    from_date = "{}{}".format(base_date, n)
 
-preprocessed = True
-from_date = "20151113"
-to_date = "20151113"
+    if False:
+      x_dict = get_training_set(from_date)
+      dump_set(x_dict)
 
-if not preprocessed:
-  x_dict = get_training_set(from_date, to_date)
-  dump_set(x_dict)
-
-print("loading!")
-x_n = joblib.load(model_path(from_date))
-print(x_n[0], len(x_n))
-
-
-
+    print("loading!")
+    x_n = joblib.load(model_path(from_date))
+    print("{}. {}, {}".format(idx, x_n[0], len(x_n)))
 
 
