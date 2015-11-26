@@ -11,11 +11,12 @@ function copy_resources_to_out {
   cp ../hawstyle.sty .
   cp ../thesis.bib .
   cp -r ../logo .
+  cp -r ../*.png .
   cp ../*.tex .
 }
 
 function texify {
-  /usr/texbin/latex -interaction=batchmode thesis.tex
+  /usr/texbin/pdflatex -interaction=batchmode thesis.tex
 }
 
 function compile {
@@ -26,12 +27,5 @@ function compile {
   texify
 }
 
-function to_pdf {
-  /usr/texbin/dvips thesis.dvi
-  /usr/local/bin/ps2pdf thesis.ps
-  cp thesis.pdf ../
-}
-
-cd "out" && copy_resources_to_out && clear && compile
-open thesis.dvi
+cd "out" && copy_resources_to_out && clear && compile && open thesis.pdf
 

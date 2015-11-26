@@ -1,4 +1,7 @@
 import os
+import numpy as np
+
+from collections import Counter
 from utils.helpers import flatten, unique
 
 from clustering import cluster_plot_2d
@@ -22,8 +25,14 @@ def print_top_words(model, feature_names, n_top_words):
 
 
 def print_clusters(c, fids):
+  k = len(list(Counter(c).keys()))
+  cluster_size = {cidx: np.where(c == cidx)[0].shape[0] for cidx in range(0,k)}
+
   clusters = {}
   for doc, cid in enumerate(c):
+    if cid == -1:
+      continue
+
     if not cid in clusters:
       clusters[cid] = []  
     clusters[cid].append( doc )

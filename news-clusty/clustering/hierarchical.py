@@ -39,8 +39,8 @@ Sources:
   - http://scikit-learn.org/stable/modules/clustering.html#hierarchical-clustering
 '''
 def ward_linkage(x, num_clusters=20):
-  knn_graph = kneighbors_graph(x, 40, include_self=False)
-  return __agglomerative__(x, num_clusters, "ward", knn_graph)
+  # knn_graph = kneighbors_graph(x, 40, include_self=False)
+  return __agglomerative__(x, num_clusters, "ward", None)
 
 def average_linkage(x, num_clusters=20):
   return __agglomerative__(x, num_clusters, "average", None)
@@ -91,10 +91,10 @@ Sources:
     BIRCH: An efficient data clustering method for large databases
   - http://scikit-learn.org/stable/modules/clustering.html#birch
 '''
-def birch(x, num_clusters=None, threshold=0.5, branching_factor=5):
+def birch(x, n_clusters=None, threshold=0.5, branching_factor=5):
   birch_model = Birch(
     threshold=threshold, 
-    n_clusters=num_clusters, 
+    n_clusters=n_clusters, 
     branching_factor=branching_factor
   )
   birch_model.fit(x)

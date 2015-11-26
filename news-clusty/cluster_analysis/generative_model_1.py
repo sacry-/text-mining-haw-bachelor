@@ -2,8 +2,8 @@ from __future__ import division
 
 import logging
 import numpy as np
+from pickle_utils import get_sents_training
 
-from es import EsSearcher
 from preprocessing import TextNormalizer
 from preprocessing import sentence_tokenize
 
@@ -23,34 +23,6 @@ from io_utils import append_to_file
 from io_utils import plot
 
 from clustering import silhouette
-
-
-def get_training_set(from_date, to_date, limit=None):
-  es = EsSearcher()
-  tn = TextNormalizer()
-
-  features, titles = [], []
-  skipped = 0
-  for idx, a in enumerate(es.articles_from_to(from_date, to_date)):
-    if len(a.text.split(" ")) < 40:
-      skipped += 1
-      continue
-
-    sentences = sentence_tokenize(a.text, tn.normalize)
-    features.append( sentences )
-    titles.append( str(a) )
-
-    if limit and limit == idx:
-      break
-
-  if not limit:
-    limit = len(titles) + skipped
-
-  print("lim: {}, actual: {}, ratio: {}%".format(
-    limit, len(features), (len(features) / limit) * 100)
-  )
-
-  return features, titles
 
 
 def important_sentences(topic_model, doc):
@@ -80,6 +52,9 @@ def topic_model_run(decomposer, n_topics, ffeatures, fids):
       )
     except:
       failed.append((fids[idx], doc, "Sparse"))
+      continue
+
+    if x_hat.shape[0] <= n_topics and decomposer == nmf:
       continue
 
     if x_hat.shape[1] > n_topics:
@@ -118,11 +93,8 @@ if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
   # Data
-  from_date = "20151114"
-  to_date = "20151114"
-  ffeatures, fids = get_training_set( 
-    from_date, to_date
-  )
+  model_name = "20151114"
+  ffeatures, fids = get_sents_training( model_name )
 
   # Topic modelling
   decomposer = [lsa, lda, nmf, None][1]
@@ -133,6 +105,7 @@ if __name__ == "__main__":
   # Clustering
   from clustering import birch
   from clustering import kmeans
+  from clustering import ward_linkage
 
   x, _ = count_vector( 
     x_topic, 
@@ -140,13 +113,14 @@ if __name__ == "__main__":
     max_df=0.99, 
     min_df=0.1
   )
+  n_clusters = 10
 
   plot_dimension = 2
-  x, _ = pca(x, plot_dimension)
-  centroids, c, k = kmeans(x, 8)
-  plot(x, centroids, c, k, "Birch", plot_dimension)
+  # x, _ = pca(x, plot_dimension)
+  centroids, c, k = kmeans(x, n_clusters)
+  # plot(x, centroids, c, k, "K-Means", plot_dimension)
   if fids: 
     print_clusters(c, fids)
 
-  print_measure("Birch", "silhouette", silhouette(x, c))
+  print_measure("K-Means", "silhouette", silhouette(x, c))
 

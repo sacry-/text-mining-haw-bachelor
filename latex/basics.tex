@@ -18,33 +18,51 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \item \emph{Sentence based} - A document d is split into sentences so clustering reveals the most coherent groups of sentences that are closely related.
     \item \emph{Collection of documents} - A collection of documents d (corpora) is grouped to get groups of documents that are closely related
     \item \emph{Stream of documents} - The same as clustering copora with the constraint that over time the size of documents grow.
-  \end{enumerate}
+  \end{itemize}
 
   Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section.\\
-  \textbf{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user (\cite{SumEvaluation2001}).\\
+  \textbf{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user \cite{SumEvaluation2001}.\\
   This results in a few possibilities where clustering works great as a preprocessing step for summarization.
   
   \begin{description}
-    \item[First] Clustering groups that have a higher density of information resulting in a grouped input for summarizers.
-    \item[Second] Grouping the latent topics accross and within documents to create a meta concept of closely related documents
-    \item[Third] Classify documents into categories in a semi supervised way to construct hierarchies of relationships
-    \item[Fourth] Finding outliers that will not highly contribute to the summarization
-  \end{enumerate}
+    \item[First] Clustering groups that have a \emph{higher density of information} resulting in a grouped input for summarizers.
+    \item[Second] Grouping the \emph{latent topics} accross and within documents to create a meta concept of closely related documents
+    \item[Third] Classify documents into \emph{categories} in a semi supervised way to construct hierarchies of relationships
+    \item[Fourth] Finding \emph{outliers} that will not highly contribute to the summarization
+  \end{description}
 
-  \subsection{Summarization}
+  Aside clustering itself can be seen as a summarization as well. Clustering can lead to well formed topical browsers where users can interact with a graphical user interface to browse topics in a more coherent and semantic way see \cite{Carrot2Search2003}.
 
-  \subsection{Supervision}
-    \begin{enumerate}
-      \item \emph{Multinominal/Gaussian) Naive Bayes (NB)} - x
-      \item \emph{(Multivariate) Logistic/Linear Regression} - x
-      \item \emph{Neural Networks (ANN)} - x
-      \item \emph{Support Vector Machines (SVM)} - x
-      \item \emph{Random Forests (RF)} - x
-    \end{enumerate}
+  \paragraph{Supervision}
 
+    As opposed to unsupervised learning strategies such as clustering, supervised learning classifies some input based on a provided ground truth. That is for an input \emph{x} there are labels \emph{y} that describe the class they are in. Supervision can be done by explicitly classifying the documents before the clustering. The input is then split into \emph{n} classes. Then each class can be individually clustered. Often however this is no option. We need to manually label all documents. This can be time consuming and error prone. Often several labellers are needed to crossvalidate human bias.
+    With this in mind there are two options on how to label unseen or new data:
+
+      \begin{itemize}
+        \item Use a supervised classification algorithm to automatically label unlabelled data. A prerequisite is to have a labelled training set and to have a lot of data. To name a few candidates: \emph{Multinominal/Gaussian) Naive Bayes (NB)}, \emph{Multivariate Logistic/Linear Regression}, \emph{Neural Networks (ANN)}, \emph{Support Vector Machines (SVM)} or \emph{Random Forests (RF)}.
+        \item Use an unsupervised clustering algorithm to automatically label unlabelled data. This can be done by first forming clusters and then merging the nearest clusters until k distinct categories remain. Usually the merging criterion can be controlled by some threshold and high variance documents are sorted out into an outlier cluster.
+      \end{itemize}
+
+    Usually by clustering we mean automatic detection of the grund truths. Often this is to shallow and does not lead to labels with a high confidence. In the domain of document clustering all information that provide some context are critical and should be used.
+
+\newpage{}
 \section{Vector Space Model (VSM)}
   
-  The vector space model
+  \paragraph{}
+    The vector space model is directly derived from the vector space which is studied in linear algebra. If we talk about vector space we often refer to the euclidean vector space where the dimensions are typically not higher than 3 dimensions. All dimensions higher than 3 are hard to display and to imagine. However this is does not mean that the rules do not hold true for higher dimensions.
+
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{vsm.png}
+      \caption{"Fig. 1 - Vector space model"}
+      \label{vsm_pic}
+  \end{figure}
+
+  \paragraph{}
+    The vector space model in the text domain has the meaning that each word is a component of a document. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independant of the first document, vectors are now in 150th dimensional space but with the non existant words set to 0. In linear algebra we can interpret two documents as two vectors forming a subspace in an \emph{m x n} matrix where m is the document size and \emph{n} all the features from all documents. It is typical that we generally have a lower \emph{m} and a much higher \emph{n} resulting in highly sparse vectors with a lot of zeros, typically 99\%. This also results in feature explosion where no document is close to one another because the dimensions are too high.\\
+    \emph{Simple example: Take 500 documents with 500 words and each document has a few words in common with another one, you easily get 200.000 features. Even documents with a lot of common or shared words will not be very close then.}
+
+  \subsection{Notation}
   \subsection{Bag of words}
   \subsection{Similarity and Distances}
   \subsection{Dimensionality and Hashing}
@@ -78,7 +96,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
 \section{Generative Models}    
   
   \subsection{Topic modelling}
-    \paragrah{Bayes Theorem}
+    \paragraph{Bayes Theorem}
     \paragraph{Multinominal Distributions}
     \paragraph{Dirichlet Distributions}
       Chinese Restaurant Process

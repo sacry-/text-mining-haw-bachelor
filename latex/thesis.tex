@@ -1,5 +1,5 @@
 \documentclass[
-  draft=true,
+  draft=false,
   paper=a4,
   twoside=false,
   fontsize=11pt,
@@ -11,6 +11,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman, english]{babel}
+\usepackage{textcomp}
 \usepackage{libertine}
 \usepackage{pifont}
 \usepackage{microtype}
@@ -23,10 +24,17 @@
 \usepackage[ngerman,colorlinks=true]{hyperref}
 \usepackage{soul}
 \usepackage{hawstyle}
-\usepackage{lipsum}
 \usepackage{epigraph}
+\usepackage{graphicx}
+\usepackage{algorithm2e}
 
 \input{imports_definitions.tex}
+
+\lstset{
+  frame = single,
+  basicstyle=\ttfamily\small,
+  fontadjust=true
+}
 
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}

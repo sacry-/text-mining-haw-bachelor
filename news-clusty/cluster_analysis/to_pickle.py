@@ -15,7 +15,7 @@ def base_path():
   return "/".join(os.path.abspath(__file__).split("/")[:-1])
 
 def model_path(model_name):
-  return "{}/{}.p".format(base_path(), model_name)
+  return "{}/es_pickles/{}.p".format(base_path(), model_name)
 
 
 '''
@@ -23,10 +23,10 @@ def model_path(model_name):
   "20151114", ["clinton_in_iowa", "Clinton in Iowa. Nice!", "Clinton is in iowa", "Nice!"],..
 ]
 '''
-def dump_set(docs):
+def dump_set(docs, write_to):
   print("dumping!")
   for index, docs in sorted(x_dict.items(), key=lambda y: y[0]):
-    joblib.dump([index] + docs, model_path(index))
+    joblib.dump([index] + docs, write_to)
   print("dumped!")
 
 '''
@@ -41,9 +41,9 @@ def dump_set(docs):
     "sents" : ["Clinton is in iowa", "Nice!"],
     "ner" : ["Hilary Clinton"]
   },..]
-}
+} -> [ index, [id, len(keywords), *keywords, len(flatten(pos)), *flatten(pos), len(ner), *ner], ...]
 '''
-def get_training_set(from_date, to_date=None):
+def get_sents_set(from_date, to_date=None):
   if not to_date:
     to_date = from_date
 
@@ -52,10 +52,48 @@ def get_training_set(from_date, to_date=None):
   docs = defaultdict(list)
   for doc in get_days(from_date, to_date):
     doc["sents"] = sentence_tokenize(doc["text"], tn.normalize)
-    doc["ner"] = __ners(doc["ner"])
     p = [doc["id"], doc["title"]] + doc["sents"]
     docs[doc["index"]].append( p )
 
+  return docs
+
+'''
+{ 
+  "index" : [
+    id, 
+    title, 
+    len(keywords), 
+    *keywords, 
+    len(flatten(pos)), 
+    *flatten(pos), 
+    len(ner), 
+    *ner
+  ]
+}
+'''
+def get_semantic_set(from_date, to_date=None):
+  if not to_date:
+    to_date = from_date
+
+  tn = TextNormalizer()
+
+  docs = defaultdict(list)
+  for doc in get_days(from_date, to_date):
+    keywords = list(doc["keywords"])
+    pos = flatten(doc["pos"])
+    ner = __ners(doc["ner"])
+    nps = doc["np"]
+
+    p = [
+      doc["id"], 
+      doc["title"]
+    ]
+    p += [len(keywords)] + keywords
+    p += [len(pos)] + pos
+    p += [len(ner)] + ner
+    p += [len(nps)] + nps
+
+    docs[doc["index"]].append( p )
   return docs
 
 def __ners(seq):
@@ -71,16 +109,22 @@ def __ners(seq):
   return unique( r )
 
 if __name__ == "__main__":
-  base_date = "201511"
-  for idx, n in enumerate([str(i) for i in range(13,19+1)]):
+  base_date = "201507"
+  post_fix = "_semantic"
+  for idx, n in enumerate([str(i) for i in range(1,19+1)]):
+    if len(n) == 1: 
+      n = "0" + n 
     from_date = "{}{}".format(base_date, n)
 
-    if False:
-      x_dict = get_training_set(from_date)
-      dump_set(x_dict)
+    x_dict = get_semantic_set(from_date)
+
+    write_to = model_path("{}{}".format(from_date, post_fix))
+    dump_set(x_dict, write_to)
 
     print("loading!")
-    x_n = joblib.load(model_path(from_date))
+    x_n = joblib.load(write_to)
     print("{}. {}, {}".format(idx, x_n[0], len(x_n)))
+
+
 
 
