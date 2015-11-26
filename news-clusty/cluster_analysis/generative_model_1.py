@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
   # Topic modelling
   decomposer = [lsa, lda, nmf, None][1]
-  n_topics = 3
+  n_topics = 15
   x_topic = topic_model_run(decomposer, n_topics, ffeatures, fids)
 
 
@@ -116,9 +116,9 @@ if __name__ == "__main__":
   n_clusters = 10
 
   plot_dimension = 2
-  # x, _ = pca(x, plot_dimension)
+  x, _ = pca(x, plot_dimension)
   centroids, c, k = kmeans(x, n_clusters)
-  # plot(x, centroids, c, k, "K-Means", plot_dimension)
+  plot(x, centroids, c, k, "K-Means", plot_dimension)
   if fids: 
     print_clusters(c, fids)
 

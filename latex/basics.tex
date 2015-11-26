@@ -20,6 +20,15 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \item \emph{Stream of documents} - The same as clustering copora with the constraint that over time the size of documents grow.
   \end{itemize}
 
+  The following is an illustration of a typical cluster result. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. 
+
+  \begin{figure}[h!]
+    \centering
+      \includegraphics[width=0.7\textwidth]{clustering_intro.png}
+      \caption{"A K-means visualisation with several dimensionality reduction steps."}
+      \label{clustering_intro}
+  \end{figure}
+
   Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section.\\
   \textbf{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user \cite{SumEvaluation2001}.\\
   This results in a few possibilities where clustering works great as a preprocessing step for summarization.
@@ -54,16 +63,86 @@ Lastly some quality measures of clusters based on internal measures (without gro
   \begin{figure}[h!]
     \centering
       \includegraphics[width=0.7\textwidth]{vsm.png}
-      \caption{"Fig. 1 - Vector space model"}
+      \caption{"Vector space model"}
       \label{vsm_pic}
   \end{figure}
 
   \paragraph{}
-    The vector space model in the text domain has the meaning that each word is a component of a document. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independant of the first document, vectors are now in 150th dimensional space but with the non existant words set to 0. In linear algebra we can interpret two documents as two vectors forming a subspace in an \emph{m x n} matrix where m is the document size and \emph{n} all the features from all documents. It is typical that we generally have a lower \emph{m} and a much higher \emph{n} resulting in highly sparse vectors with a lot of zeros, typically 99\%. This also results in feature explosion where no document is close to one another because the dimensions are too high.\\
-    \emph{Simple example: Take 500 documents with 500 words and each document has a few words in common with another one, you easily get 200.000 features. Even documents with a lot of common or shared words will not be very close then.}
+    The vector space model in the text domain has the meaning that each word is a component of a document. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independant of the first document, both vectors are now in 150th dimensional space. That is every new word will be a new component extending the dimensions by one which we generally call ``bag of words'' which is detailed in the next sections.
 
   \subsection{Notation}
+    Before moving on we have to denote some notations and definitions. 
+    A corpus \emph{C} is defined as a collection of \emph{m} documents
+
+    \begin{equation}
+      C = \{d_1, d_2 \: .. \: d_m\}
+    \end{equation}
+
+    A document \emph{d} contains words \emph{w} such that
+    
+    \begin{equation}
+      d = \{w_1, w_2 \: .. \: w_i\}
+    \end{equation}
+    
+    Where \emph{i} is \emph{|d| (length of document d)}. Note that each document is not a text but a sequence of words. That is the result of preprocessing where texts are tokenized to individual word tokens and special characters are filtered out.\\
+    A dictionary \emph{D} contains all the distinct words from each document.
+
+    \begin{equation}
+      C = \{w_1, w_2 \: .. \: w_n\}
+    \end{equation}
+
   \subsection{Bag of words}
+    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0.
+
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{c|c|c|c}
+        \multicolumn{1}{r|}{} & \multicolumn{3}{c}{Words} \\
+        \cline{1-4}
+        Documents &   politics &   corruption &  policy  \\
+        \hline
+        document1 &    1 (2)   &     1 (1)    &   0 (0)  \\
+        document2 &    1 (4)   &     0 (0)    &   1 (2)  \\
+        document3 &    1 (1)   &     1 (6)    &   0 (0)  \\
+      \end{tabular}\\
+      \caption{"Document term matrix, the numbers in brackets is the actual count"}
+    \end{table}
+
+    Normally we have a lower \emph{m} and a much higher \emph{n} resulting in highly sparse vectors with a lot of zeros, typically 99\%. We can also conclude that the order of words is not kept. That means highly correlating words like \emph{New} and \emph{York} are not accounted for. In this case they can actually refer to the verb \emph{new} and \emph{York} as a city in \emph{Great Britain}. A bigram e.g. \emph{(New, York)} would capture the concept \emph{New York}. Bigrams, trigrams or generally ngrams are not taken into account. Ngrams transform a sequence of words by \emph{n} such that 
+
+      \begin{equation}
+        f(n, \{w1, w2, w3, w4\} \in d) \to \{(w1, w2),(w2,w3),(w3,w4)\}
+      \end{equation}
+
+    Adding ngrams to a to a document term matrix can greatly enhance similiarity between two documents. With single words and ngrams the memory requirement is \emph{n+(n-1)}. If the data is already extremely sparse this will not help much but can increase the semantic effect on documents that share similar word combinations. There are other much more complex models e.g. \emph{noun phrases} or \emph{named entities} that can grasp this intuition as well.
+
+    The document term matrix can be enhanced by taking the count of the occuring words instead of just labelling it by occurence. This is called the raw frequency and can be normalized in a couple of ways by the term frequency (tf) model
+     
+      \begin{equation}
+        f(t,d) = c
+      \end{equation}
+
+    where \emph{c} is the total count of term \emph{t} occuring in document \emph{d}.
+    And a general term frequency function that helps against long document bias by normalizing with the maximum frequency of any occuring word in d.
+
+    \begin{equation}
+      tf(t,d) = 0.5 + \frac{0.5 * f(t,d)}{max(f(w,d)\, \forall w \in d)}
+    \end{equation}
+
+    The term frequency model can be further advanced by caculating the inverse document frequency (idf).
+
+    \begin{equation}
+      idf(t, C) = log(\frac{|C|}{|\forall d \in C : t \in d|})
+    \end{equation}
+
+    Where |C| is the size of the corpus and we check for every document in the corpus if the term occurs in the document. The intuition is: How often does a term occur in other documents and therefore measures importance. Generalizing the term-frequency and inverse-document-frequency we obtain the tf-idf:
+
+    \begin{equation}
+      tfidf(t, d, D) = tf(t, d) * idf(t, D)
+    \end{equation}
+
+    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words.
+
   \subsection{Similarity and Distances}
   \subsection{Dimensionality and Hashing}
 

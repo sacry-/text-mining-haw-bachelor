@@ -9,6 +9,7 @@ from features import tfidf_vector
 from features import hash_vector
 
 from features import lsa
+from features import pca
 
 from io_utils import print_clusters
 from io_utils import print_measure
@@ -43,7 +44,7 @@ def get_algo(algorithm_id=0):
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
-  (algo_name, algorithm) = get_algo(algorithm_id=2)
+  (algo_name, algorithm) = get_algo(algorithm_id=0)
 
   # Data
   model_name = "20151116"
@@ -56,18 +57,18 @@ if __name__ == "__main__":
     max_df=0.8, 
     min_df=1
   )
-  xtrain = cosine_similarity(x_train)
+  x_train = cosine_similarity(x_train)
   n_clusters = 10
 
+  print(x_train.shape)
   x_train, _ = lsa(x_train, n_clusters)
+  x_train, _ = pca(x_train, 2)
   centroids, c, k = algorithm(
     x_train, 
-    n_clusters=n_clusters, 
-    threshold=0.5, 
-    branching_factor=5
+    n_clusters=n_clusters
   )
 
-  # plot(x_train, centroids, c, k, algo_name, 3)
+  plot(x_train, centroids, c, k, algo_name, 2)
 
   if ids: 
     print_clusters(c, ids)

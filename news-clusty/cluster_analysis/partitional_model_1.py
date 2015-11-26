@@ -67,7 +67,7 @@ ffeatures, fids = flattened_features(
 print( "-"*40, "\n", cluster_algo_name, "\n", "-"*40 )
 
 
-if True:
+if False:
   x, vsmodel = hash_vector(
     ffeatures, 
     ngram=(1,2),

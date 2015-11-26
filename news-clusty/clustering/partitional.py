@@ -44,10 +44,10 @@ Sources:
   Society for Industrial and Applied Mathematics (2007)
   - http://scikit-learn.org/stable/modules/clustering.html#k-means
 '''
-def kmeans(x, num_clusters=1):
+def kmeans(x, n_clusters=1):
   km = KMeans(
     init='k-means++', 
-    n_clusters=num_clusters, 
+    n_clusters=n_clusters, 
     n_init=20, 
     copy_x=True
   )

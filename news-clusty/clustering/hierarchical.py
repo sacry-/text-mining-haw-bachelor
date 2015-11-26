@@ -38,20 +38,20 @@ Description:
 Sources:
   - http://scikit-learn.org/stable/modules/clustering.html#hierarchical-clustering
 '''
-def ward_linkage(x, num_clusters=20):
+def ward_linkage(x, n_clusters=20):
   # knn_graph = kneighbors_graph(x, 40, include_self=False)
-  return __agglomerative__(x, num_clusters, "ward", None)
+  return __agglomerative__(x, n_clusters, "ward", None)
 
-def average_linkage(x, num_clusters=20):
-  return __agglomerative__(x, num_clusters, "average", None)
+def average_linkage(x, n_clusters=20):
+  return __agglomerative__(x, n_clusters, "average", None)
 
-def complete_linkage(x, num_clusters=20):
-  return __agglomerative__(x, num_clusters, "complete", None)
+def complete_linkage(x, n_clusters=20):
+  return __agglomerative__(x, n_clusters, "complete", None)
 
 
-def __agglomerative__(x, num_clusters, linkage, connectivity):
+def __agglomerative__(x, n_clusters, linkage, connectivity):
   ac = AgglomerativeClustering(
-    n_clusters=num_clusters,
+    n_clusters=n_clusters,
     connectivity=connectivity,
     linkage=linkage
   )

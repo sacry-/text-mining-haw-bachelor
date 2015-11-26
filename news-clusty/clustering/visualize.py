@@ -76,7 +76,7 @@ def cluster_plot_2d(x, centroids, c, k, name):
       plt.scatter(c1, c2, 
         s=180.0, c=point_colors[i], marker='o', lw=2, zorder=100
       )
-      annotate(plt, i, (c1, c2))
+      if False: annotate(plt, i, (c1, c2))
 
   plt.show()
 
