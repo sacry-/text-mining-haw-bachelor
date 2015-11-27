@@ -5,7 +5,7 @@
 The goal of this section is to give some intuition and the necessary theoretical background for the following chapters. The areas where clustering problems arise are huge. It provides solutions to problems like market segmentation, classification, document organization or indexing.\\
 Firstly we will have a look at the definition of clustering and summarization. How they are related and the variety of possibilities this imposes.
 Secondly the vector space model (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by singular value decomposition (SVD).
-Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Mean-Shift) will be presented.
+Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Mean-Shift) family will be presented.
 Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.
 Lastly some quality measures of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth) are explained.
 
@@ -25,7 +25,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
   \begin{figure}[h!]
     \centering
       \includegraphics[width=0.7\textwidth]{clustering_intro.png}
-      \caption{"A K-means visualisation with several dimensionality reduction steps."}
+      \caption{"K-means visualisation with applied dimensionality reduction"}
       \label{clustering_intro}
   \end{figure}
 
@@ -58,7 +58,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
 \section{Vector Space Model (VSM)}
   
   \paragraph{}
-    The vector space model is directly derived from the vector space which is studied in linear algebra. If we talk about vector space we often refer to the euclidean vector space where the dimensions are typically not higher than 3 dimensions. All dimensions higher than 3 are hard to display and to imagine. However this is does not mean that the rules do not hold true for higher dimensions.
+    The vector space model is directly derived from the vector space subject to linear algebra. If we talk about vector space we often refer to the euclidean vector space where the dimensions are typically up to 3 dimensions. All dimensions higher than 3 are hard to imagine. From the view of linear algebra the vector space consists of linear combinations that are solved by $Ax = b$ by some matrix decomposition step. In the context of document clustering the vector spaces typically far exceed 3 dimensions up to $\mathbf{R}^{n}$. For a proper introduction to linear algebra see \cite{Strang2009}.
 
   \begin{figure}[h!]
     \centering
@@ -68,7 +68,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
   \end{figure}
 
   \paragraph{}
-    The vector space model in the text domain has the meaning that each word is a component of a document. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independant of the first document, both vectors are now in 150th dimensional space. That is every new word will be a new component extending the dimensions by one which we generally call ``bag of words'' which is detailed in the next sections.
+    The vector space model in the text domain has the meaning that each word is a component of a document. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independant of the first document, both vectors are now in 150th dimensional space. That is every new word will be concatenated to the existing document sets. This is the ``bag of words'' model which is detailed in the next section.
 
   \subsection{Notation}
     Before moving on we have to denote some notations and definitions. 
@@ -84,11 +84,11 @@ Lastly some quality measures of clusters based on internal measures (without gro
       d = \{w_1, w_2 \: .. \: w_i\}
     \end{equation}
     
-    Where \emph{i} is \emph{|d| (length of document d)}. Note that each document is not a text but a sequence of words. That is the result of preprocessing where texts are tokenized to individual word tokens and special characters are filtered out.\\
+    Where \emph{i} is \emph{|d| (length of document d)}. Note that each document is not a text but a sequence of words. That is the result of preprocessing where texts are tokenized to individual word tokens. Often special characters are filtered out as well.\\
     A dictionary \emph{D} contains all the distinct words from each document.
 
     \begin{equation}
-      C = \{w_1, w_2 \: .. \: w_n\}
+      D = \{w_1, w_2 \: .. \: w_n\}
     \end{equation}
 
   \subsection{Bag of words}
@@ -111,7 +111,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
     Normally we have a lower \emph{m} and a much higher \emph{n} resulting in highly sparse vectors with a lot of zeros, typically 99\%. We can also conclude that the order of words is not kept. That means highly correlating words like \emph{New} and \emph{York} are not accounted for. In this case they can actually refer to the verb \emph{new} and \emph{York} as a city in \emph{Great Britain}. A bigram e.g. \emph{(New, York)} would capture the concept \emph{New York}. Bigrams, trigrams or generally ngrams are not taken into account. Ngrams transform a sequence of words by \emph{n} such that 
 
       \begin{equation}
-        f(n, \{w1, w2, w3, w4\} \in d) \to \{(w1, w2),(w2,w3),(w3,w4)\}
+        f(n = 2, \{w_1, w_2, w_3\} \in d) \to \{(w_1, w_2),(w_2,w_3)\}
       \end{equation}
 
     Adding ngrams to a to a document term matrix can greatly enhance similiarity between two documents. With single words and ngrams the memory requirement is \emph{n+(n-1)}. If the data is already extremely sparse this will not help much but can increase the semantic effect on documents that share similar word combinations. There are other much more complex models e.g. \emph{noun phrases} or \emph{named entities} that can grasp this intuition as well.
@@ -135,16 +135,47 @@ Lastly some quality measures of clusters based on internal measures (without gro
       idf(t, C) = log(\frac{|C|}{|\forall d \in C : t \in d|})
     \end{equation}
 
-    Where |C| is the size of the corpus and we check for every document in the corpus if the term occurs in the document. The intuition is: How often does a term occur in other documents and therefore measures importance. Generalizing the term-frequency and inverse-document-frequency we obtain the tf-idf:
+    Where |C| is the size of the corpus and we check for every document in the corpus if the term occurs in the document. The intuition is: How often does a term occur in other documents. If a term appears more often then it is a common word such as ``the'', whereas ``super-symmetry'' might be a rare word. It is therefore some measure of importance. Because idf and tf only measure either importance accross all documents or importance of one document, we need to find words that are not rare and not common either. Generalizing the term-frequency and inverse-document-frequency we obtain the tf-idf:
 
     \begin{equation}
       tfidf(t, d, D) = tf(t, d) * idf(t, D)
     \end{equation}
 
-    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words.
+    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words.\\
+
+    There are other models such as graph based or tree based approaches. For the porpuse of this thesis these models are left out. @TODO:Ref
+
+    One of the big problems with the vector space model is that feature inflation or feature explosion arises quickly. If documents have a high variance between other documents and the connections between two documents are small the sparsity can go up to 100\%. That means that no document has overlapping words and each document only accounts for the words that were originally in the document. Think of it another way, suppose one has 3 documents in 3 dimensional space with each axis set to zero but one (1,0,0), (0,1,0), (0,0,1) we have an independant basis. This means that all documents are orthogonal to each other, meeting at no point except at the null point (0,0,0). It is therefore not really possible to derive any connections between those 3 points. Thus each document represents its own topic.
+    These kind of problems need a well thought out solution which is presented later in this section.
 
   \subsection{Similarity and Distances}
-  \subsection{Dimensionality and Hashing}
+    Partitional clustering algorithms commonly work through some objective distance or similarity function between two objects. After lifting the documents into vector space, we are faced with the problem of distance between two documents. Several measures were proprosed mostly stemming from linear algebra so we will briefly review them. Our goal is to have not an \emph{m x n}matrix for \emph{document x term} correlations but an \emph{m x m} matrix for \emph{document x document} similarities. After all the goal is to compare two documents.
+
+    \paragraph{Cosine similarity}
+    Given two documents $d_1$ and $d_2$ the classical cosine similarity is defined by
+
+    \begin{equation}
+      cos(d_1, d_2) = \frac{d_1 * d_2}{||d_1|| * ||d_2||}
+    \end{equation}
+
+    If the documents are already defined unit vectors cosine similarity is just $cos(d_1, d_2) = d_1 * d_2$. The cosine similarity is a measure of orientation, not the magnitude. The angles between documents is compared and thus if the angle is 0° both documents are equal in size and word occurences. On the other hand we often like to measure not only the direction but the magnitude.
+
+    \paragraph{Euclidean distance ($l^2\:norm$)}
+    Again given two documents $d_1$ and $d_2$ it is the geometrical distance between two vectors in $\mathbf{R}^n$. This results in the fact that documents running into different directions, e.g. have different angles might as well be very close. It is a geometric measure and accounts for magintude.
+
+    \begin{equation}
+      euclid(d_1, d_2) = \sqrt{\sum_{i=1}^{M}(d_1^i * d_2^i)^2}
+    \end{equation}
+
+    \paragraph{Manhattan ($l^1\:norm$)}
+    Is commonly known under the city block distance measure. Equally squared brackets
+    will get you closest to a document by comparing one dimension at a time and summing up their totals.
+
+    \begin{equation}
+      manhattan(d_1, d_2) = \sum_{i=1}^{M}|d_1^i - d_2^i|
+    \end{equation}
+
+    There are more distance functions such as the Jaccard coefficient that works on intersections of sets and the Chebyshev distance which is a maximizing greedy strategy of the manhattan distance. The underlying concepts of similarity should be clear though. Each coefficient works good on a particular set, however cosine and euclidean distances are the commonly used choices.
 
   \subsection{Enhancing the Vector Space Model}
     \subsubsection{Singular Value Decomposition (SVD)}
