@@ -19,14 +19,14 @@ from paths import bbc_path
 def semantics(doc):
   prep = preprocess(doc)
   return (
-    flatten( prep.pos_tags() )
+    flatten( prep.pos_tags() ),
     prep.noun_phrases(),
     flatten( prep.get_entities() )
   )
 
 def bbc_parser(doc, category): 
   try:
-    signal.alarm(10)
+    signal.alarm(15)
     s = doc.split("\n")
     title = s[0]
     _id = normalize_title(title)
