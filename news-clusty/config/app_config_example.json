@@ -1,10 +1,9 @@
 {
-  "stanford_ner" : {
-    "ner_jar" : "path/to/your/stanford-ner.jar",
-    "classifier" : "path/to/your/classifiers/english.muc.7class.distsim.crf.ser.gz"
-  },
-  "logpath" : "path/to/your_logs/logs",
-  "redis" : "",
-  "elasticsearch" : "",
-  "pickles" : ""
+  "stanford_ner_jar" : "path/to/your/stanford-ner/stanford-ner.jar",
+  "stanford_classifier" : "path/to/your/stanford-ner/classifiers/english.muc.7class.distsim.crf.ser.gz",
+  "logpath" : "/path/to/your/news-clusty/logs",
+  "redis_host" : "localhost",
+  "redis_port" : "6379",
+  "elastic_host" : "localhost",
+  "elastic_port" : "9200"
 }
