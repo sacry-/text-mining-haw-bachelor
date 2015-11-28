@@ -1,14 +1,13 @@
 import json
+import os
 
-from es import EsConnect
-from es import Elastic
+from persistence import EsConnect
+from persistence import Elastic
 
 from scraping import article
 
-from router import backup_path
 from utils.helpers import date_today
 from utils.logger import Logger
-from os import listdir
 
 
 logger = Logger(__name__).getLogger()
@@ -75,13 +74,13 @@ class ElasticSnapper():
     return "yes" == input( message ).strip()
 
   def backup(self, name):
-    return "{}/{}.json".format( backup_path(), name )
+    return "{}/{}.json".format( os.environ["CLUSTY_BACKUPS"], name )
 
   def latest_backup_file(self):
-    return str( max([int(f.strip(".json")) for f in listdir(backup_path())]) )
+    return str( max([int(f.strip(".json")) for f in os.listdir(backup_path())]) )
 
 
 if __name__ == "__main__":
-  eS = ElasticSnapper()
-  eS.dump()
+  es = ElasticSnapper()
+  es.dump()
   

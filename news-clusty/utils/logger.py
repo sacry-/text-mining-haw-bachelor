@@ -1,6 +1,5 @@
 import logging
-from os import path
-from router import log_path
+import os
 
 
 class Logger():
@@ -11,7 +10,7 @@ class Logger():
 
   def getLogger(self):
     self.logger = logging.getLogger(self.name)
-    handler = logging.FileHandler("{}/{}.log".format(log_path(), self.name))
+    handler = logging.FileHandler("{}/{}.log".format(os.environ["LOG_PATH"], self.name))
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)

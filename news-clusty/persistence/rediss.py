@@ -1,5 +1,6 @@
 import ast
 import redis
+import os
 
 
 LEVAL = ast.literal_eval
@@ -9,7 +10,13 @@ class Rediss(object):
   def __init__(self, db=0, host="localhost", port=6379, config=None):
     self.db = db
     self.host = host
+    if os.environ["REDIS_HOST"]:
+      self.host = os.environ["REDIS_HOST"]
+
     self.port = port
+    if os.environ["REDIS_PORT"]:
+      self.port = int(os.environ["REDIS_PORT"])
+
     if config:
       self.config = None
     self.rs = redis.StrictRedis(host=self.host, port=self.port, db=self.db)

@@ -1,5 +1,5 @@
 from utils.logger import Logger
-from es import EsConnect
+from persistence import EsConnect
 
 from scraping.article import Article
 from scraping.article import article_from_data

@@ -1,5 +1,5 @@
 from utils.logger import Logger
-from es import EsConnect
+from persistence import EsConnect
 
 from preprocessing.preprocessor import Prep
 

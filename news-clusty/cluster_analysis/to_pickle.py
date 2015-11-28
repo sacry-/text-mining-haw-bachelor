@@ -15,28 +15,15 @@ def base_path():
   return "/".join(os.path.abspath(__file__).split("/")[:-1])
 
 def model_path(model_name):
-  return "{}/data/{}.p".format(base_path(), model_name)
+  return "{}/es_pickles/{}.p".format(base_path(), model_name)
 
-def dump_set(docs, write_to):
+
+def dump_set(x_dict, write_to):
   print("dumping!")
   for index, docs in sorted(x_dict.items(), key=lambda y: y[0]):
     joblib.dump([index] + docs, write_to)
   print("dumped!")
 
-'''
-{ 
-  "20151114" : [{
-    "index" : "20151114",
-    "id" : "clinton_in_iowa",
-    "title" : "Clinton in Iowa. Nice!",
-    "text" : "Clinton is in iowa",
-    "keywords" : ["Clinton", "politics"],
-    "pos" : [["Cliton", "NP"], ["politics", "NP"]],
-    "sents" : ["Clinton is in iowa", "Nice!"],
-    "ner" : ["Hilary Clinton"]
-  },..]
-} -> [ index, [id, len(keywords), *keywords, len(flatten(pos)), *flatten(pos), len(ner), *ner], ...]
-'''
 def get_sents_set(from_date, to_date=None):
   if not to_date:
     to_date = from_date
@@ -50,7 +37,6 @@ def get_sents_set(from_date, to_date=None):
     docs[doc["index"]].append( p )
 
   return docs
-
 
 def get_semantic_set(from_date, to_date=None):
   if not to_date:
@@ -89,16 +75,13 @@ def __ners(seq):
       r.append( " ".join(fst) )
   return unique( r )
 
-
-if __name__ == "__main__":
-  base_date = "201507"
-  post_fix = "_semantic"
-  for idx, n in enumerate([str(i) for i in range(1,19+1)]):
+def stream(base_date, post_fix, method, from_int, to_int):
+  for idx, n in enumerate([str(i) for i in range(from_int,to_int+1)]):
     if len(n) == 1: 
       n = "0" + n 
     from_date = "{}{}".format(base_date, n)
 
-    x_dict = get_semantic_set(from_date)
+    x_dict = method(from_date)
 
     write_to = model_path("{}{}".format(from_date, post_fix))
     dump_set(x_dict, write_to)
@@ -108,5 +91,12 @@ if __name__ == "__main__":
     print("{}. {}, {}".format(idx, x_n[0], len(x_n)))
 
 
+if __name__ == "__main__":
+  base_date = "201507"
+  post_fix = "_semantic"
+  from_int = 1
+  to_int = 19
+  stream( base_date, post_fix, get_sents_set, from_int, to_int )
+  stream( base_date, post_fix, get_semantic_set, from_int, to_int )
 
 

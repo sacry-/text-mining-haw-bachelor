@@ -1,4 +1,4 @@
-from es import EsSearcher
+from persistence import EsSearcher
 
 from features.cache import Cache
 

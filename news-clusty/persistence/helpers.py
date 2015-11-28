@@ -23,3 +23,4 @@ def date_range(from_date, to_date):
 
   without_dash = [str(date).replace("-", "") for date in times]
   return without_dash
+

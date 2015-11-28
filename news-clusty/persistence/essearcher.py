@@ -2,9 +2,9 @@ import random
 
 from scraping.article import article_from_hash
 
-from es.esconnect import EsConnect
-from es.elastic import Elastic
-from es.helpers import date_range
+from persistence.esconnect import EsConnect
+from persistence.elastic import Elastic
+from persistence.helpers import date_range
 
 from collections import Counter
 

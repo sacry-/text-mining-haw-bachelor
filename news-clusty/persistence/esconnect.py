@@ -1,4 +1,5 @@
 import requests
+import os
 
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
@@ -6,12 +7,9 @@ from elasticsearch_dsl.connections import connections
 
 class EsConnect():
 
-  def __init__(self, config=None):
-    self.host = "localhost" 
-    self.port = 9200
-    if config:
-      self.host = config["host"]
-      self.port = config["port"]
+  def __init__(self):
+    self.host = os.environ["ELASTIC_HOST"]
+    self.port = int(os.environ["ELASTIC_PORT"])
 
   def check(self):
     try:

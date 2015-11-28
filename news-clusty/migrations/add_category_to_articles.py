@@ -1,5 +1,5 @@
-from es import EsSearcher
-from es import Elastic
+from persistence import EsSearcher
+from persistence import Elastic
 
 
 def unique(seq):
