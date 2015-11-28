@@ -222,9 +222,34 @@ Lastly some quality measures of clusters based on internal measures (without gro
   Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms. \emph{Partitional algorithms} in particular can be globally optimized given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$.
 
   \subsection{Partitional clustering}
-    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity is applied such as cosine cluster centers are created import numpy as np
+    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms such as K-Means and Mean-Shift.
 
     \paragraph{K-Means}
+    The K-means clustering algorithm is a centroid based algorithm. One needs to provide a fixed number k so k centroids are generated. Maxiter is a parameter that controls how many runs a kmeans will run. As it can take a while until kmean converges with some minimum we can enforce this.
+
+    \begin{algorithm}[H]
+    \begin{algorithmic}[1]
+      \caption{Kmeans algorithm}\label{kmeans}
+      \Function{Kmeans}{$X,k,maxiter$}
+        \State $centroids \gets select\:k\:initial\:centroids\:from\:X$
+        \State $labels \gets init\:m\:x\:1\:zero\:matrix$
+        \State $cost \gets \infty$
+
+        \For{$i\gets 1, maxiter$}
+          \State $labels \gets assign\:X\:to\:k\:nearest\:centroids$
+          \State $centroids \gets update\:centroids\:averaging\:X\:over\:assigned\:labels$
+          \If{$algorithm\:converges\:by\:argmin(costs)$}
+            \State Stop
+          \EndIf
+        \EndFor
+        \State \Return $labels, centroids, cost$
+      \EndFunction
+    \end{algorithmic}
+    \end{algorithm}
+
+    K-Means does not infer how many clusters fit well, rather it is limited by the number the user provides. The inherent problem is, how many clusters are actually in the underlying data? If 5 documents are compared that share no meaning and share no words at all we obviously need 5 clusters. If on the other hand most of the documents share meaning and magnitude then maybe it is reasonable to pick 2 clusters. Typically one needs to run a K-means with some objective cost function that tries different ks and checks whether or not the result greatly improves by some threshold. 
+    All of these methods have one great inherent second problem: How do we chose the initial clusters? Several strategies have been proposed over random sampling such as intercluster distance maximization or high variance sampling. As the initial clusters are often picked randomly kmeans is a non deterministic approach that will most likely result in different clusters after each run. However kmeans will always converge at or near a global maximum, that is it will find a globally minimized cost that cannot get better. This however all depends on the choice of initial clusters.
+
     \paragraph{Mean-Shift}
 
   \subsection{Hierarchical / Agglomerative clustering}
