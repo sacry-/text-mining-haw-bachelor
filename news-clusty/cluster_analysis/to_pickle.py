@@ -15,14 +15,8 @@ def base_path():
   return "/".join(os.path.abspath(__file__).split("/")[:-1])
 
 def model_path(model_name):
-  return "{}/es_pickles/{}.p".format(base_path(), model_name)
+  return "{}/data/{}.p".format(base_path(), model_name)
 
-
-'''
-[
-  "20151114", ["clinton_in_iowa", "Clinton in Iowa. Nice!", "Clinton is in iowa", "Nice!"],..
-]
-'''
 def dump_set(docs, write_to):
   print("dumping!")
   for index, docs in sorted(x_dict.items(), key=lambda y: y[0]):
@@ -57,20 +51,7 @@ def get_sents_set(from_date, to_date=None):
 
   return docs
 
-'''
-{ 
-  "index" : [
-    id, 
-    title, 
-    len(keywords), 
-    *keywords, 
-    len(flatten(pos)), 
-    *flatten(pos), 
-    len(ner), 
-    *ner
-  ]
-}
-'''
+
 def get_semantic_set(from_date, to_date=None):
   if not to_date:
     to_date = from_date
@@ -107,6 +88,7 @@ def __ners(seq):
     if all(x==snd[0] for x in snd):
       r.append( " ".join(fst) )
   return unique( r )
+
 
 if __name__ == "__main__":
   base_date = "201507"
