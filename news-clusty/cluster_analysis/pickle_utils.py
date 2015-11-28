@@ -12,7 +12,7 @@ def model_path(model_name):
 
 def get_sents_training(model_name):
   print("loading!")
-  x_n = joblib.load(model_path(model_name))
+  x_n = joblib.load(model_path(model_name + "_sents"))
   print("Loaded model: {} with docs: {}".format(x_n[0], len(x_n)))
 
   index = x_n[0]

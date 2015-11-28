@@ -93,7 +93,7 @@ if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
   # Data
-  model_name = "20151114"
+  model_name = "20150701"
   ffeatures, fids = get_sents_training( model_name )
 
   # Topic modelling

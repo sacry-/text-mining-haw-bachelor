@@ -26,7 +26,7 @@ def list_topic(c, ids_as_list):
 
 if __name__ == "__main__":
   s_index = "20150701"
-  e_index = "20150705"
+  e_index = "20150702"
   features, ids = indexed_features(s_index, e_index)
   
   c = 0

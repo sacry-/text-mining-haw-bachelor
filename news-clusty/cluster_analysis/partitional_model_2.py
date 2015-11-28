@@ -47,7 +47,7 @@ if __name__ == "__main__":
   (algo_name, algorithm) = get_algo(algorithm_id=0)
 
   # Data
-  model_name = "20151116"
+  model_name = "20150701"
   x_train, ids = get_sents_training( model_name )
 
   x_train = [" ".join(s) for s in x_train]

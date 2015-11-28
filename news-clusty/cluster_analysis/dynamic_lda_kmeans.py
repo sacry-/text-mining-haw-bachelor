@@ -15,7 +15,7 @@ from features import create_corpus
 
 if __name__ == "__main__":
   s_index = "20150701"
-  e_index = "20150705"
+  e_index = "20150702"
   features_as_list, ids = indexed_features(s_index, e_index)
  
   n_topics = 0
@@ -28,7 +28,7 @@ if __name__ == "__main__":
   dictionary, corpus = create_corpus(index, all_features)
   x, lda_model, lda_corpus = single_lda("20150703", corpus, dictionary, n_topics)
 
-  x = pca(x, dims)
+  x = pca(x, 2)
   centroids, c, k = kmeans(x, n_topics)
   cluster_plot_2d(x, centroids, c, k)
 

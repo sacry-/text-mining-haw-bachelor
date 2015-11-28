@@ -58,7 +58,7 @@ def single_lda(index, corpus, dictionary, n_topics):
   except:
     print("no corpus_lda found for: {}".format( lda_path ))
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    lda_model = models.LdaModel(corpus, id2word=dictionary, num_topics=n_topics, iterations=100, update_every=0, passes=10)
+    lda_model = models.LdaModel(corpus, id2word=dictionary, num_topics=n_topics, iterations=100, update_every=0, passes=5)
     lda_model.save( lda_path )
     lda_corpus = lda_model[corpus]
   
