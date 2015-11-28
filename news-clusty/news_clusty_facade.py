@@ -1,8 +1,10 @@
+import router
+
 from utils import shell_tools
 from utils import Logger
 from utils import ElasticSnapper
 
-from es import check_es_is_up
+from persistence import check_es_is_up
 
 
 logger = Logger("news-clusty").getLogger()
@@ -25,7 +27,6 @@ def usage( args ):
 
 
 def news_clusty_facade(cmd, args):
-
   logger.info("{} with: {}".format(cmd, args))
 
   if cmd == "scrape": 

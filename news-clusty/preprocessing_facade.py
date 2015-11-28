@@ -3,7 +3,7 @@ import signal
 
 from preprocessing import PrepPersister
 from preprocessing import preprocess
-from es import EsSearcher
+from persistence import EsSearcher
 
 from utils import timeit
 from utils import Logger

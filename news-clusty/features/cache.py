@@ -1,4 +1,4 @@
-from features.rediss import Rediss
+from persistence import Rediss
 
 
 class Cache(Rediss):

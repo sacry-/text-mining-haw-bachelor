@@ -73,3 +73,34 @@ https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
 http://pythonhosted.org/mediawiki-utilities/
 ```
 
+
+### ENVIRONMENT ###
+Setup your environment by either configuring the <b>config/app_config.json</b> with absolute paths or set the following variables to your global <b>ENV</b>
+
+1. "stanford_ner_jar" : "full/path/to/stanford-ner.jar"
+2. "stanford_classifier" : "full/path/to/classifiers/english.muc.7class.distsim.crf.ser.gz"
+3. "logpath" : "full/path/to/logs"
+4. "redis_host" : "localhost"
+5. "redis_port" : "6379"
+6. "elastic_host" : "localhost"
+7. "elastic_port" : "9200"
+
+
+### Command line tool ###
+If you have anything setup and your environment configured you can setup the command line tool like so, in your global configuration point at the file news-clusty/news_clusty_facade.py e.g.
+
+alias news-clusty="full/path/to/news-clusty/news_clusty_facade.py" and use it like this:
+
+```python
+  news-clusty --help
+  news-clusty scrape
+  news-clusty preprocess
+  news-clusty cluster strategy
+```
+
+Note that this tool is not a generalized abstraction. It is great to scrape and preprocess your data, the clustering only happens if you provide scripts that are used from the shell (not done).
+
+As of now this is no release. There are a lot of open questions and it is clear that some designs need to be rethought. There need to be more options etc. etc.
+
+
+

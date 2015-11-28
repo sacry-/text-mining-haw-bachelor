@@ -71,4 +71,3 @@ if __name__ == "__main__":
   f, t = get_semantic_training("20151113")
 
 
-

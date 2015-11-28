@@ -1,9 +1,10 @@
+import os
+
 from nltk.tag.stanford import NERTagger
-from router import stanford_ner_conf
 
 
 def get_configured_ner_tagger(tokens):
-  ner_jar, classifier = stanford_ner_conf() 
+  ner_jar, classifier = os.environ["STANFORD_NER_JAR"], os.environ["STANFORD_NER_CLASSIFIER"]  
   stanford_tagger = NERTagger( classifier, ner_jar )
   return NerTagger(stanford_tagger, tokens)
 

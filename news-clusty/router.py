@@ -1,34 +1,31 @@
 # encoding: utf-8
-from os import path
-from utils.helpers import read_json
+import os
+import json
+import ast
 
 
-MODULE = path.dirname(path.abspath(__file__))
-RESOURCES = path.join(MODULE, 'resources')
-BACKUPS = path.join(MODULE, 'backups')
+def evaluate(python_data):
+  return ast.literal_eval(python_data)
 
-APP_CONFIG = "{}/{}".format(RESOURCES, "app_config.json")
+def read_json(abs_path):
+  with open(abs_path) as f:
+    return evaluate(f.read())
+
+MODULE = os.path.dirname(os.path.abspath(__file__))
+CONFIG = os.path.join(MODULE, 'config')
+APP_CONFIG = "{}/{}".format(CONFIG, "app_config.json")
 
 
-def backup_path():
-  return BACKUPS
-  
-def read_config(conf):
-  return read_json(conf)
+os.environ["CLUSTY_BACKUPS"] = os.path.join(MODULE, 'backups')
 
-def app_conf():
-  return read_config(APP_CONFIG)
+variables = read_json(APP_CONFIG)
 
-def stanford_ner_conf():
-  ner_conf = app_conf()["stanford_ner"]
-  if ner_conf and ner_conf["ner_jar"] and ner_conf["classifier"]:
-    expanded_ner = path.expanduser(ner_conf["ner_jar"])
-    expanded_classifier = path.expanduser(ner_conf["classifier"])
-    return ( expanded_ner, expanded_classifier ) 
-  return ( None, None )
+os.environ["LOG_PATH"] = variables["logpath"]
 
-def log_path():
-  return app_conf()["logpath"]
+os.environ["STANFORD_NER_JAR"] = variables["stanford_ner_jar"]
+os.environ["STANFORD_NER_CLASSIFIER"] = variables["stanford_classifier"]
 
-if __name__ == "__main__":
-  pass
+os.environ["ELASTIC_HOST"] = variables["elastic_host"]
+os.environ["ELASTIC_PORT"] = variables["elastic_port"]
+os.environ["REDIS_HOST"] = variables["redis_host"]
+os.environ["REDIS_PORT"] = variables["redis_port"]

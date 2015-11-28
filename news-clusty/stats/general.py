@@ -1,4 +1,4 @@
-from es import EsSearcher
+from persistence import EsSearcher
 
 
 def cat_indices(_from=None, _to=None, doctype="article"):

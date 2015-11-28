@@ -5,7 +5,7 @@ import pickle
 import json
 
 from collections import defaultdict
-from es import EsSearcher
+from persistence import EsSearcher
 
 from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler

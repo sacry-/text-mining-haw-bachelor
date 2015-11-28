@@ -1,7 +1,0 @@
-{
-  "stanford_ner" : {
-    "ner_jar" : "path/to/your/stanford-ner.jar",
-    "classifier" : "path/to/your/classifiers/english.muc.7class.distsim.crf.ser.gz"
-  },
-  "logpath" : "path/to/your_logs/logs"
-}
