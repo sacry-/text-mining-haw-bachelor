@@ -5,6 +5,7 @@
 
 - <a href="http://www.haw-hamburg.de/fileadmin/user_upload/FakTI/FSB_TI/Abschlussarbeiten/I/haw-vorlage_LaTeX.zip" target="_blank">LaTex zip Download Link</a>
 
+This is a setup for a short time bachelor thesis project. The libraries do the most of the work. Often, especially downloading papers it is much more convenient to use almost perfect wrappers doing this sort of thing like newspaper, numpy, scipy, gensim, beautifulsoup and more. This is an abstraction of a lot of libraries. However I do suggest to anyone who is interested, to study the source code of the libraries, and read a lot of the underlying theory. Sure Stanford did a great job doing their Named Entity Tagger, sure sklearn has great resources for ML, but do you understand it as well? Could you at least partially design algorithms to tackle these problems? I could not implement all, but a lot. Not as fast, not as accurate, but I could. Be advised to spend a huge amount of time studying the problems that were solved by talented and great minds.
 
 ### Setup ###
 
@@ -85,11 +86,30 @@ Setup your environment by either configuring the <b>config/app_config.json</b> w
 6. "elastic_host" : "localhost"
 7. "elastic_port" : "9200"
 
+### DATABASE ###
+You need a working <b>elasticsearch</b> and <b>redis</b> installation. Ideally you have already configured it yourself.
+Elasticsearch persists downloaded articles like this:
+
+```python
+  /date/article/normalized_title_id
+  /20150709/article/some_awesome_news_event
+```
+
+and preprocessed articles in the same fashion:
+
+```python
+  /date/prep/normalized_title_id
+  /20150709/prep/some_awesome_news_event
+```
+
+Redis is merely a cache. Elasticsearch is great for data aggregation, specialised search and as good way to view your data. However it is slow in getting all articles for an index, so redis is set in between to make an efficient mapping between elasticsearch data and queries you as a user make. It is an elastic-cache.
+
+More recently though, I started using the pickle utils from numpy and python as well as ordinary plaintext files to speed up my processes. The tools are there but they are not generalized. This is a todo.
 
 ### Command line tool ###
-If you have anything setup and your environment configured you can setup the command line tool like so, in your global configuration point at the file news-clusty/news_clusty_facade.py e.g.
+If you have anything setup and your environment configured you can setup the command line tool like so, in your global configuration point at the file <b>news-clusty/news_clusty_facade.py</b> e.g.
 
-alias news-clusty="full/path/to/news-clusty/news_clusty_facade.py" and use it like this:
+<b>alias news-clusty="full/path/to/news-clusty/news_clusty_facade.py"</b> and use it like this:
 
 ```python
   news-clusty --help
@@ -101,6 +121,3 @@ alias news-clusty="full/path/to/news-clusty/news_clusty_facade.py" and use it li
 Note that this tool is not a generalized abstraction. It is great to scrape and preprocess your data, the clustering only happens if you provide scripts that are used from the shell (not done).
 
 As of now this is no release. There are a lot of open questions and it is clear that some designs need to be rethought. There need to be more options etc. etc.
-
-
-
