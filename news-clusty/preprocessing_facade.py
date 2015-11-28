@@ -2,7 +2,7 @@ import time
 import signal
 
 from preprocessing import PrepPersister
-from preprocessing import preprocess
+from preprocessing import preprocess_and_persist
 from persistence import EsSearcher
 
 from utils import timeit
@@ -30,7 +30,7 @@ def preprocess_articles(from_date, to_date):
     preprocessor = None
     try:
       signal.alarm(10)
-      preprocessor = preprocess( a, tokenizer=None )
+      preprocessor = preprocess_and_persist( a )
     except Exception as e:
       logger.error("{} - {}".format(str(e), str(a)))
       unprocessed.append( str(a) )

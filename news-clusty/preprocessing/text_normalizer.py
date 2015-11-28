@@ -90,7 +90,7 @@ class TextNormalizer():
 
 
 if __name__ == "__main__":
-  s = " it "
+  s = " it was a very long and cool day"
   s = s.strip()
   no_noise = lambda x: (x not in STOPWORDS and len(x) > 1 and not x in NLTK_STOPS) 
   res = [w for w in word_tokenize(s) if no_noise(w)]

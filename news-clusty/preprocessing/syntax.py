@@ -10,6 +10,12 @@ from nltk import PorterStemmer
 from nltk import WordNetLemmatizer
 from nltk.corpus import stopwords
 
+from textblob import TextBlob
+from textblob_aptagger import PerceptronTagger
+from textblob.np_extractors import ConllExtractor
+
+from utils import flatten
+
 
 STOPS = stopwords.words('english')
 EN_US_DICT = enchant.Dict("en_US")
@@ -17,106 +23,45 @@ EN_GB_DICT = enchant.Dict("en_GB")
 PORTER = PorterStemmer()
 WN_LEMMATIZER = WordNetLemmatizer()
 SENTENCE_DETECTOR = data.load('tokenizers/punkt/english.pickle')
+TAGGER = PerceptronTagger()
+EXTRACTOR = ConllExtractor()
 
 
-'''
-  CC Coordinating conjunction
-  CD Cardinal number
-  DT Determiner
-  EX Existential there
-  FW Foreign word
-  IN Preposition or subordinating conjunction
-  JJ Adjective
-  JJR Adjective, comparative
-  JJS Adjective, superlative
-  LS List item marker
-  MD Modal
-  NN Noun, singular or mass
-  NNS Noun, plural
-  NNP Proper noun, singular
-  NNPS Proper noun, plural
-  PDT Predeterminer
-  POS Possessive ending
-  PRP Personal pronoun
-  PRP$ Possessive pronoun
-  RB Adverb
-  RBR Adverb, comparative
-  RBS Adverb, superlative
-  RP Particle
-  SYM Symbol
-  TO to
-  UH Interjection
-  VB Verb, base form
-  VBD Verb, past tense
-  VBG Verb, gerund or present participle
-  VBN Verb, past participle
-  VBP Verb, non­3rd person singular present
-  VBZ Verb, 3rd person singular present
-  WDT Wh­determiner
-  WP Wh­pronoun
-  WP$ Possessive wh­pronoun
-  WRB Wh­adverb
-'''
+def get_blob(text):
+  return TextBlob(text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
 
+def sentence_tokenize(s):
+  sentences = []
+  for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
+    try:
+      if detect(sentence) == "en":
+        sentences.append( sentence )
+    except:
+      pass
+  return sentences
 
-def is_num(s):
-  try:
-    float(s)
-    return True
-  except ValueError:
-    return False
-
-def is_noisy(x):
-  if not x:
-    return False
-  x = x.strip().lower()
-  return (
-    # not be in stopwords
-    x in STOPS or 
-    # not be in specials
-    re.match('(^\W+|\W+$)', x) or 
-    # should be larger than 1 i.e. not "a" etc.
-    len(x) <= 1
-  )
+def tokenize(s):
+  words = []
+  for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
+    try:
+      if detect(sentence) == "en":
+        words += word_tokenize(sentence)
+    except:
+      pass
+  return words
 
 def word_is_valid(word):
   return (
-    # word should not be none
-    word and 
-    # word should be valid in a english dictionary
-    (EN_US_DICT.check(unicode(word)) and EN_GB_DICT.check(unicode(word))) or
-    # average word length for biology assuming that the english word_list
-    # does not contain specialized biology words
+    word and
+    (EN_US_DICT.check(word) and EN_GB_DICT.check(word)) and
     (len(word) > 0)
   )
 
-def remove_noise(tokens):
-  return [remove_special(token) for token in tokens if not is_noisy(token)]
-
-def remove_special(token):
-  return re.sub("[\W\s]", "", token)
-
-def sentence_tokenize(s, sentece_processor=lambda a: a):
-  sentences = []
-  for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
-    try:
-      if detect(sentence) == "en":
-        sentences.append( sentece_processor(sentence) )
-    except:
-      pass
-  return sentences
-
-
-def sentence_word_tokenize(s):
-  sentences = []
-  for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
-    try:
-      if detect(sentence) == "en":
-        words = word_tokenize(sentence)
-        sentences.append( words )
-    except:
-      pass
-  return sentences
+def stem(tokens):
+  return [stem for stem in 
+            [PORTER.stem(token).lower() for token in tokens 
+             if token and len(token) > 0] 
+          if stem and len(stem) > 0]
 
 def stemmatize(tokens):
   for token in tokens:
@@ -128,16 +73,21 @@ def lemmatize(tokens):
     if word_is_valid(token):
       yield WN_LEMMATIZER.lemmatize(token).lower()
 
-def stem(tokens):
-  return [stem for stem in 
-            [PORTER.stem(token).lower() for token in tokens 
-             if token and len(token) > 0] 
-          if stem and len(stem) > 0]
-
-
 
 if __name__ == "__main__":
-  pass
+  s = "it was a very long and cool day. I am satisfied! Mr. crowley said this."
+  tokens = tokenize(s)
+  print(tokens)
+  lemmas = list(lemmatize(tokens))
+  print(lemmas)
+  stemas = list(stemmatize(tokens))
+  print(stemas)
+  stems = stem(tokens)
+  print(stems)
+  sents = sentence_tokenize(s)
+  print(sents)
+  blob = get_blob(s)
+  print(blob)
 
 
 

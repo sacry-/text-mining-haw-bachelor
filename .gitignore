@@ -9,8 +9,7 @@ literature/todo/
 */cluster_analysis/es_pickles/*.p
 */knowledge/wikipedia_sources/*.pkl
 */knowledge/wikipedia_sources/enwiki-latest-pages-articles.xml.bz2
-*/resources/app_config.json
-*/resources/newspapers.json
+*/config/app_config.json
 backups/
 
 

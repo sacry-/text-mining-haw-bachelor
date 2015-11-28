@@ -5,6 +5,7 @@ import re
 import hashlib
 import time
 import datetime
+import collections
 
 
 def timeit(method):
@@ -42,12 +43,23 @@ def date_today():
   return datetime.date.today().strftime("%Y%m%d")
 
 def flatten(seq):
-  return sum(seq,[])
+  return list( flatten_gen(seq) )
+
+def flatten_gen(seq):
+  for item in seq:
+    if is_iter(item):
+      yield from flatten(item)
+    else:
+      yield item
+
+def is_iter(x):
+  is_iterable = isinstance(x, collections.Iterable) or (type(x) is tuple)
+  return is_iterable and not isinstance(x, str)
 
 def unique(seq):
   seen = set()
   seen_add = seen.add
-  return [ x for x in seq if not (x in seen or seen_add(x))]
+  return [ x for x in seq if not (x in seen or seen_add(x)) ]
   
 if __name__ == "__main__":
   pass

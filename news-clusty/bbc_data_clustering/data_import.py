@@ -5,27 +5,23 @@ from os import listdir
 
 from preprocessing import TextNormalizer
 from preprocessing import sentence_tokenize
-from preprocessing import Preprocessor
+from preprocessing import preprocess
+from preprocessing import get_tagger
 
 from utils import normalize_title
+from utils import flatten
 
 from paths import model_path
 from paths import bbc_path
 
 
 # Dump
-def tokenizer(text):
-  return [word for sentence in sentence_tokenize( text ) for word in sentence]
-
 def semantics(doc):
-  tn = TextNormalizer(options=["keep_alpha"])
-  normalized = tn.normalize(doc)
-  prep = Preprocessor(normalized, tokenizer)
-  pos = prep.pos_tags()
-  nouns = prep.noun_phrases()
+  prep = preprocess(doc)
   return (
-    list(sum(pos, ())), 
-    nouns
+    flatten( prep.pos_tags() )
+    prep.noun_phrases(),
+    flatten( prep.get_entities() )
   )
 
 def bbc_parser(doc, category): 
@@ -38,6 +34,7 @@ def bbc_parser(doc, category):
     tn = TextNormalizer()
     pos, nouns, ners = semantics(doc)
     nouns = tn.fmap(nouns)
+    ners = tn.fmap(ners)
     
     paragraphs = []
     sentences = []
@@ -54,7 +51,8 @@ def bbc_parser(doc, category):
       "sents" : sentences,
       "paras" : paragraphs,
       "pos" : pos,
-      "nouns" : nouns
+      "nouns" : nouns,
+      "ners" : ners
     }
   except Exception as e:
     print("Could not process article")
@@ -93,8 +91,11 @@ def stream_bbc_data_by_category(category):
 
       try:
         new_doc = bbc_parser(data_file.read(), category)
-      except:
-        print("Failed {}".format(fname))
+      except (KeyboardInterrupt, SystemExit):
+        raise SystemExit("\nKeyboard was interrupted - Exiting System")
+      
+      except Exception as e:
+        print(e, fname)
         new_doc = None
 
     if new_doc:
@@ -108,10 +109,11 @@ def stream(categories):
       stream_to_set("sents", doc["sents"])
       stream_to_set("pos", doc["pos"])
       stream_to_set("nouns", doc["nouns"])
+      stream_to_set("ners", doc["ners"])
+
 
 if __name__ == "__main__":
   categories = ["business", "entertainment", "politics", "sport", "tech"]
   stream(categories)
-
 
 

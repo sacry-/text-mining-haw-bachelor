@@ -1,10 +1,17 @@
-from preprocessing.preppersister import PrepPersister
 from preprocessing.preprocessor import preprocess
-from preprocessing.text_normalizer import TextNormalizer#
 from preprocessing.preprocessor import Preprocessor
+from preprocessing.preprocessor import preprocess_and_persist
+from preprocessing.preppersister import PrepPersister
 
+
+from preprocessing.text_normalizer import TextNormalizer
 from preprocessing.syntax import stem
 from preprocessing.syntax import sentence_tokenize
+from preprocessing.syntax import tokenize
+
+
+from preprocessing.ner_tagger import get_tagger
+
 
 if __name__ == "__main__":
   pass
