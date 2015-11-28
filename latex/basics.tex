@@ -114,7 +114,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
         f(n = 2, \{w_1, w_2, w_3\} \in d) \to \{(w_1, w_2),(w_2,w_3)\}
       \end{equation}
 
-    Adding ngrams to a to a document term matrix can greatly enhance similiarity between two documents. With single words and ngrams the memory requirement is \emph{n+(n-1)}. If the data is already extremely sparse this will not help much but can increase the semantic effect on documents that share similar word combinations. There are other much more complex models e.g. \emph{noun phrases} or \emph{named entities} that can grasp this intuition as well.
+    Adding ngrams to a document term matrix can greatly enhance similiarity between two documents. With single words and ngrams the memory requirement is \emph{n+(n-1)}. If the data is already extremely sparse this will not help much but can increase the semantic effect on documents that share similar word combinations. There are other much more complex models e.g. \emph{noun phrases} or \emph{named entities} that can grasp this intuition as well.
 
     The document term matrix can be enhanced by taking the count of the occuring words instead of just labelling it by occurence. This is called the raw frequency and can be normalized in a couple of ways by the term frequency (tf) model
      
@@ -149,7 +149,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
     These kind of problems need a well thought out solution which is presented later in this section.
 
   \subsection{Similarity and Distances}
-    Partitional clustering algorithms commonly work through some objective distance or similarity function between two objects. After lifting the documents into vector space, we are faced with the problem of distance between two documents. Several measures were proprosed mostly stemming from linear algebra so we will briefly review them. Our goal is to have not an \emph{m x n}matrix for \emph{document x term} correlations but an \emph{m x m} matrix for \emph{document x document} similarities. After all the goal is to compare two documents.
+    \emph{Partitional clustering} algorithms commonly work through some objective distance or similarity function between two objects. After lifting the documents into vector space, we are faced with the problem of distance between two documents. Several measures were proprosed that can be easily interpreted by geometry or linear algebra. Our goal is to have an \emph{m x m} matrix for \emph{document x document} distances. A \emph{document x terms} matrix on the other hand is highly relevant when clustering under the assumption of topical classification. That is compare documents not to each other but to all the occuring words as topics. LSA is an example where words are projected to lower dimensions resembling partial categorization to topics of a document by the most distinct words. Then a clustering can be done by documents that highly correlate to the same topics.
 
     \paragraph{Cosine similarity}
     Given two documents $d_1$ and $d_2$ the classical cosine similarity is defined by
@@ -175,25 +175,61 @@ Lastly some quality measures of clusters based on internal measures (without gro
       manhattan(d_1, d_2) = \sum_{i=1}^{M}|d_1^i - d_2^i|
     \end{equation}
 
-    There are more distance functions such as the Jaccard coefficient that works on intersections of sets and the Chebyshev distance which is a maximizing greedy strategy of the manhattan distance. The underlying concepts of similarity should be clear though. Each coefficient works good on a particular set, however cosine and euclidean distances are the commonly used choices.
+    There are more distance functions such as the \emph{Jaccard coefficient} that works on intersections of sets and the \emph{Chebyshev distance} which is a maximizing greedy strategy of the manhattan distance. The underlying concepts of similarity should be clear though. Each coefficient works good on a particular set, however cosine and euclidean distances are the commonly used choices.
+
+    \emph{Hierarchical algorithms} use different metrics. The goal here is not to find the closest points but to organize them into hierarchies. A different set of similarity metrics must be used. We will review them later as their functionality strays away from the vector space.
 
   \subsection{Enhancing the Vector Space Model}
-    \subsubsection{Singular Value Decomposition (SVD)}
-    \subsubsection{Latent Semantic Analysis (LSA)}
+
+    The vector space model comes with a variety of problems. First we have extremely high dimensions. As we see later this is particularly true for newspapers. Unlike Twitter the content of a newspaper article can be substantial and range over a variety of topics. This can lead to extremely poor clustering results. Several methods have been proposed to tackle this high dimensionality problem. One of the most strickening come from linear algebra and were proposed in DeerwesterLSI1990 called Latent Semantic Analysis (LSA). It is based on Singular Value Decomposition (SVD). The Principal Component Analysis (PCA) on the other hand uses SVD in a different manner. Apart from these there are also much more elaborate techniques in the domain of topic modelling which will be reviewed later.
+
+    \subsubsection{Latent Semantic Analysis}
+      Latent Semantic Analysis is a progress to reduce as much noise as possible from a given document x term matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is often proposed for dealing with large sparse data to find the underlying connecting relations. \emph{LSA} is a truncated singular value decomposition \emph{(SVD)} on a term x document matrix. \emph{SVD} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into several parts:
+
+      \begin{equation}
+        svd(A) = U_{mxm}\Sigma_{mxn} V'_{nxn}
+      \end{equation}
+
+      And for \emph{LSA}
+
+      \begin{equation}
+        lsa(A, k) = U_{mxk}\Sigma_{kxk} V'_{kxn}
+      \end{equation}
+
+      The difference here really is the resulting dimensions. While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{m} words to \emph{k}.
+
+      The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. For a \emph{term x document} matrix this means that a lot of documents provide a lot of words. The higher the variance between each document the more single words there will be. Thus most of the words do not contribute anything to the relationships between documents. SVD then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. The \emph{SVD} will also sort the words by highest impact and so smaller \emph{singular values} will appear in the lower part of the resulting decomposition.
+
+      Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning.\\
+      Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
+      On the contrary to this \emph{LSA} reduces dimensions so we can compare documents more rigurously. This also means that we effectively destroy variance. If the variance is 100\% before \emph{LSA} and after only 20\% remain, we only account for $frac{1}{5}$ of the original variance. Often this is not desired and we need to find a good \emph{k} to reduce the dimensions to. In laymans terms: we do not want ``happy'' to be close to ``murder'' to be close to ``ordinary''. That is, no meaning but a single one is left.
+      In summarization \emph{LSA} is much more frequently used. \cite{SumLSASteinberger2004} proposed a solution to retrieve the highest weighting sentences by \emph{LSA} taking the top \emph{k} words into account as well.
+
+      \begin{figure}[h!]
+        \centering
+          \includegraphics[width=0.7\textwidth]{svd_lsa.png}
+          \caption{"Singular Value Decomposition by \cite{SumLSASteinberger2004}"}
+          \label{svd_lsa}
+      \end{figure}
+
+      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude.
+
     \subsubsection{Principal Component Analysis (PCA)}
+    @TODO:PCA
 
 \section{Clustering algorithms}
+  
+  Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms. \emph{Partitional algorithms} in particular can be globally optimized given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$.
 
-  \subsection{Objective goal}
-    EM, Cost functions, general clustering scheme
+  \subsection{Partitional clustering}
+    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity is applied such as cosine cluster centers are created import numpy as np
+
+    \paragraph{K-Means}
+    \paragraph{Mean-Shift}
 
   \subsection{Hierarchical / Agglomerative clustering}
     \paragraph{Ward, Complete and Average Linkage}
     \paragraph{Birch}
-
-  \subsection{Partitional clustering}
-    \paragraph{K-Means}
-    \paragraph{Mean-Shift}
 
     \subsection{Others}
       \begin{enumerate}
@@ -202,21 +238,12 @@ Lastly some quality measures of clusters based on internal measures (without gro
         \item \emph{Grid} - x
       \end{enumerate}
 
+  \subsection{Objective goal}
+    An objective cost function or the objective goal of a clustering algorithm highly depends on the structure that is build up. A Cost function generally maximizes or minizies some parameter(s) $\theta$to converge at either a local minimum or global maximum. Typically a convergence threshold is defined. Therefore when the rate of change between two consecutive runs with respect to the cost function did not decrease >= threshold the function has converged.
 
-\section{Generative Models}    
-  
-  \subsection{Topic modelling}
-    \paragraph{Bayes Theorem}
-    \paragraph{Multinominal Distributions}
-    \paragraph{Dirichlet Distributions}
-      Chinese Restaurant Process
+    EM, Cost functions, general clustering scheme
 
-  \subsection{Methods}
-    \subsubsection{Latent Dirichlet Allocation (LDA)}
-    \subsubsection{Non Negative Matrix Factorization (NMF)}
-
-
-\section{Clustering quality measures}
+\section{Clustering evaluation}
 
   \subsection{Internal measures}
     Without labels of the ground truth
@@ -234,4 +261,17 @@ Lastly some quality measures of clusters based on internal measures (without gro
       \item \emph{F-Measure} - x
       \item \emph{Jaccard index} - x
     \end{enumerate}
+
+\section{Generative Models}    
+  
+  \subsection{Topic modelling}
+    \paragraph{Bayes Theorem}
+    \paragraph{Multinominal Distributions}
+    \paragraph{Dirichlet Distributions}
+      Chinese Restaurant Process
+
+  \subsection{Methods}
+    \subsubsection{Latent Dirichlet Allocation (LDA)}
+    \subsubsection{Non Negative Matrix Factorization (NMF)}
+
 
