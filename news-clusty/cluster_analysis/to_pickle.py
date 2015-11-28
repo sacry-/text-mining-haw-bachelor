@@ -75,6 +75,7 @@ def __ners(seq):
       r.append( " ".join(fst) )
   return unique( r )
 
+
 def stream(base_date, post_fix, method, from_int, to_int):
   for idx, n in enumerate([str(i) for i in range(from_int,to_int+1)]):
     if len(n) == 1: 
