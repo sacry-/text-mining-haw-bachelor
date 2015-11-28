@@ -1,9 +1,0 @@
-{
-  "stanford_ner_jar" : "/Users/sacry/dev/uni/bachelor/dependencies/stanford-ner/stanford-ner.jar",
-  "stanford_classifier" : "/Users/sacry/dev/uni/bachelor/dependencies/stanford-ner/classifiers/english.muc.7class.distsim.crf.ser.gz",
-  "logpath" : "/Users/sacry/dev/uni/bachelor/ba-clusty/news-clusty/logs",
-  "redis_host" : "localhost",
-  "redis_port" : "6379",
-  "elastic_host" : "localhost",
-  "elastic_port" : "9200"
-}
