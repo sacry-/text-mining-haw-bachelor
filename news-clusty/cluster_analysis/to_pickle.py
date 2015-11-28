@@ -93,10 +93,17 @@ def stream(base_date, post_fix, method, from_int, to_int):
 
 if __name__ == "__main__":
   base_date = "201507"
-  post_fix = "_semantic"
-  from_int = 1
-  to_int = 19
-  stream( base_date, post_fix, get_sents_set, from_int, to_int )
-  stream( base_date, post_fix, get_semantic_set, from_int, to_int )
+  from_int, to_int = 1, 19
+  stream( 
+    base_date, "_sents", 
+    get_sents_set, 
+    from_int, to_int 
+  )
+
+  stream( 
+    base_date, "_semantic", 
+    get_semantic_set, 
+    from_int, to_int 
+  )
 
 
