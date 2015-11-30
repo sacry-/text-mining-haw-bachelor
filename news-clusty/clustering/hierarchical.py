@@ -58,7 +58,7 @@ def __agglomerative__(x, n_clusters, linkage, connectivity):
   ac.fit(x)
   c = ac.labels_
   k = ac.n_clusters
-  return None, c, k
+  return None, c, k, ac
 
 
 

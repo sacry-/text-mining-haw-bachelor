@@ -29,7 +29,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
       \label{clustering_intro}
   \end{figure}
 
-  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section.\\
+  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section. Data clustering is a computationally expensive \emph{NP-hard} problem. That means there is currently no efficient way to group objectcs in an optimal way. Therefore heuristics are applied such that algorithms converge at a  \emph{local minimum}. Theoretically a local minimum can vary vastly compared to a global minimum, in practice however a close to 80\% solution seems reasonable.\\
   \textbf{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user \cite{SumEvaluation2001}.\\
   This results in a few possibilities where clustering works great as a preprocessing step for summarization.
   
@@ -181,7 +181,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
 
   \subsection{Enhancing the Vector Space Model}
 
-    The vector space model comes with a variety of problems. First we have extremely high dimensions. As we see later this is particularly true for newspapers. Unlike Twitter the content of a newspaper article can be substantial and range over a variety of topics. This can lead to extremely poor clustering results. Several methods have been proposed to tackle this high dimensionality problem. One of the most strickening come from linear algebra and were proposed in DeerwesterLSI1990 called Latent Semantic Analysis (LSA). It is based on Singular Value Decomposition (SVD). The Principal Component Analysis (PCA) on the other hand uses SVD in a different manner. Apart from these there are also much more elaborate techniques in the domain of topic modelling which will be reviewed later.
+    The vector space model comes with a variety of problems. First we have extremely high dimensions. As we see later this is particularly true for newspapers. Unlike Twitter the content of a newspaper article can be substantial and range over a variety of topics. This can lead to extremely poor clustering results. Several methods have been proposed to tackle this high dimensionality problem. One of the most strickening comes from linear algebra and was initially proposed in \cite{DeerwesterLSI1990} called Latent Semantic Analysis (LSA). It is based on Singular Value Decomposition (SVD). The Principal Component Analysis (PCA) on the other hand uses SVD in a different manner. Apart from these there are also much more elaborate techniques in the domain of topic modelling which will be reviewed later.
 
     \subsubsection{Latent Semantic Analysis}
       Latent Semantic Analysis is a progress to reduce as much noise as possible from a given document x term matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is often proposed for dealing with large sparse data to find the underlying connecting relations. \emph{LSA} is a truncated singular value decomposition \emph{(SVD)} on a term x document matrix. \emph{SVD} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into several parts:
@@ -202,7 +202,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
 
       Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning.\\
       Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
-      On the contrary to this \emph{LSA} reduces dimensions so we can compare documents more rigurously. This also means that we effectively destroy variance. If the variance is 100\% before \emph{LSA} and after only 20\% remain, we only account for $frac{1}{5}$ of the original variance. Often this is not desired and we need to find a good \emph{k} to reduce the dimensions to. In laymans terms: we do not want ``happy'' to be close to ``murder'' to be close to ``ordinary''. That is, no meaning but a single one is left.
+      On the contrary to this \emph{LSA} reduces dimensions so we can compare documents more rigurously. This also means that we destroy variance. If the variance is 100\% before \emph{LSA} and after only 20\% remain, we only account for $frac{1}{5}$ of the original variance. Often this is not desired and we need to find a good \emph{k} to reduce the dimensions to. In laymans terms: we do not want ``happy'' to be close to ``murder'' to be close to ``ordinary''. That is, no meaning but a single one is left.
       In summarization \emph{LSA} is much more frequently used. \cite{SumLSASteinberger2004} proposed a solution to retrieve the highest weighting sentences by \emph{LSA} taking the top \emph{k} words into account as well.
 
       \begin{figure}[h!]
@@ -212,20 +212,33 @@ Lastly some quality measures of clusters based on internal measures (without gro
           \label{svd_lsa}
       \end{figure}
 
-      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude.
+      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}
 
     \subsubsection{Principal Component Analysis (PCA)}
-    @TODO:PCA
+    The \emph{Principal Component Analysis (PCA)} is a mulativariate technique seperating out correlating variables into principal components. \emph{PCA} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. Often \emph{SVD} is part of this process. What makes \emph{PCA} different to \emph{LSA} is the underlying methodology.\\
+    It uses least square projections to project the data into a plane for each dimension \cite{Strang2009}. Least square projections are useful for linear combinations of vectors that do not intersect. It is then possible to project data onto a line or a plane that can by some error value be part of a combined dimension. Suppose two vectors $["he", "is", "happy"]\:and\:["she", "is", "happy"]$. Both vectors share some meaning and they will result in some form in vector space. \emph{PCA} now takes these vectors and projects ``is'' and ``happy'' onto the same dimension, reducing the overall dimensions by 1. As with the \emph{SVD} we find several components that resemble the data without parts of the noisy variance.
+
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{PCA.png}
+        \caption{"Principal Component Analysis by \cite{PCA2009}"}
+        \label{pca}
+    \end{figure}
+
+    In this case we seek to find principal components for m documents by n new principal components. Primarily \emph{PCA} can be described as a dimensionality reduction technique that resembles the original structure rather well and can be used for visualization, reducing down to 2 or 3 dimensions. See more in \cite{PCA2009}.
+
 
 \section{Clustering algorithms}
   
-  Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms. \emph{Partitional algorithms} in particular can be globally optimized given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$.
+  Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms.
 
   \subsection{Partitional clustering}
-    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms such as K-Means and Mean-Shift.
+    \emph{Partitional algorithms} in particular can be globally optimized given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$. Often they are much easier to implement because constraints are kept low and are therefore fast in converging. There are also online versions available which makes it possible to scale algorithms such as K-means with map reduce on several processors. This is not true for hierarchical algorithms which build up hierarchy.\\
+
+    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms namely K-Means and Mean-Shift. For a more thorough overview I suggest \cite{ClusteringBooAggarwalk2013}.
 
     \paragraph{K-Means}
-    The K-means clustering algorithm is a centroid based algorithm. One needs to provide a fixed number k so k centroids are generated. Maxiter is a parameter that controls how many runs a kmeans will run. As it can take a while until kmean converges with some minimum we can enforce this.
+    The \emph{K-Means} clustering algorithm is a centroid based algorithm. For each document we want to find a centroid that is closest. In order to do this \emph{k} centroids are drawn as a sample from the documents. Then interdistance similarity measures decide if a documents is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next round a document then might be reconsidered for another cluster. The algorithm converges either after not improving above a \emph{threshold} or by limiting the iterations by a paramter \emph{max iter} after which the algorithm stops. \emph{K-Means} typically forms cluster centers of equal size compared to other algorithms suchs as density or model based \emph{EM} algorithms.
 
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
@@ -247,8 +260,15 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \end{algorithmic}
     \end{algorithm}
 
-    K-Means does not infer how many clusters fit well, rather it is limited by the number the user provides. The inherent problem is, how many clusters are actually in the underlying data? If 5 documents are compared that share no meaning and share no words at all we obviously need 5 clusters. If on the other hand most of the documents share meaning and magnitude then maybe it is reasonable to pick 2 clusters. Typically one needs to run a K-means with some objective cost function that tries different ks and checks whether or not the result greatly improves by some threshold. 
-    All of these methods have one great inherent second problem: How do we chose the initial clusters? Several strategies have been proposed over random sampling such as intercluster distance maximization or high variance sampling. As the initial clusters are often picked randomly kmeans is a non deterministic approach that will most likely result in different clusters after each run. However kmeans will always converge at or near a global maximum, that is it will find a globally minimized cost that cannot get better. This however all depends on the choice of initial clusters.
+    \emph{K-Means} does not infer how many clusters fit well, rather it is limited by the number the user provides. The inherent problem is, how many clusters are actually in the underlying data? If 5 documents are compared that share no meaning and share no words at all we obviously need 5 clusters. If on the other hand most of the documents share meaning and magnitude then maybe it is reasonable to pick 2 clusters. Typically a K-means algorithm will be run with respect to an objective cost function to be minimized. Globally this can be used for chosing a suitable \emph{k} for the underlying data. The objective goal is to minimize the sum square of within cluster distances.
+
+      \begin{equation}
+        \sum_{i=0}^{n}\min_{\mu_j \in C}(||x_j - \mu_i||^2)
+      \end{equation}
+
+    Now we are left with one problem: How do we chose the initial clusters? Several strategies have been proposed. The most used is probably random sampling where k random documents are chosen as a centroid. The problem is, when all documents are skewed to one direction or close together the \emph{K-means} converges at a local minimum that seems to suboptimally divide the documents into clusters.
+    Another strategy has been proposed by \cite{KMeansPlusPlus2007} that maximizes the intercluster distance by spreading the clusters as far from each other as possible. 
+    As the initial clusters are often picked randomly kmeans is a non deterministic approach that will most likely result in different clusters after each run. However kmeans will always converge at a \emph{local minimum}, that is it will find locally minimizing costs to converge.
 
     \paragraph{Mean-Shift}
 
@@ -262,11 +282,6 @@ Lastly some quality measures of clusters based on internal measures (without gro
         \item \emph{Density} - x
         \item \emph{Grid} - x
       \end{enumerate}
-
-  \subsection{Objective goal}
-    An objective cost function or the objective goal of a clustering algorithm highly depends on the structure that is build up. A Cost function generally maximizes or minizies some parameter(s) $\theta$to converge at either a local minimum or global maximum. Typically a convergence threshold is defined. Therefore when the rate of change between two consecutive runs with respect to the cost function did not decrease >= threshold the function has converged.
-
-    EM, Cost functions, general clustering scheme
 
 \section{Clustering evaluation}
 
@@ -289,6 +304,8 @@ Lastly some quality measures of clusters based on internal measures (without gro
 
 \section{Generative Models}    
   
+  EM, Cost functions, general clustering scheme
+
   \subsection{Topic modelling}
     \paragraph{Bayes Theorem}
     \paragraph{Multinominal Distributions}
