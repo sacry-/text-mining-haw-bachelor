@@ -230,35 +230,45 @@ Lastly some quality measures of clusters based on internal measures (without gro
 
 \section{Clustering algorithms}
   
-  Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms. Some additional defintions will help to describe the algorithms better
+  Clustering algorithms are at the heart of this thesis. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are \emph{graph based} or \emph{density} based algorithms. There is also a fifth category namely \emph{generative models} and closely related in terms of the text domain \emph{probabilistic topic models}. These models try to find the underlying latent semantics by generating the model that could have created the documents in the first place. As this is quite a chapter on its own and does not fall under the classic definitions of clustering algorithms they come in a separate part later.\\
+  First let us setup a few definitions that all clustering algorithms incorporate.
 
   \begin{itemize}
-    \item \emph{Hard and Soft clustering} - A clustering algorithm is hard if documents can only be assigned to one distinct cluster. On the contrary they are \emph{soft} (often called \emph{fuzzy/overlapping}) if a document can have multiple assignments that resemble topical proportions of the document.
+    \item \emph{Hard and Soft clustering} - A clustering algorithm is \emph{hard} if documents can only be assigned to one distinct cluster. On the contrary they are \emph{soft} (often called \emph{fuzzy/overlapping}) if a document can have multiple assignments that resemble topical proportions of the document.
     \item \emph{Exhaustive and non-exhaustive} - A clustering is exhaustive if every document has an assignment after the run whereas it is non-exhaustive if documents might not have any assignments at all (assigned to a null cluster).
-    \item \emph{Cost functions} - Most clustering algorithms incorporate some sort of cost function that needs to be minimized or maximized after the algorithm completed. The clustering can be rerun several times find a maximum between different runs varying the parameters. This should not be confused with the similarity measure between objects during a clustering run.
+    \item \emph{Cost functions} - Most clustering algorithms incorporate some sort of cost function that needs to be minimized or maximized after the algorithm completed. The clustering can be rerun several times finding a maximum between different runs by varying the parameters. This should not be confused with the similarity measure between objects during a clustering run (although this can be the objective cost function of a clustering algorithm as well).
+    \item \emph{local minima/global optimum} - A local minima is when the objective cost functions between objects do not yield better results after several iterations. This does not mean that the best state is found. Similarity metrics between objects are inherently heuristic and have no view of a global optimum. A global optimum can be approximated by objective cost functions rerunning the algorithm several times, varying the parameters in hope of better results. There is currently no known algorithm that can solve clustering in a deterministic globally optimized way. It is NP-hard.
     \item \emph{Cluster cardinality} - Most of the clustering algorithm incoporate a fixed non optional parameter k that determines how many clusters should be build up. Only a few algorithms such as Birch, Mean-Shift or certain probabilistic topic models can infer the cardinality of a cluster algorithm by tweeking threshold, density or graph based objective cost parameters.
   \end{itemize}
 
   \subsection{Partitional clustering}
-    \emph{Partitional algorithms} in particular can be globally optimized given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$. Often they are much easier to implement because constraints are kept low and are therefore fast in converging. There are also online versions available which makes it possible to scale algorithms such as K-means with map reduce on several processors. This is not true for hierarchical algorithms which build up hierarchy.\\
+    \emph{Partitional clustering} algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms namely \emph{K-Means} and \emph{Expectation Maximization (EM)}. Literature in this area is rigorous, see \cite{ClusteringBooAggarwalk2013, NextFrontierClustering2013, IRBookStanford2008}.\\
 
-    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms namely K-Means and Expectation Maximization (EM). For a more thorough overview I suggest \cite{ClusteringBooAggarwalk2013}.
+    \emph{Partitional algorithms} in particular can be globally approximated given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$. Often they are much easier to implement because constraints are kept low and requirements are kept to a minimum. There are also online versions available which makes it possible to scale algorithms such as K-means with \emph{map reduce} on several processors. This is not true for hierarchical algorithms which build up a hierarchy bottom-up or top-down.\\
 
     \paragraph{K-Means}
-    The \emph{K-Means} clustering algorithm is a centroid based algorithm that is for each document we want to find a centroid that is closest. In order to do this \emph{k} centroids are drawn as a sample from the documents. Then interdistance similarity measures decide if a document is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next round a document then might be reconsidered for another cluster. The algorithm converges either after not improving above a \emph{threshold} or by limiting the iterations by a paramter \emph{max iter} after which the algorithm stops. \emph{K-Means} typically forms cluster centers of equal sizes and is a hard clustering algorithm.
+    The \emph{K-Means} clustering algorithm is a centroid based algorithm. Each document is assigned to a cluster center in each iteration. In order to do this \emph{k} centroids are drawn as a initial cluster centers from the documents. Then interdistance similarity measures, typically $l_2\:norm$, decide if a document is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next iteration a document then might be reconsidered for another cluster.\emph{K-Means} typically forms cluster centers of equal sizes and is a hard clustering algorithm \cite{IRBookStanford2008}.\\
+    Typically a \emph{K-Means} algorithm will be run with respect to an objective cost function to be minimized. Globally this can be used for chosing a suitable \emph{k} for the underlying data. The objective goal is to minimize the least sum square of within cluster distances \cite{IRBookStanford2008}:
+
+      \begin{equation}
+        RSS_k = \sum_{\vec{x}_k \in \textit{w}_k}|\vec{x} - \vec{\mu}(\textit{w}_k)|^{2}
+      \end{equation}
+
+    If we now sum over all $RSS_k$ the total amount must be minimized. The algorithm converges either after not improving above a \emph{threshold} or by limiting the iterations by a paramter \emph{max iter} after which the algorithm stops. In this case both criterias are modelled which resembles the implementation by \cite{ScikitLearn} in Sklearn.
 
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
-      \caption{Kmeans algorithm}\label{kmeans}
-      \Function{Kmeans}{$X,k,maxiter$}
-        \State $centroids \gets select\:k\:initial\:centroids\:from\:X$
-        \State $labels \gets init\:m\:x\:1\:zero\:matrix$
+      \caption{$X$ is a document term matrix, $\mu$ is a matrix of centroid vectors, $c$ a mapping between $X$ and $\mu$}\label{kmeans}
+      \Function{Kmeans}{$X={x_1,..x_m},k,maxiter$}
+        \State $\mu \gets select\:k\:initial\:centroids\:from\:X$
+        \State $c \gets init\:assignment\:matrix {}$
         \State $cost \gets \infty$
 
         \For{$i\gets 1, maxiter$}
-          \State $labels \gets assign\:X\:to\:k\:nearest\:centroids$
-          \State $centroids \gets update\:centroids\:averaging\:X\:over\:assigned\:labels$
-          \If{$algorithm\:converges\:by\:argmin(costs)$}
+          \State $c \gets argmin|\vec{\mu} - \vec{X}|$ \Comment{assign X to k nearest centroids}
+          \State $\mu \gets average\:X\:over\:assigned\:\mu\:by\:c$
+          \State $cost \gets \sum_{k = 1}^{K}RSS_k$
+          \If{$cost\:lead\:to\:convergence$}
             \State Stop
           \EndIf
         \EndFor
@@ -267,17 +277,29 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \end{algorithmic}
     \end{algorithm}
 
-    \emph{K-Means} does not infer how many clusters fit well, rather it is limited by the number the user provides. The inherent problem is, how many clusters are actually in the underlying data? If 5 documents are compared that share no meaning and share no words at all we obviously need 5 clusters. If on the other hand most of the documents share meaning and magnitude then maybe it is reasonable to pick 2 clusters. Typically a K-means algorithm will be run with respect to an objective cost function to be minimized. Globally this can be used for chosing a suitable \emph{k} for the underlying data. The objective goal is to minimize the sum square of within cluster distances.
-
-      \begin{equation}
-        \sum_{i=0}^{n}\min_{\mu_j \in C}(||x_j - \mu_i||^2)
-      \end{equation}
-
-    Now we are left with one problem: How do we chose the initial clusters? Several strategies have been proposed. The most used is probably random sampling where k random documents are chosen as a centroid. The problem is, when all documents are skewed to one direction or close together the \emph{K-means} converges at a local minimum that seems to suboptimally divide the documents into clusters.
+    \emph{Now we are left with one problem}: How do we chose the initial clusters? Several strategies have been proposed. The most used is random sampling where \emph{k} random documents are chosen as a centroid. The problem is, when all documents are skewed to one direction or close together the \emph{K-means} converges at a local minimum that seems to suboptimally divide the documents into clusters.
     Another strategy has been proposed by \cite{KMeansPlusPlus2007} that maximizes the intercluster distance by spreading the clusters as far from each other as possible. 
-    As the initial clusters are often picked randomly kmeans is a non deterministic approach that will most likely result in different clusters after each run. However kmeans will always converge at a \emph{local minimum}, that is it will find locally minimizing costs to converge.
+    As the initial clusters are often picked randomly \emph{K-Means} is a non deterministic approach that will most likely result in different clusters after each run.
 
     \paragraph{Expectation Maximization (EM)}
+    The \emph{Expecation Maximization (EM)} algorithm is a generalization of the \emph{K-Means} and is a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as normal distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary and guassian mixture models are very basic ones. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to find a parameter $\Theta$ that maximizes a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $x$, that is assumed to be normally distributed, we want to maximize the connection between our model and $x$.\\
+    The \emph{EM} algorithm now tries to maximize this function by assigning a probability that a data point $x$ is likely to be in the cluster $c_1..c_k$ by calculating the joint probabilities of occuring words given a prior of cluster $c_1..c_k$. This is also called the expectation step. In the second step each probability of a document \emph{d} being part of a cluster $c_1..c_k$ is weighted into the average and variance of the defined clusters. The clusters are then recalculated using the beforementioned assignments. This step is repeated until some kind of convergence criteria has been met. The only problem is now: How can we start an expectation if we do not have any kind of maximization yet? We simply choose k gaussian distributions at random and act as if these were the priors. This resembles much with the notion of the \emph{K-Means} algorithm where \emph{k} initial clusters need to be selected. At the beginning this might as well be equally proportioned so $c_1..c_k$ will have $\frac{1}{k}$ prior probability.\\
+    Putting this together for the text domain, we would like to model the following:
+
+      \begin{descriptin}
+        \item[Expectation step] - we would like to compute the soft assignments of $\alpha$ and $r$:
+          \begin{equation}
+            P(d|\Theta) = \sum_{k=1}^{K}\alpha_k\left ( \prod_{t_m \in d} P(t_m = 1|w_k) \right ) \left ( \prod_{t_m \not\in d} (1 - P(t_m = 1|w_k)) \right )
+          \end{equation}
+
+        \item[Maximization step] - we would like to maximize $\alpha$ and $r$:
+          \begin{equation}
+            P(d|\Theta) = \sum_{k=1}^{K}\alpha_k\left ( \prod_{t_m \in d} P(t_m = 1|w_k) \right ) \left ( \prod_{t_m \not\in d} (1 - P(t_m = 1|w_k)) \right )
+          \end{equation}
+
+      \end{descriptin}
+
+    Given some document $d$ and a parameter $\Theta$, what are the probabilities given $\Theta$ that $d$ is in some cluster $c_1..c_k$. $\alpha$ is the prior probability meaning the probability that a cluster $c_1..c_k$ is chosen without evidence of $d$. We would like to to know the probability of a word $t_m \in w_k$ and $t_m \in d$ so that the product of all occuring terms, penalizing documents that do not share a lot of words $t_m$ with $w_k$, is maximized. For further information see \cite{IRBookStanford2008}.
 
 
   \subsection{Hierarchical / Agglomerative clustering}
