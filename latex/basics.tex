@@ -230,15 +230,22 @@ Lastly some quality measures of clusters based on internal measures (without gro
 
 \section{Clustering algorithms}
   
-  Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms.
+  Clustering algorithms are at the heart of this thesis. In some way the \emph{LSA} or \emph{PCA} can be seen as clusterings as well. Unsupervised methods forming groups of coherent similarity and dissimilarity. Traditional clustering algorithms stray much further than this. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are graph based or \emph{density} based algorithms. Some additional defintions will help to describe the algorithms better
+
+  \begin{itemize}
+    \item \emph{Hard and Soft clustering} - A clustering algorithm is hard if documents can only be assigned to one distinct cluster. On the contrary they are \emph{soft} (often called \emph{fuzzy/overlapping}) if a document can have multiple assignments that resemble topical proportions of the document.
+    \item \emph{Exhaustive and non-exhaustive} - A clustering is exhaustive if every document has an assignment after the run whereas it is non-exhaustive if documents might not have any assignments at all (assigned to a null cluster).
+    \item \emph{Cost functions} - Most clustering algorithms incorporate some sort of cost function that needs to be minimized or maximized after the algorithm completed. The clustering can be rerun several times find a maximum between different runs varying the parameters. This should not be confused with the similarity measure between objects during a clustering run.
+    \item \emph{Cluster cardinality} - Most of the clustering algorithm incoporate a fixed non optional parameter k that determines how many clusters should be build up. Only a few algorithms such as Birch, Mean-Shift or certain probabilistic topic models can infer the cardinality of a cluster algorithm by tweeking threshold, density or graph based objective cost parameters.
+  \end{itemize}
 
   \subsection{Partitional clustering}
     \emph{Partitional algorithms} in particular can be globally optimized given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$. Often they are much easier to implement because constraints are kept low and are therefore fast in converging. There are also online versions available which makes it possible to scale algorithms such as K-means with map reduce on several processors. This is not true for hierarchical algorithms which build up hierarchy.\\
 
-    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms namely K-Means and Mean-Shift. For a more thorough overview I suggest \cite{ClusteringBooAggarwalk2013}.
+    Partitional clustering algorithms build up centroids. They resemble typical cluster centers. After documents are converted into vector space and some sort of similarity measure is applied, cluster centers are incrementally created. We briefly review two partitional clustering algorithms namely K-Means and Expectation Maximization (EM). For a more thorough overview I suggest \cite{ClusteringBooAggarwalk2013}.
 
     \paragraph{K-Means}
-    The \emph{K-Means} clustering algorithm is a centroid based algorithm. For each document we want to find a centroid that is closest. In order to do this \emph{k} centroids are drawn as a sample from the documents. Then interdistance similarity measures decide if a documents is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next round a document then might be reconsidered for another cluster. The algorithm converges either after not improving above a \emph{threshold} or by limiting the iterations by a paramter \emph{max iter} after which the algorithm stops. \emph{K-Means} typically forms cluster centers of equal size compared to other algorithms suchs as density or model based \emph{EM} algorithms.
+    The \emph{K-Means} clustering algorithm is a centroid based algorithm that is for each document we want to find a centroid that is closest. In order to do this \emph{k} centroids are drawn as a sample from the documents. Then interdistance similarity measures decide if a document is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next round a document then might be reconsidered for another cluster. The algorithm converges either after not improving above a \emph{threshold} or by limiting the iterations by a paramter \emph{max iter} after which the algorithm stops. \emph{K-Means} typically forms cluster centers of equal sizes and is a hard clustering algorithm.
 
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
@@ -270,7 +277,8 @@ Lastly some quality measures of clusters based on internal measures (without gro
     Another strategy has been proposed by \cite{KMeansPlusPlus2007} that maximizes the intercluster distance by spreading the clusters as far from each other as possible. 
     As the initial clusters are often picked randomly kmeans is a non deterministic approach that will most likely result in different clusters after each run. However kmeans will always converge at a \emph{local minimum}, that is it will find locally minimizing costs to converge.
 
-    \paragraph{Mean-Shift}
+    \paragraph{Expectation Maximization (EM)}
+
 
   \subsection{Hierarchical / Agglomerative clustering}
     \paragraph{Ward, Complete and Average Linkage}
