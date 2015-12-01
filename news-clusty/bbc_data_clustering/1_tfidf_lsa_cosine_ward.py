@@ -31,6 +31,22 @@ Ward linkage: 93.15315315315316%
   - ward_linkage n = 8
 '''
 
+def preprocess(x):
+  from preprocessing import tokenize_string
+  from preprocessing import stem
+  from preprocessing import stemmatize
+
+  print("tokenizing")
+  doc_tokens = [tokenize_string(doc) for doc in x] 
+  print("stemming")
+  doc_stems = [stemmatize(tokens) for tokens in doc_tokens]
+  print("joining")
+  X = [" ".join(stems) for stems in doc_stems]
+  # X = preprocess(X)
+  X, vsmodel = tfidf_vector( X, ngram=(1,1), max_df=0.99, min_df=1 )
+  return X, vsmodel
+
+
 def setup_data(bbc_data):
   X = bbc_data.X()
   X, vsmodel = tfidf_vector( X, ngram=(1,1), max_df=0.8, min_df=3 )

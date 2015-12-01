@@ -30,6 +30,9 @@ EXTRACTOR = ConllExtractor()
 def get_blob(text):
   return TextBlob(text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
 
+def tokenize_string(doc):
+  return word_tokenize(doc)
+
 def sentence_tokenize(s):
   sentences = []
   for sentence in SENTENCE_DETECTOR.tokenize(s.strip()):
