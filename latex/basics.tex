@@ -92,7 +92,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \end{equation}
 
   \subsection{Bag of words}
-    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0.
+    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0. One of the general assumptions is directly derived from Bayesian inference that words are indenpendant of each other. That is, there are no relations between a given word and the following word in a document. In reality this is not true, but without this assumption it cannot hold true that a bag of words is a suitable representation of text data. In real world examples this typically no problem.
 
     \begin{table}[h!]
       \centering
@@ -282,25 +282,21 @@ Lastly some quality measures of clusters based on internal measures (without gro
     As the initial clusters are often picked randomly \emph{K-Means} is a non deterministic approach that will most likely result in different clusters after each run.
 
     \paragraph{Expectation Maximization (EM)}
-    The \emph{Expecation Maximization (EM)} algorithm is a generalization of the \emph{K-Means} and is a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as normal distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary and guassian mixture models are very basic ones. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to find a parameter $\Theta$ that maximizes a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $x$, that is assumed to be normally distributed, we want to maximize the connection between our model and $x$.\\
-    The \emph{EM} algorithm now tries to maximize this function by assigning a probability that a data point $x$ is likely to be in the cluster $c_1..c_k$ by calculating the joint probabilities of occuring words given a prior of cluster $c_1..c_k$. This is also called the expectation step. In the second step each probability of a document \emph{d} being part of a cluster $c_1..c_k$ is weighted into the average and variance of the defined clusters. The clusters are then recalculated using the beforementioned assignments. This step is repeated until some kind of convergence criteria has been met. The only problem is now: How can we start an expectation if we do not have any kind of maximization yet? We simply choose k gaussian distributions at random and act as if these were the priors. This resembles much with the notion of the \emph{K-Means} algorithm where \emph{k} initial clusters need to be selected. At the beginning this might as well be equally proportioned so $c_1..c_k$ will have $\frac{1}{k}$ prior probability.\\
-    Putting this together for the text domain, we would like to model the following:
+    The \emph{Expecation Maximization (EM)} algorithm is a generalization of the \emph{K-Means} and is a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary, gaussian distributions can tend to zero if no assignment was found and so EM could assign no label at all. If that is not desired and a soft and exhaustive clustering is prefered one can add additive smoothing, that other models like the Dirichlet model inheret. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to estimate a model $\Theta$ that is maximized using a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $D$, that is assumed to be normally distributed, we want to maximize the connection between $\Theta$ and $D$.\\
 
-      \begin{descriptin}
-        \item[Expectation step] - we would like to compute the soft assignments of $\alpha$ and $r$:
-          \begin{equation}
-            P(d|\Theta) = \sum_{k=1}^{K}\alpha_k\left ( \prod_{t_m \in d} P(t_m = 1|w_k) \right ) \left ( \prod_{t_m \not\in d} (1 - P(t_m = 1|w_k)) \right )
-          \end{equation}
+      \begin{equation}
+        \Theta = argmax\:\sum_{n=1}^{N}log\:P(d_n,\Theta)
+      \end{equation}
 
-        \item[Maximization step] - we would like to maximize $\alpha$ and $r$:
-          \begin{equation}
-            P(d|\Theta) = \sum_{k=1}^{K}\alpha_k\left ( \prod_{t_m \in d} P(t_m = 1|w_k) \right ) \left ( \prod_{t_m \not\in d} (1 - P(t_m = 1|w_k)) \right )
-          \end{equation}
+    Where $P$ is the fractional probability that a document $d_n$ was generated by $\Theta$. In the text domain this means: for all words in each $D$ can we generate assignments to distributions that maximize $\Theta$.
+    The \emph{EM} algorithm tries to maximize this function by assigning a probability that a data point $x$ is likely to be in the cluster $c_1..c_k$ by calculating the joint probabilities of occuring words given a prior of cluster $c_1..c_k$. This is also called the expectation step. In the second step each probability of a document \emph{d} being part of a cluster $c_1..c_k$ is weighted into the average and variance of the defined clusters. The clusters are then recalculated using the beforementioned assignments. This step is repeated until some kind of convergence criteria has been met. The main intuition is if we have a model $\Theta$ we can compute the fractional probabilities of a document $d$ to be in a cluster $k$:
 
-      \end{descriptin}
+      \begin{equation}
+        P(d|\Theta) = \sum_{k=1}^{K}\alpha_k\left ( \prod_{t_m \in d} P(t_m = 1|c_k) \right ) \left ( \prod_{t_m \not\in d} (1 - P(t_m = 1|c_k)) \right )
+      \end{equation}
 
-    Given some document $d$ and a parameter $\Theta$, what are the probabilities given $\Theta$ that $d$ is in some cluster $c_1..c_k$. $\alpha$ is the prior probability meaning the probability that a cluster $c_1..c_k$ is chosen without evidence of $d$. We would like to to know the probability of a word $t_m \in w_k$ and $t_m \in d$ so that the product of all occuring terms, penalizing documents that do not share a lot of words $t_m$ with $w_k$, is maximized. For further information see \cite{IRBookStanford2008}.
-
+    In the maximization step we then need to compute the probability that a term $t_m$ has a high probability to be in $c_k$ that is $P(t_m = 1|c_k)$ and the prior $\alpha_k$ that is the probability that any document is in $c_1..c_k$ given no evidence. In the expectation step we compute $r_{nk}$ that is the soft assignment of a document $d_n$ to a cluster $k$. $r_{nk}$ is computed with the soft assignments of the prior $\alpha_k$ and $P(t_m = 1|c_k)$.\\
+    A final inherent problem remains as was seen with the \emph{K-Means}: How do we choose the initial seed? Expectation Maximization is self referencing so to begin an iteration the seed is most often just $k$ randomly build up distributions that hopefully will converge well. For further information see \cite{IRBookStanford2008}.
 
   \subsection{Hierarchical / Agglomerative clustering}
     \paragraph{Ward, Complete and Average Linkage}
