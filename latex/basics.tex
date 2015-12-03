@@ -3,11 +3,11 @@
 }}{ Isaac Newton }
 
 The goal of this section is to give some intuition and the necessary theoretical background for the following chapters. The areas where clustering problems arise are huge. It provides solutions to problems like market segmentation, classification, document organization or indexing.\\
-Firstly we will have a look at the definition of clustering and summarization. How they are related and the variety of possibilities this imposes.
-Secondly the vector space model (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by singular value decomposition (SVD).
-Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Expectation Maximization) family will be presented.
-Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.
-Lastly some quality measures of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth) are explained.
+Firstly we will have a look at the definition of clustering and summarization. How they are related and the variety of possibilities this imposes.\\
+Secondly the vector space model (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by singular value decomposition (SVD).\\
+Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Expectation Maximization) family will be presented. Part of this is exemplifying the quality of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth).\\
+Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.\\
+The reader is assumed to have prior knowledge on linear algebra, statistics and linguistics. This is by no means a complete reference but should cover the topics fairly well.\\
 
 
 \section{Clustering and Summarization}
@@ -116,9 +116,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
       tfidf(t, d, D) = tf(t, d) * idf(t, D)
     \end{equation}
 
-    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words.\\
-
-    There are other models such as graph based or tree based approaches. For the porpuse of this thesis these models are left out. @TODO:Ref
+    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words. There are other models such as graph based or tree based approaches. For the porpuse of this thesis these models are left out. \cite{Nothing}\\
 
     One of the big problems with the vector space model is that feature inflation or feature explosion arises quickly. If documents have a high variance between other documents and the connections between two documents are small the sparsity can go up to 100\%. That means that no document has overlapping words and each document only accounts for the words that were originally in the document. Think of it another way, suppose one has 3 documents in 3 dimensional space with each axis set to zero but one (1,0,0), (0,1,0), (0,0,1) we have an independant basis. This means that all documents are orthogonal to each other, meeting at no point except at the null point (0,0,0). It is therefore not really possible to derive any connections between those 3 points. Thus each document represents its own topic.
     These kind of problems need a well thought out solution which is presented later in this section.
@@ -166,13 +164,6 @@ Lastly some quality measures of clusters based on internal measures (without gro
 
       The difference here really is the resulting dimensions. While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{m} words to \emph{k}.
 
-      The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. For a \emph{term x document} matrix this means that a lot of documents provide a lot of words. The higher the variance between each document the more single words there will be. Thus most of the words do not contribute anything to the relationships between documents. SVD then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. The \emph{SVD} will also sort the words by highest impact and so smaller \emph{singular values} will appear in the lower part of the resulting decomposition.
-
-      Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning.\\
-      Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
-      On the contrary to this \emph{LSA} reduces dimensions so we can compare documents more rigurously. This also means that we destroy variance. If the variance is 100\% before \emph{LSA} and after only 20\% remain, we only account for $frac{1}{5}$ of the original variance. Often this is not desired and we need to find a good \emph{k} to reduce the dimensions to. In laymans terms: we do not want ``happy'' to be close to ``murder'' to be close to ``ordinary''. That is, no meaning but a single one is left.
-      In summarization \emph{LSA} is much more frequently used. \cite{SumLSASteinberger2004} proposed a solution to retrieve the highest weighting sentences by \emph{LSA} taking the top \emph{k} words into account as well.
-
       \begin{figure}[h!]
         \centering
           \includegraphics[width=0.7\textwidth]{svd_lsa.png}
@@ -180,11 +171,15 @@ Lastly some quality measures of clusters based on internal measures (without gro
           \label{svd_lsa}
       \end{figure}
 
-      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}
+      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}\\
+
+      The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. For a \emph{term x document} matrix this means that a lot of documents provide a lot of words. The higher the variance between each document the more single words there will be. Thus most of the words do not contribute anything to the relationships between documents. SVD then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. The \emph{SVD} will also sort the words by highest impact and so smaller \emph{singular values} will appear in the lower part of the resulting decomposition.\\
+      Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning. Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.\\
+      On the contrary to this \emph{LSA} reduces dimensions so we can compare documents more rigurously. This also means that we destroy variance. If the variance is 100\% before \emph{LSA} and after only 20\% remain, we only account for $frac{1}{5}$ of the original variance. Often this is not desired and we need to find a good \emph{k} to reduce the dimensions to. In laymans terms: we do not want ``happy'' to be close to ``murder'' to be close to ``ordinary''. That is, no meaning but a single one is left.\\
+      In summarization \emph{LSA} is much more frequently used. \cite{SumLSASteinberger2004} proposed a solution to retrieve the highest weighting sentences by \emph{LSA} taking the top \emph{k} words into account as well.
 
     \subsubsection{Principal Component Analysis (PCA)}
-    The \emph{Principal Component Analysis (PCA)} is a mulativariate technique seperating out correlating variables into principal components. \emph{PCA} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. Often \emph{SVD} is part of this process. What makes \emph{PCA} different to \emph{LSA} is the underlying methodology.\\
-    It uses least square projections to project the data into a plane for each dimension \cite{Strang2009}. Least square projections are useful for linear combinations of vectors that do not intersect. It is then possible to project data onto a line or a plane that can by some error value be part of a combined dimension. Suppose two vectors $["he", "is", "happy"]\:and\:["she", "is", "happy"]$. Both vectors share words and transforming them to vector space will find that the two documents are close. \emph{PCA} now takes these vectors and projects all 3 dimensions onto a specified dimension by \emph{k}. Assuming \emph{k} is 2 we reduce to 2 dimensional space. As with the \emph{SVD} we find several components that resemble the data without parts of the noisy variance.
+    The \emph{Principal Component Analysis (PCA)} is a mulativariate technique seperating out correlating variables into principal components. \emph{PCA} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. Often \emph{SVD} is part of this process. What makes \emph{PCA} different to \emph{LSA} is the underlying methodology.
 
     \begin{figure}[h!]
       \centering
@@ -193,17 +188,18 @@ Lastly some quality measures of clusters based on internal measures (without gro
         \label{pca}
     \end{figure}
 
-    In order to find the n most likely components of a document we will decompose an original document matrix $X$ by factoring out $P$ principal components. These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. If we do this with SVD we also get a ranking of these principal components by impact on the entire collection. Primarily \emph{PCA} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down \emph{n} dimensions to 2D or 3D. See more in \cite{PCA2009}.
+    In figure \ref{pca} we find the \emph{n} most likely components of a document we will decompose an original document matrix $X$ by factoring out $P$ principal components. These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. If we do this with SVD we also get a ranking of these principal components by impact on the entire collection. Primarily \emph{PCA} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.\\
+    The whole theoretical concept stems from least square projections to project the data into a plane for each dimension. Least square projections are useful for linear combinations of vectors that do not intersect. It is then possible to project data onto a line or a plane that can by some error value be part of a combined dimension. As with the \emph{SVD} we find several components that resemble the data without parts of the noisy variance.
 
 \section{Clustering algorithms}
   
-  Clustering algorithms are at the heart of this thesis. Unsupervised methods forming groups of coherent similarity and dissimilarity. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are \emph{graph based} or \emph{density} based algorithms. There is also a fifth category namely \emph{generative models} and closely related in terms of the text domain \emph{probabilistic topic models}. These models try to find the underlying latent semantics by generating the model that could have created the documents in the first place. As this is quite a chapter on its own and does not fall under the classic definitions of clustering algorithms they come in a separate part later. First let us setup a few definitions that all clustering algorithms incorporate.
+  Clustering algorithms are the procedures as to how a group of similar groups are created. They are unsupervised methods and can be combined by explicit knowledge engineering. They come in shape of \emph{partitional} models, that flatten the structure, in \emph{hierarchical} models that build tree like structures, \emph{spectral} algorithms that are \emph{graph based} or \emph{density} based algorithms. There is also a fifth category namely \emph{generative models} and closely related in terms of the text domain \emph{probabilistic topic models}. These models try to find the underlying latent semantics by generating the model that could have created the documents in the first place. First let us setup a few definitions that all clustering algorithms incorporate.
 
   \begin{itemize}
     \item \emph{Hard and Soft clustering} - A clustering algorithm is \emph{hard} if documents can only be assigned to one distinct cluster. On the contrary they are \emph{soft} (often called \emph{fuzzy/overlapping}) if a document can have multiple assignments that resemble topical proportions of the document.
     \item \emph{Exhaustive and non-exhaustive} - A clustering is exhaustive if every document has an assignment after the run whereas it is non-exhaustive if documents might not have any assignments at all (assigned to a null cluster).
-    \item \emph{Cost functions} - Most clustering algorithms incorporate some sort of cost function that needs to be minimized or maximized after the algorithm completed. The clustering can be rerun several times finding a maximum between different runs by varying the parameters. This should not be confused with the similarity measure between objects during a clustering run (although this can be the objective cost function of a clustering algorithm as well).
-    \item \emph{local minima/global optimum} - A local minima is when the objective cost functions between objects do not yield better results after several iterations. This does not mean that the best state is found. Similarity metrics between objects are inherently heuristic and have no view of a global optimum. A global optimum can be approximated by objective cost functions rerunning the algorithm several times, varying the parameters in hope of better results. There is currently no known algorithm that can solve clustering in a deterministic globally optimized way. It is NP-hard.
+    \item \emph{Cost functions} - Most clustering algorithms incorporate some sort of cost function that needs to be minimized or maximized after the algorithm completed. The clustering can be rerun several times finding a maximum between different runs by varying the parameters. This should not be confused with the similarity measure between objects during a clustering run.
+    \item \emph{local minima/global optimum} - A local minima is when the objective cost functions between objects do not yield better results after several iterations. This does not mean that the best state is found. Similarity metrics between objects are inherently heuristic and have no view of a global optimum. A global optimum can be approximated by objective cost functions rerunning the algorithm several times. There is currently no known algorithm that can solve clustering in a deterministic globally optimized way.
   \end{itemize}
 
   \subsection{Partitional clustering}
@@ -216,11 +212,9 @@ Lastly some quality measures of clusters based on internal measures (without gro
         \label{kmeans_clustering}
     \end{figure}
 
-    \ref{kmeans_clustering} is a typical clustering result. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. 
+    Figure \ref{kmeans_clustering} is a typical clustering result. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. 
 
-    \emph{Partitional clustering} algorithms typically have linear running times and thus are often used in practical real world applications. We will see later that this comes with a price mostly in accuracy and by providing the number of clusters. Most of the time we do not know how many clusters will be in the final result so we need algorithms that can find an approximately optimal clustering.\\
-
-    \emph{Partitional algorithms} in particular can be globally approximated given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$. Often they are much easier to implement because constraints are kept low and requirements are kept to a minimum. There are also online versions available which makes it possible to scale algorithms such as K-means with \emph{map reduce} on several processors. This is not true for hierarchical algorithms which build up a hierarchy bottom-up or top-down.\\
+    \emph{Partitional clustering} algorithms typically have linear running times and thus are often used in practical real world applications. We will see later that this comes with a price mostly in accuracy and by providing the number of clusters. Most of the time we do not know how many clusters will be in the final result so we need algorithms that can find an approximately optimal clustering. In particular partitional algorithms can be globally approximated given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(x_0) \geq f(x), \forall x \in D$  or minimizes $f(x_0) \leq f(x), \forall x \in D$. Often they are much easier to implement because constraints are kept low and requirements are kept to a minimum. There are also online versions available which makes it possible to scale algorithms such as K-means with \emph{map reduce} on several processors. This is not true for hierarchical algorithms which build up a hierarchy bottom-up or top-down.
 
     \paragraph{K-Means}
     The \emph{K-Means} clustering algorithm is a centroid based algorithm. Each document is assigned to a cluster center in each iteration. In order to do this \emph{k} centroids are drawn as a initial cluster centers from the documents. Then interdistance similarity measures, typically $l_2\:norm$, decide if a document is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next iteration a document then might be reconsidered for another cluster.\emph{K-Means} typically forms cluster centers of equal sizes and is a hard clustering algorithm \cite{IRBookStanford2008}.\\
@@ -258,7 +252,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
     As the initial clusters are often picked randomly \emph{K-Means} is a non deterministic approach that will most likely result in different clusters after each run.
 
     \paragraph{Expectation Maximization (EM)}
-    The \emph{Expecation Maximization (EM)} algorithm is a generalization of the \emph{K-Means} and is a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary, gaussian distributions can tend to zero if no assignment was found and so EM could assign no label at all. If that is not desired and a soft and exhaustive clustering is prefered one can add additive smoothing, that other models like the Dirichlet model inheret. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to estimate a model $\Theta$ that is maximized using a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $D$, that is assumed to be normally distributed, we want to maximize the connection between $\Theta$ and $D$.\\
+    The \emph{Expecation Maximization (EM)} algorithm is a generalization of the \emph{K-Means} and is a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary, gaussian distributions can tend to zero if no assignment was found and so EM could assign no label at all. If that is not desired and a soft and exhaustive clustering is prefered one can add additive smoothing, that other models like the Dirichlet model inheret. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to estimate a model $\Theta$ that is maximized using a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $D$, that is assumed to be normally distributed, we want to maximize the connection between $\Theta$ and $D$.
 
       \begin{equation}
         \Theta = argmax\:\sum_{n=1}^{N}log\:P(d_n,\Theta)
@@ -275,7 +269,7 @@ Lastly some quality measures of clusters based on internal measures (without gro
     A final inherent problem remains as was seen with the \emph{K-Means}: How do we choose the initial seed? \emph{EM} is self referencing so to begin an iteration the seed is most often just $k$ randomly build up distributions that will eventuelly converge well. For further information see \cite{IRBookStanford2008}.
 
   \subsection{Hierarchical / Agglomerative clustering}
-    \emph{Hierarchical agglomerative clustering (HAC)} algorithms build up hierarchies of clusters with  documents on their leaf nodes. There are two approaches available. By bottom-up, assuming all documents to be clusters, agglomerating them upwards until a root node has been found. Or by top-down, starting with all documents in a cluster, splitting them down until the leafs are documents. Often we can constrain this process by limiting the cluster size as well. Then HAC performs clustering and by some heuristic the clusters are cut out of the tree by some distance threshold or a fixed k forming clusters by merging the smallest root clusters to the desired size. It is a big discussion in the scientific community if hierarchical clustering as opposed to partitional clustering algorithms give better results. @TODO:Ref \\
+    \emph{Hierarchical agglomerative clustering (HAC)} algorithms build up hierarchies of clusters with  documents on their leaf nodes. There are two approaches available. By bottom-up, assuming all documents to be clusters, agglomerating them upwards until a root node has been found. Or by top-down, starting with all documents in a cluster, splitting them down until the leafs are documents. Often we can constrain this process by limiting the cluster size as well. Then HAC performs clustering and by some heuristic the clusters are cut out of the tree by some distance threshold or a fixed k forming clusters by merging the smallest root clusters to the desired size. It is a big discussion in the scientific community if hierarchical clustering as opposed to partitional clustering algorithms give better results. \cite{Nothing}\\
     HACs typically have higher runtimes due to the fact that most of them infer the count of clusters and build up a hierarchy until convergence. The runtimes are often in $O(N^2)$ or $O(N^3)$. As seen below in figure \ref{hac_dendogram} hierarchical clusterings can be easily visualized as dendograms. Dendograms show a history of the merges of different clusters up to the root nodes.
 
     \begin{figure}[h!]
@@ -285,18 +279,19 @@ Lastly some quality measures of clusters based on internal measures (without gro
         \label{hac_dendogram}
     \end{figure}
 
-    In hierarchical clustering we cannot simply look at two objects alone we have to take the clusterings into account in the merging steps. On the \emph{y} label there are decreasing distances. To start hierarchical clustering a $m\:x\:m$ distance matrix has to be created. The closest two documents will be iteratively merged until no unassigned document remains. To so do we have to keep track of all the merging processes in between. A simple HAC scheme first finds the maximizing next distance between two documents that have not yet been clustered. Then these maximized documents $d_1$ and $d_2$ will be merged resulting in a new cluster. This cluster then needs to be compared by a linkage strategy to all other clusters.
+    In hierarchical clustering we cannot simply look at two objects alone we have to take the clusterings into account in the merging steps. On the \emph{y} label there are decreasing distances. To start hierarchical clustering a $m\:x\:m$ distance matrix has to be created. The closest two documents will be iteratively merged until no unassigned document remains. To so do we have to keep track of all the merging processes in between. A simple HAC scheme first finds the maximizing next distance between two documents that have not yet been clustered. Then these maximized document pairs $d_1$ and $d_2$ will be merged resulting in a new cluster. This new clustering formed with $d_1,d_2$ needs to be compared with similarity measures to all other clusters. The similarity in HACs are stated by linkage criterias. The question then is: given two clusters $c_1,c_2$ how can we compare them?
 
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
       \caption{$D$ is a document term matrix}\label{hac}
       \Function{HAC}{$D={d_1,..d_m}$}
-        \State $C \gets initialize\:m\:by\:m\:cosine\:distance\:matrix$
+        \State $C \gets initialize\:m\:by\:m\:distance\:matrix\:over\:D$
         \State $I \gets list\:of\:length\:m\:I[m]=1$ \Comment{List of unmerged documents}
         \State $H \gets \{\}$ \Comment{History of merges}
 
         \For{$k\gets 1, m$}
-          \State $i,l \gets  argmax \{ i,l : i\not=l \wedge I[i]=1 \wedge I[l]=1 \} C[i][l]$ \Comment{Return indices for maximized next distance in C}
+          \State $g \gets \{i\not=l \wedge I[i]=1 \wedge I[l]=1 \}$
+          \State $i,l \gets  argmax\:\{ i,l : g\} C[i][l]$ \Comment{Return maximized indices over C}
           \State $H \gets (i,l)$ \Comment{Keep track of merges}
           \For{$j\gets 1, m$} \Comment{Update C with respect to all other clusters}
             \State $C[i][j] \gets LinkageSim(C[i][l], C[l][j])$
@@ -309,57 +304,84 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \end{algorithmic}
     \end{algorithm}
 
-    In the following there will be explanations for these different linkage clustering strategies.
+    In the following we will explore some of these different linkage clustering strategies.
+    A short overview. In the following the distance function will be one of the conventional distances such as \emph{cosine} or \emph{euclidean}.
 
-    \paragraph{Single, Complete, Average and Ward Linkage}
-    Generally speaking there are two distinct strategies, the complete link, where the minimum distance of cluster 1 and the minimum distance of cluster 2 will be used to link together two clusters.
+    \paragraph{Single linkage} takes two documents of the corresponding clusters $c_1,c_2$ that minimizes the distance between these two. The objective function corresponds to:
+      
+      \begin{equation}
+        \forall d_1 \in c_1 \wedge \forall d_2 \in c_1: min(distance(d_1, d_2))
+      \end{equation}
 
-    \paragraph{Birch}
+    In figure \ref{linkage_strategy} we can see that single linkage takes, geometrically, the two clostest points of $c_1,c_2$. It is single in a sense that no other documents are considered but the closest two.
+
+    \paragraph{Complete linkage} takes two documents of the corresponding clusters $c_1,c_2$ that maximizies the distance between these two. The objective function corresponds to:
+      
+      \begin{equation}
+        \forall d_1 \in c_1 \wedge \forall d_2 \in c_1: max(distance(d_1, d_2))
+      \end{equation}
+
+    In figure \ref{linkage_strategy} we can see that complete linkage takes, geometrically, the two farthest points of $c_1,c_2$. It is complete in saying that it is not underestimated by taking the high variance into account.
+
+    \paragraph{Average linkage} takes all documents of the two corresponding clusters $c_1,c_2$ and averages them with all corresponding clusters. That is we take all documents into account and link them by their average. The objective function is:
+
+      \begin{equation}
+        \frac{1}{|c_1|*|c_2|} \sum_{d_1 \in c_1} \sum_{d_2 \in c_2} distance(d_1, d_2)
+      \end{equation}
+
+    In figure \ref{linkage_strategy} we can see that average linkage takes the average of all documents in a cluster and calculates the distance between both averages.
+
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{linkage_strategy.png}
+        \caption{"Single, complete and average linkage"}
+        \label{linkage_strategy}
+    \end{figure}
+
+    There are other strategies such as centroid based, Wards method and minimum energy based.
+    All strategies have different purposes and have their place. Single linkage might be best suited for problems where the data points are dense and not scattered throughout the vector space. Complete linkage might work well if data is scattered widely in high maximas so to approximate an ideal solution. Average linkage would overestimate these cases by too many outliers. On the other hand average linkage is the best choice if documents should participate equally. As with the partitional algorithms this was studied extensively by \cite{ClusteringBooAggarwalk2013, ClusterAlgoSurveyIBM, IRBook2008}
+
+    \paragraph{Birch} is a specialized version of \emph{HACs}. It scales well to large datasets and is an incremental algorithm. It operates in different phases and can be constrained by an optional cluster size \emph{k}. One can provide parameters for maximum nodes per cluster and minimum density threshold as to when a document should be assigned to a cluster.
+    \cite{Nothing}
 
     \subsection{Others}
+    In the literature one can find dozens of further strategies as to how clustering can be done. Often they are particulary good in specific domains such as images. In the text domain however they have high runtimes and are often not desirable in their output. They often lack good strategies to work with high dimensionality. We briefly note them here.
+
       \begin{enumerate}
-        \item \emph{Spectral} - x
-        \item \emph{Density} - x
-        \item \emph{Grid} - x
+        \item \emph{Spectral} - these are graph based algorithms. Distances are based on graph partitioning problems, where shortest paths, min cuts and graph partitions are used to define clusters. These problems are perfect for small document groups and are often used as subcluster procedures. \cite{Nothing}
+        \item \emph{Density} - these algorithms try to find documents that are within a certain distance to each other. Often one needs to provide density thresholds or neighboorhood graphs that determine how two documents should be grouped. From a geometric point of view, we would like to cluster documents that are within a certain distance radius. These algorithms are locally aware in that they do not care about a global optimization. \cite{Nothing}
+        \item \emph{Grid} - the vector space of the documents is split into equally sized grids. We then compute the density of the grids and identify the maximizing grids. Then the problem to cluster each document to a distinct cluster is based on graph traversal techniques. The intuition is that we do not consider single points but rather the surrounding grids. \cite{Nothing}
       \end{enumerate}
 
   \subsection{Evaluation}
-    In order to know whether or not a clustering algorithm performed good or rather bad we need some mathematical intuition about the quality of the clusters. Each clustering algorithm creates cluster centers that connects the documents into groups. To evaluate how well the documents actually fit to the groups they are in is part of this section.
-    Formally we have two groups of measurements, the internal measures and the external measures.
+    In order to know whether or not a clustering algorithm performed good or rather bad we need some mathematical intuition about the quality of the clusters. Each clustering algorithm creates cluster centers that connects the documents into groups. To evaluate how well the documents fit to their respective groups is part of this section.
+    Formally we have two groups of measurements, the internal measures and the external measures. \cite{Nothing}
 
     \paragraph{Internal measures}
       Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters or by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. These measures perform better on lower dimensions and worse on high dimensions.
 
       \begin{enumerate}
-        \item \emph{Silhouette coefficient} - 
-        \item \emph{Davies–Bouldin index} - x
-        \item \emph{Dunn index} - x
+        \item \emph{Silhouette coefficient} - \cite{Nothing}
+        \item \emph{Davies–Bouldin index} - \cite{Nothing}
+        \item \emph{Dunn index} - \cite{Nothing}
       \end{enumerate}
 
     \paragraph{External measures}
       External measures describe how well a clustering performed provided with a ground truth of the documents. That means that each document has a predefined label assigned to a concrete class. With newspaper articles this is often the category of the article, like politics or business. We then hope to find that clusters contain documents with the same labels assigned. Through this we have the possibility to measure the accuracy of our clustering results. Ground truths are expensive. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for all our documents? In reality one would assign a few 100 to 1000 labels to documents and then check if at least part of the labels are part of the same clusters.
 
       \begin{enumerate}
-        \item \emph{Accuracy} - x
-        \item \emph{F-Measure} - x
-        \item \emph{Jaccard index} - x
+        \item \emph{Accuracy} - \cite{Nothing}
+        \item \emph{F-Measure} - \cite{Nothing}
+        \item \emph{Jaccard index} - \cite{Nothing}
       \end{enumerate}
 
 \section{Generative Models}    
-  
-  \cite{NMF1999}
-  \cite{TopicModelsBlei2012}
-  \cite{PLSA2001}
-  \cite{LDA2003}
-  \cite{SemanticTopicModels2011}
-  \cite{ProbTopicModelsSteyvers2006}
-  \cite{blei2011introduction}
 
   Generative models are special algorithmic schemes. In the area of document clustering and text summarization they play a huge role in modelling documents by a predictive model.
   The EM algorithm is a typical scheme of a generative model, found in the partitional clustering section. In practive EM is widely used as a base algorithmic scheme for several generative models. In the text domain topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By Bayesian inference we can draw much more adequate probabilities than it is the case for simple generative models. As with the EM algorithm we draw partial probabilities that a document was generated by the identified topics. Two widely used methods namely Latent Dirichlet Allocation (LDA) and Non Negative Matrix Factorization (NMF) comes to mind.
 
   \subsection{Topic modelling}
-    
+    \cite{blei2011introduction, SemanticTopicModels2011, TopicModelsBlei2012, ProbTopicModelsSteyvers2006}
     General probabilistic topic modelling
 
     \paragraph{Bayes inference}
@@ -373,8 +395,11 @@ Lastly some quality measures of clusters based on internal measures (without gro
     \paragraph{Dirichlet Distributions}
 
       What is a dirichlet distribution, a word on priors
-      Chinese Restaurant Process
+      Chinese Restaurant Process \cite{Nothing}
 
   \subsection{Latent Dirichlet Allocation (LDA)}
+    \cite{PLSA2001, LDA2003}
+
   \subsection{Non Negative Matrix Factorization (NMF)}
+    \cite{NMF1999}
 
