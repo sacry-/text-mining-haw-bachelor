@@ -12,7 +12,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
 \section{Clustering and Summarization}
   
-  \textbf{Clustering} as defined by \cite{ClusterAlgoSurveyIBM} is finding groups of similar objects in the data with a defined similarity function between objects. The granularity of the features can vary:
+  \paragraph{Clustering} as defined by \cite{ClusterAlgoSurveyIBM} is finding groups of similar objects in the data with a defined similarity function between objects. The granularity of the features can vary:
 
   \begin{itemize}
     \item \emph{Sentence based} - A document d is split into sentences so clustering reveals the most coherent groups of sentences that are closely related.
@@ -20,8 +20,9 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \item \emph{Stream of documents} - The same as clustering copora with the constraint that over time the size of documents grow.
   \end{itemize}
 
-  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section. Data clustering is a computationally expensive \emph{NP-hard} problem. That means there is currently no efficient way to group objectcs in an optimal way. Therefore heuristics are applied such that algorithms converge at a  \emph{local minimum}. Theoretically a local minimum can vary vastly compared to a global minimum, in practice however a close to 80\% solution seems reasonable.\\
-  \textbf{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user \cite{SumEvaluation2001}. We have to distinct between summarization of single documents and a collection of documents as well. In Multi-summarization the problem lies in identifying topics accross documents, finding the most relevant sentences, reducing and removing redundant/duplicate information. Moreover syntactically it is often inappropriate to merge sentences of different documents. The Columbia Newsblaster and Google News are prime examples of summarization engines. Both continuously scrape news, cluster them and summarize the content into cohesive summaries. This is by no means an easy task and involves several components. These topics will be evaluated later and will take a major part of this thesis. See \cite{NewsBlaster2002, ColumbiaExperimentsSum2002}.\\
+  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section. Data clustering is a computationally expensive \emph{NP-hard} problem. That means there is currently no efficient way to group objectcs in an optimal way. Therefore heuristics are applied such that algorithms converge at a  \emph{local minimum}. Theoretically a local minimum can vary vastly compared to a global minimum, in practice however a close to 80\% solution seems reasonable.
+
+  \paragraph{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user \cite{SumEvaluation2001}. We have to distinct between summarization of single documents and a collection of documents as well. In Multi-summarization the problem lies in identifying topics accross documents, finding the most relevant sentences, reducing and removing redundant/duplicate information. Moreover syntactically it is often inappropriate to merge sentences of different documents. The Columbia Newsblaster and Google News are prime examples of summarization engines. Both continuously scrape news, cluster them and summarize the content into cohesive summaries. This is by no means an easy task and involves several components. These topics will be evaluated later and will take a major part of this thesis. See \cite{NewsBlaster2002, ColumbiaExperimentsSum2002}.\\
   This results in a few possibilities where clustering works for summarization:
   
   \begin{description}
@@ -374,12 +375,15 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \end{enumerate}
 
     \paragraph{External measures}
-      External measures describe how well a clustering performed provided with a ground truth of the documents. That means that each document has a predefined label assigned to a concrete class. With newspaper articles this is often the category of the article, like politics or business. We then hope to find that clusters contain documents with the same labels assigned. Through this we have the possibility to measure the accuracy of our clustering results. Ground truths are expensive. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for all our documents? In reality one would assign a few 100 to 1000 labels to documents and then check if at least part of the labels are part of the same clusters. This comes with a variety of problems. In clustering for summarization our inherent goal is not to group documents that share a label. Maybe we are interested in groups of documents that share proportions of labels as well. External measures might need to capture these too.
+      External measures describe how well a clustering performed provided with a ground truth of the documents. That means that each document has a predefined label assigned to a concrete class. With newspaper articles this is often the category of the article, like politics or business. We then hope to find that clusters contain documents with the same labels assigned. Through this we have the possibility to measure the accuracy of our clustering results. Ground truths are expensive. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for all our documents? In reality one would assign a few 100 to 1000 labels to documents and then check if at least part of the labels are part of the same clusters. This comes with a variety of problems. In clustering for summarization our inherent goal is not to group documents that share a label. Maybe we are interested in groups of documents that share proportions of labels as well. External measures might need to capture these too.\\
+
+      What we are mostly interested in are metrics that faciliates the notion of facts and predicition accuracy. The problem with clustering is that we do not know what the clusters actually mean. Before we can compare them to their respective labels we need to know for each document how they were labelled. By counting all the occurences we can then see if documents were grouped into clusters with the same labels. If this is not the case then the labels either were not accurate enough or were accurate but the structure of the documents could not capture the assumptions. Generally we would like a high True positive score, meaning most of the documents that share the same label were in the same cluster.
 
       \begin{enumerate}
-        \item \emph{Accuracy} - \cite{Nothing}
-        \item \emph{F-Measure} - \cite{Nothing}
-        \item \emph{Jaccard index} - \cite{Nothing}
+        \item \emph{Precision} - \cite{Nothing}
+        \item \emph{V-Measure} - \cite{Nothing}
+        \item \emph{Adjusted Rand Index} - \cite{Nothing}
+        \item \emph{Adjusted Mutual Info} - \cite{Nothing}
       \end{enumerate}
 
 \section{Generative Models}    
