@@ -358,12 +358,20 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     Formally we have two groups of measurements, the internal measures and the external measures. \cite{Nothing}
 
     \paragraph{Internal measures}
-      Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters or by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. These measures perform better on lower dimensions and worse on high dimensions.
+      Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters or by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. These measures perform better on lower dimensions and worse on high dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
 
       \begin{enumerate}
-        \item \emph{Silhouette coefficient} - \cite{Nothing}
-        \item \emph{Davies–Bouldin index} - \cite{Nothing}
-        \item \emph{Dunn index} - \cite{Nothing}
+        \item \emph{The silhouette coefficient} is a measure for how dissimilar a document $d$ is to its own cluster $C_d$ and how dissimilar a document $d$ is to the closest neighbouring cluster in $C_{d \not \in C}$. Often denoted as $a(d)$ it is the average dissimilarity from $d$ to all other documents in $C_d$ and $b(d)$ picks the minimum dissimilarity of $d$ to all clusters $C_{d \not \in C}$. Then the silhouette of a document $d$ for a clustering $C$ is defined as
+
+          \begin{equation}
+            s(d, C) = \frac{b(d, C_{d \not \in C}) - a(d, C_d)}{max(\:b(d, C_{d \not \in C}), a(d, C_d)\:)}
+          \end{equation} 
+
+        The coefficient is 1 if the dissimilarity $a$ is low and dissimilarity $b$ is high, meaning $d$ is well clustered into $C_d$. Near to 0 if both are fairly equal, which means $d$ could fit into the neighbouring cluster almost as good as $C_d$. Finally -1 if the clustering went bad and $d$ is falsely assigned to $C_d$ whereas it should have been assigned to its neighbour. See \cite{Silhouettes1987} for detailed explanations.
+
+        \item \emph{The Davies–Bouldin index} is a measure of distance between assigned intra cluster distances and inter cluster distances. That is a clustering is best if there is low intra cluster distance and high inter cluster distance to all clusters. A smaller value means better clustering. See \cite{DavisBouldin1979} for detailed explanations. 
+
+        \item \emph{The Dunn index} minimizes the distance between two clusters $c_1$ and $c_2$ with a variety of possible distance metrices such as average, maximum or euclidean and divides it by the maximized intra cluster distances. Thus the Dunn index is like the Davies-Bouldin index a measure of intra cluster compactness and inter cluster variance. See \cite{DunnIndex1973} for detailed explanations. 
       \end{enumerate}
 
     \paragraph{External measures}
