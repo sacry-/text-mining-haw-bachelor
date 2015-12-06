@@ -354,11 +354,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \end{enumerate}
 
   \subsection{Evaluation}
-    In order to know whether or not a clustering algorithm performed good or rather bad we need some mathematical intuition about the quality of the clusters. Each clustering algorithm creates cluster centers that connects the documents into groups. To evaluate how well the documents fit to their respective groups is part of this section.
-    Formally we have two groups of measurements, the internal measures and the external measures. \cite{Nothing}
+    In order to know whether or not a particular clustering are reasonably good or bad, we need some mathematical intuition about the quality of the clusters. Each clustering algorithm creates cluster centers that connects the documents into groups. To evaluate how well the documents fit to their respective groups is part of this section.
+    Formally we have two groups of measurements, the internal measures and the external measures. Going ahead a bit for the sake of this thesis we will use the \emph{precision}, \emph{V-measure} and \emph{silhouette coefficient} for evaluation of clustering results.
 
     \paragraph{Internal measures}
-      Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters or by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. These measures perform better on lower dimensions and worse on high dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
+      Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters and by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. Internal measures on the other hand have better scores if the dimensions are lower. Using \emph{LSA} reducing the dimensions down to 1 will lead to extra ordinary high scores. The results of internal measures can thusly only be compared to other clusterings of the same dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
 
       \begin{enumerate}
         \item \emph{The silhouette coefficient} is a measure for how dissimilar a document $d$ is to its own cluster $C_d$ and how dissimilar a document $d$ is to the closest neighbouring cluster in $C_{d \not \in C}$. Often denoted as $a(d)$ it is the average dissimilarity from $d$ to all other documents in $C_d$ and $b(d)$ picks the minimum dissimilarity of $d$ to all clusters $C_{d \not \in C}$. Then the silhouette of a document $d$ for a clustering $C$ is defined as
@@ -375,16 +375,47 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \end{enumerate}
 
     \paragraph{External measures}
-      External measures describe how well a clustering performed provided with a ground truth of the documents. That means that each document has a predefined label assigned to a concrete class. With newspaper articles this is often the category of the article, like politics or business. We then hope to find that clusters contain documents with the same labels assigned. Through this we have the possibility to measure the accuracy of our clustering results. Ground truths are expensive. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for all our documents? In reality one would assign a few 100 to 1000 labels to documents and then check if at least part of the labels are part of the same clusters. This comes with a variety of problems. In clustering for summarization our inherent goal is not to group documents that share a label. Maybe we are interested in groups of documents that share proportions of labels as well. External measures might need to capture these too.\\
-
-      What we are mostly interested in are metrics that faciliates the notion of facts and predicition accuracy. The problem with clustering is that we do not know what the clusters actually mean. Before we can compare them to their respective labels we need to know for each document how they were labelled. By counting all the occurences we can then see if documents were grouped into clusters with the same labels. If this is not the case then the labels either were not accurate enough or were accurate but the structure of the documents could not capture the assumptions. Generally we would like a high True positive score, meaning most of the documents that share the same label were in the same cluster.
+      External measures describe how well a clustering performed provided with a ground truth of the documents. We often refer to this as the golden standard where human labellers assigned documents to a concrete class. With newspaper articles this is often the category of the article, like politics or business. We then hope to find that clusters contain documents with the same labels assigned. Through this we have the possibility to measure the accuracy of our clustering results. Ground truths are expensive. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for all our documents? Normally one would build up a test set with labels of the original dataset to have some sort of intuition. It is also practical to build simple classifiers such as Multinominal Naive Bayes that can learn rather quickly how to assign documents. This comes with a variety of problems. In clustering for summarization our inherent goal is not to group documents that share a label. Maybe we are interested in groups of documents that share proportions of labels as well. External measures might need to capture these too.
+      What we are mostly interested in are metrics that faciliates the notion of facts and predicition accuracy. The problem with clustering is that we do not know what the clusters actually mean. Before we can compare them to their respective labels we need to know for each cluster how documents were labeled. By counting all the occurences we can then see if documents were grouped into clusters with the same labels. If this is not the case then the labels either were not accurate enough or were accurate but the structure of the documents could not capture the assumptions. Generally we would like a high True positive score, meaning most of the documents that share the same label were in the same cluster.
 
       \begin{enumerate}
-        \item \emph{Precision} - \cite{Nothing}
-        \item \emph{V-Measure} - \cite{Nothing}
-        \item \emph{Adjusted Rand Index} - \cite{Nothing}
-        \item \emph{Adjusted Mutual Info} - \cite{Nothing}
+        \item \emph{Precision} is a basic score and facilitates the rate between correctly predicted results in relation to false results. Formally:
+
+          \begin{equation}
+            \frac{True\:Positives}{True\:Positives + False\:Positives}
+          \end{equation}
+
+        It is the ratio between all correctly predicted results the examples that were assigned into the correct cluster \emph{true positives} as a ratio to those that were falsely assigned to another cluster \emph{false positives}. A High precision indicates low error ratio in the False positives. This only accounts for the false and true assignments. But what is about labels that are partially in all clusters? We have to account for the variance how labels are spread too. It is actually worse if we have 5 clusters and 5 labels and one label is partially found in all 5 clusters how can we account for that?
+
+        \item \emph{V-Measure} is an entropy based measure. It relies on the homogeneity score that measures if all of the clusters $c_1..c_k$ contain documents that are labelled with the same class and completeness score that measures if all documents that are members of a class are elements of the same cluster. Completeness and homogenity run in opposite directions. Informally if all points are in a single global cluster, then all classes are part of the same single cluster, thusly generating a high completeness score and a low homegeneity score. If each document is assigned to its own cluster, having as many clusters as documents, the homogeneity score is very high and the completeness score extremely low. The V-Measure then favours solutions where classes are assigned to a correct cluster (completeness), while keeping the classes distinct between clusters (homgeneity) \cite{VMeasure2007}:
+          
+          \begin{equation}
+            homogeneity = 1 - \frac{H(C|K)}{H(C)}\\
+            completeness = 1 - \frac{H(K|C)}{H(K)}
+          \end{equation}
+
+        where $H(C|K)$ is the conditional entropy of the classes given the cluster assignments (similary for completeness, change the conditional probability):
+
+          \begin{equation}
+            H(C|K) = - \sum_{c=1}^{|C|} \sum_{k=1}^{|K|} \frac{n_{c,k}}{n}\cdot \log\left(\frac{n_{c,k}}{n_k}\right)
+          \end{equation}
+
+        and $H(C)$ is the entropy of the classes:
+
+          \begin{equation}
+            H(C) = - \sum_{c=1}^{|C|} \frac{n_c}{n} \cdot \log\left(\frac{n_c}{n}\right)
+          \end{equation}
+
+        \cite{VMeasure2007} then define the V-measure as the harmonic mean of homogeneity and completeness:
+
+          \begin{equation}
+            v = 2 \cdot \frac{h \cdot c}{h + c}
+          \end{equation}
+
+        \item \emph{Adjusted Rand Index} - The Rand Index computes a similarity measure between two clusterings by considering all pairs of samples and counting pairs that are assigned in the same or different clusters in the predicted and true clusterings. The adjusted score than weights in an error rate that accounts for chance, meaning that all pairs could be randomly formed accounting for pure chance. See \cite{RandIndex1971} for more information.
       \end{enumerate}
+
+    There are more models such as adjusted mutual information or F-Measure (especially good for information retrieval). All these measures have the underlying assumptions that a human labeller did a good job in finding the underlying topics of a document. Often though these scores are skewed and are at best information about total failure or an approximative good solution. As said before documents can be partially assigned to different topics and thusly all metrics measuring the performance by hard labels will fail in actually stating if the desired goal was found. What if we would like to have clusterings where certain topics such as entertainment and sports or sports and business have an overlap? In summarization we might want to consider that sports can be about business decisions as well. We actually get more diversified summarizations if connections between different labels can be found. Thusly scoring too high on the V-Measure scale mit indicate that there are no topic overlaps, while at the same time clusterings obviously fail if the score is near to zero where each cluster has approximately equally high assignments for each topic.
 
 \section{Generative Models}    
 
