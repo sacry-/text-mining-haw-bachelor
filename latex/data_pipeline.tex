@@ -11,21 +11,42 @@ This section explains a general dataflow and the necessary steps to get data fro
       \label{news_clusty}
   \end{figure}
 
-  The Columbia Newsblaster System by \cite{ColumbiaMultiDoc2001} is a very good point of reference. The core components of this system are:
+  The Columbia Newsblaster System by \cite{ColumbiaMultiDoc2001} is a very good point of reference. The core components of the Columbia Newsblaster are scraping, preprocessing, routing, clustering, summarizing and output generation. News-Clusty uses most of these components. They are briefly described in the following.
 
-  \begin{enumerate}
-    \item \emph{Scraping} - get articles from the internet or predefined news sites and persist the raw content of a site. Here it is crucial to identify if a page is actually an article and if the desired content is correctly encoded, contains the correct language (if not multilingual), has a certain length, is not an advertisement. It is also possible to extract as much meta information as possible, like authors, meta keywords, keywords, categories, publishing dates, tags and links.
+  \paragraph{Scraping} - By scraping the process of retrieving documents of interest in its raw form from websites, archieves and other sources. In the news domain we talk about online newspagers such as ``The Guardian'' or news feeds like google news. The inherent goal is then to persist the found pages. It is crucial to identify correct pages by several heuristics:
 
-    \item \emph{Preprocessing} - extracting the raw content from html, xml or any kind of source that is found is a major part of preprocessing articles. Certain preconditions hold before preprocessing but might not be afterwards. If the html is stripped, is the text still long enough? A document in it's raw form can then be processed by stripping stop words, spell correcting the words and tokenize the content. Tokenization can either be by paragraph, sentence or word. If neeeded it is also recommended to store syntactical constructs like named entities, noun phrases and pos tags. Often when dealing with a lot of data it is no option to use these when doing actual cluster analysis as each of those often require several seconds per article to finish.
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{c|c|c|c|c}
+        Formats   &   encoding &   language &  content-length & irrelevant content  \\
+        \hline
+        article   &    utf-8   &    english &   >= 500 chars  &   advertisement etc. \\
+        newsfeed  &&&&\\
+        ..        &&&&\\
+      \end{tabular}\\
+      \caption{"Scraping conditions"}
+    \end{table}
 
-    \item \emph{Routing} - the router is an engine that detects if the input is a single event, a multi-event, person centered or something entirely different ``other''. A single event is about the same topic like the earthquake in Nepal. A multi-event are events at differentt times, palces and humans but with the same content. A person-centered view is often a biography for instance when the U.S. elections take place lots of candidates are interviewed about their opinions. This view makes it possible to make different assumptions about how articles should be summarized in case of single events or person centered events.
+  The more information one can collect about the article the better. Meta information like authors, meta keywords, keywords, categories, publishing dates, tags and links can be used later for more semantic strategies. Often meta keywords can completely contain what articles are about. These keywords can be reasonably used by looking up definitions on Wikipedia or Google, enhancing the content of an article. Publishing dates can be used to capture freshness by penalizing articles that are several days old. 
 
-    \item \emph{Clustering} - The clustering primarily has several transformations to do. First  feature selection, by picking features that are of most interest in any kind of clustering scheme. Then if desired enhancing the features by definitions of Wikipedia or by projecting words of a document into corresponding hypernyms or hyponyms via Wordnet ontologies. The last step could be to stem or lemmatize the features. After this documents need to be lifted into vector space, topic models can be extracted, distances between documents calculated,dimensionalities reduced, normalization or scaling applied and the results clustered by different algorithms. The output is fed into a summarization engine.
+  \paragraph{Preprocessing} is the step where raw content is send into a pipeline of filters until all noise and unnecessary information is stripped. In News-Clusty everything is on the internet in form of html pages. So a major task is to extract raw content from html to representative forms.
 
-    \item \emph{Summarization} - In summarization preclustered documents of interest, possibly with a lot of meta information can be summarized. Either by single document or by multiple documents that where in the same cluster. If assignments are soft, possible cluster overlaps can take place too. 
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{preprocessing.png}
+        \caption{"Preprocessing"}
+        \label{preprocessing}
+    \end{figure} 
 
-    \item \emph{Output generation} - Here it is only a matter of visualizing the results of a summarization engine. For instance a website with rendered html.
-  \end{enumerate}
+  In figure \ref{preprocessing} we work on two elastic search indices. The preprocessing module reads articles from the ``articles'' index, a continuous stream of documents and posts on the ``prep'' index. In the preprocessing we take all the actions listed and save the intermediate result as its own field. This is helpful later when computing expensive operations such as named-entity tags, noun-phrases or pos-tags. After processing the html we take a second filter step to make sure that the conditions of the scraping steps still hold true. If not the article is removed. Stripping html is not the only necessary step, we need to clean documents from bad characters, unuseful information we cannot work with like images.
+
+  \paragraph{Routing} - the router is an engine that detects if the input is a single event, a multi-event, person centered or something entirely different ``other''. A single event is about the same topic like the earthquake in Nepal. A multi-event are events at differentt times, palces and humans but with the same content. A person-centered view is often a biography for instance when the U.S. elections take place lots of candidates are interviewed about their opinions. This view makes it possible to make different assumptions about how articles should be summarized in case of single events or person centered events.
+
+  \paragraph{Clustering} - The clustering primarily has several transformations to do. First  feature selection, by picking features that are of most interest in any kind of clustering scheme. Then if desired enhancing the features by definitions of Wikipedia or by projecting words of a document into corresponding hypernyms or hyponyms via Wordnet ontologies. The last step could be to stem or lemmatize the features. After this documents need to be lifted into vector space, topic models can be extracted, distances between documents calculated,dimensionalities reduced, normalization or scaling applied and the results clustered by different algorithms. The output is fed into a summarization engine.
+
+  \paragraph{Summarization} - In summarization preclustered documents of interest, possibly with a lot of meta information can be summarized. Either by single document or by multiple documents that where in the same cluster. If assignments are soft, possible cluster overlaps can take place too. 
+
+  \paragraph{Output generation} - Here it is only a matter of visualizing the results of a summarization engine. For instance a website with rendered html.
 
   The routing is something that could really boost performance. By identifying which documents are part of different summarization schemes it is much easier to incorporate language specific strategies. Due to time constraints this is an open question and should be investigated further.
 
