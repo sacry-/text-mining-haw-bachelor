@@ -1,5 +1,5 @@
 
-This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and the various problems that arise.
+This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and as a poitn of reference what the Columbia Newsblaster system did.
 
 \section{Pipeline}
   A data pipeline for text data has various modules of interest. Where do we get the textutal content from? How is it stored? How is it preprocessed? What intermediate representations are useful? How do we handle the ongoing stream of input? The system that was developed for this thesis which is an early version is currently called ``News-Clusty''. Scraping, preprocessing and clustering are in place. There is a command line interface to interact with scraping and preprocessing. Currently it is an open question how to incorporate clustering schemes by a command line. The summarization and output generation is yet an open topic.
@@ -15,21 +15,17 @@ This section explains a general dataflow and the necessary steps to get data fro
 
   \paragraph{Scraping} - By scraping the process of retrieving documents of interest in its raw form from websites, archieves and other sources. In the news domain we talk about online newspagers such as ``The Guardian'' or news feeds like google news. The inherent goal is then to persist the found pages. It is crucial to identify correct pages by several heuristics:
 
-    \begin{table}[h!]
-      \centering
-      \begin{tabular}{c|c|c|c|c}
-        Formats   &   encoding &   language &  content-length & irrelevant content  \\
-        \hline
-        article   &    utf-8   &    english &   >= 500 chars  &   advertisement etc. \\
-        newsfeed  &&&&\\
-        ..        &&&&\\
-      \end{tabular}\\
-      \caption{"Scraping conditions"}
-    \end{table}
+  \begin{enumerate}
+    \item \emph{encoding} to utf-8 if working in english.
+    \item \emph{language} to english, as a lot of newspapers have several languages to offer.
+    \item \emph{content-length} has to be >= 500 chars to be relevant
+    \item \emph{irrelevant content} like advertisement, not found pages, subscriptions etc.
+  \end{enumerate}
 
-  The more information one can collect about the article the better. Meta information like authors, meta keywords, keywords, categories, publishing dates, tags and links can be used later for more semantic strategies. Often meta keywords can completely contain what articles are about. These keywords can be reasonably used by looking up definitions on Wikipedia or Google, enhancing the content of an article. Publishing dates can be used to capture freshness by penalizing articles that are several days old. 
+  The more information one can collect about the article the better. Meta information like authors, meta keywords, keywords, categories, publishing dates, tags and links can be used later for more semantic strategies. Often meta keywords can completely contain what articles are about. These keywords can be reasonably used by looking up definitions on Wikipedia or Google, enhancing the content of an article. Publishing dates can be used to capture freshness by penalizing articles that are several days old.
 
-  \paragraph{Preprocessing} is the step where raw content is send into a pipeline of filters until all noise and unnecessary information is stripped. In News-Clusty everything is on the internet in form of html pages. So a major task is to extract raw content from html to representative forms.
+  \paragraph{Preprocessing} is the step where raw content is send into a pipeline of filters until all noise and unnecessary information is stripped. In News-Clusty everything is on the internet in form of html pages. So a major task is to extract raw content from html to representative forms.\\
+  In figure \ref{preprocessing} we work on two elastic search indices. The preprocessing module reads articles from the ``articles'' index, a continuous stream of documents and posts on the ``prep'' index. In the preprocessing we take all the actions listed and save the intermediate result as its own field. This is helpful later when computing expensive operations such as named-entity tags, noun-phrases or pos-tags. After processing the html we take a second filter step to make sure that the conditions of the scraping steps still hold true. If not the article is removed. Stripping html is not the only necessary step, we need to clean documents from bad characters, unuseful information we cannot work with like images. If the need arises spelling correction can be applied as well that is if there is sufficient evidence that articles have a lot gross misspellings, due to the central limit theorem this can be mitigated.
 
     \begin{figure}[h!]
       \centering
@@ -38,36 +34,31 @@ This section explains a general dataflow and the necessary steps to get data fro
         \label{preprocessing}
     \end{figure} 
 
-  In figure \ref{preprocessing} we work on two elastic search indices. The preprocessing module reads articles from the ``articles'' index, a continuous stream of documents and posts on the ``prep'' index. In the preprocessing we take all the actions listed and save the intermediate result as its own field. This is helpful later when computing expensive operations such as named-entity tags, noun-phrases or pos-tags. After processing the html we take a second filter step to make sure that the conditions of the scraping steps still hold true. If not the article is removed. Stripping html is not the only necessary step, we need to clean documents from bad characters, unuseful information we cannot work with like images.
+  \paragraph{The Clustering} module does several transformations as displayed in figure \ref{clustering_cycle}. Feature selection, by picking features that are of most interest, if desired enhancing the features by definitions of Wikipedia or by projecting words of a document via Wordnet ontologies. Second transformation to any kind of vector space model like TF-IDF, then decomposing the matrix by topic models and dimensionality reduction techniques. Before the actual clustering algorithm is run similarity matrices and normalization to unit vectors is done. After this documents can be clustered by any kind of clustering algorithm. Outcomes are evaluated and redone if desired evaluation criterias were not met.
 
-  \paragraph{Routing} - the router is an engine that detects if the input is a single event, a multi-event, person centered or something entirely different ``other''. A single event is about the same topic like the earthquake in Nepal. A multi-event are events at differentt times, palces and humans but with the same content. A person-centered view is often a biography for instance when the U.S. elections take place lots of candidates are interviewed about their opinions. This view makes it possible to make different assumptions about how articles should be summarized in case of single events or person centered events.
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{clustering_cycle.png}
+        \caption{"Clustering cycle"}
+        \label{clustering_cycle}
+    \end{figure} 
 
-  \paragraph{Clustering} - The clustering primarily has several transformations to do. First  feature selection, by picking features that are of most interest in any kind of clustering scheme. Then if desired enhancing the features by definitions of Wikipedia or by projecting words of a document into corresponding hypernyms or hyponyms via Wordnet ontologies. The last step could be to stem or lemmatize the features. After this documents need to be lifted into vector space, topic models can be extracted, distances between documents calculated,dimensionalities reduced, normalization or scaling applied and the results clustered by different algorithms. The output is fed into a summarization engine.
+  \paragraph{The Summarization} module would receive the clustered documents as input. In addition meta information can be used here as well. The summarizer either gets single documents or a collection of documents that where in the same cluster. If assignments are soft, possible cluster overlaps can be taken into account. As this is not further part of the thesis we will leave it at that.
 
-  \paragraph{Summarization} - In summarization preclustered documents of interest, possibly with a lot of meta information can be summarized. Either by single document or by multiple documents that where in the same cluster. If assignments are soft, possible cluster overlaps can take place too. 
+  \paragraph{Output generation} is a matter of visualizing the results of a summarization engine. For instance a website with rendered html. Currently clustering results can be projected to lower dimensions and to render 2D or 3D visualizations. Additionally the measures of clusterings can be compared and examined.
 
-  \paragraph{Output generation} - Here it is only a matter of visualizing the results of a summarization engine. For instance a website with rendered html.
-
-  The routing is something that could really boost performance. By identifying which documents are part of different summarization schemes it is much easier to incorporate language specific strategies. Due to time constraints this is an open question and should be investigated further.
+  \paragraph{The Routing engine} detects if the input is a type of event. They are categorized into ``single-events'', ``multi-events'', ``person-centered'' and ``other''. A single event is about the same topic e.g. the earthquake in Nepal 2015. Multi-events take place at different times, locations and with different subjects but with the same content, like terrorist attacks in 5 countries. A person-centered view is often a biography like a profile of Barack Obama running for president. This view makes it possible to make different assumptions about how articles should be summarized in case of the category of events that occured. A router like this could bring in various performance gains and strengthen the quality of a summarization. Due to time constraints this was left out of \emph{News-Clusty}.
 
 \section{Python and Libraries}
-  News-Clusty is entirely written in the programming language Python and a well versed collection of libraries. Persistence is in Elasticsearch, Redis and simple compressed files on a filesystem. The Named Entity Tagger by Stanford is involved as well and the Conll Noun phrase extractor. 
+  \emph{News-Clusty} is entirely written in the programming language Python and a well versed collection of libraries. Persistence is in Elasticsearch, Redis and simple compressed files on a filesystem. The Named Entity Tagger by Stanford is involved as well and the Conll Noun phrase extractor. 
 
   \paragraph{Python} is a dynamic, object oriented higher level programming language with a rich environment for scientific computing. Python incoporates many different styles and assumptions, thusly leading to a variety of programming paradigms between object oriented and functional programming. From the Zen of Python: ``Beautiful is better than ugly. Explicit is better than implicit. Simple is better than complex.''. For a proper introduction to Python see \cite{NltkPython}.
 
-  \paragraph{Persistence} - Long standing persistence of articles are held in Elasticsearch. Redis is used as a cache for different feature selection strategies. Several runs with the same feature selection strategy but different clustering algorithm settings will get the documents from Elasticsearch at first and successively from Redis. While databases have huge advantages if you would like to get certain types of document by search criterias, they are a overhead when accessing all files at once. If for a particular reason a whole dataset must be used it is advised to use some of the pickeling tools that will compress data into large files. Input and output on filesystems is much faster if you do not need to query the data. This holds true as long as a single node filesystem is involved. Elasticsearch for instance has its powers by leveraging clusters of servers (nodes) and is at its core meant to be a distributed system. The indices for Elasticsearch are build up as dates:
+  \paragraph{The Persistence} of articles is held in \emph{Elasticsearch}. \emph{Redis} is used as a cache for different feature selection strategies. Several runs with the same feature selection strategy but different clustering settings will get the documents from \emph{Elasticsearch} at first and successively from \emph{Redis}.\\
+  While databases have huge advantages by querying documents, there is an overhead when accessing all files at once. If for a particular reason a whole dataset must be used, it is advised to use some of the serialization tools that output sparse matrix market formats or pickels of python objects compressing data into text files. Input and output on filesystems is faster if you do not need to query the data. This holds true as long as a single node filesystem is involved. \emph{Elasticsearch} for instance has its powers by leveraging clusters of servers (nodes).\\ 
+  The indices for \emph{Elasticsearch} are build up as dates $20150701/article/id = document$ or $20150701/prep/id = document$ and \emph{Redis} as a feature cache $20150701/id = feature\:vector$. The reason for choosing both is that we get highly expressive power and fast solutions for document queries and caching. If for several reasons the system should be setup in a distributed system of server nodes, both databases come with well defined abstractions.
 
-    \begin{equation}
-      20150701/article/title_id = document
-    \end{equation}
-
-  for Redis respectively:
-
-    \begin{equation}
-      20150701-title_id = feature vector
-    \end{equation}
-
-  \paragraph{Libraries} - A general word on libraries. Throughout this thesis most of the components were build on abstractions provided by libraries that were not in any part, build by the system designers. That means the system leverages linear algebra, feature selection strategies and clustering algorithms from scipy (especially numpy and sklearn) see \cite{ScikitLearn}. It uses natural language analysis tools from the nltk by \cite{NltkPython}. Moreover named entitiy recognition by the StanfordNLP group, noun phrase extraction by Conll, word ontologies by Wordnet, Knowledge and dictionaries by Wikipedia.
+  \paragraph{The Libraries} used throughout this thesis provide the abstraction for the \emph{News-Clusty} components. These libraries are not part, build or maintained by the system designers. They should be mentioned and accredited for. \emph{News-Clusty} leverages linear algebra, feature selection strategies and clustering algorithms from \emph{Scipy} (especially numpy and sklearn) see \cite{ScikitLearn}. It uses natural language analysis tools from the nltk by \cite{NltkPython}. Moreover named entitiy recognition by the \emph{StanfordNLP group}, noun phrase extraction by \emph{Conll}, word ontologies by \emph{Wordnet}, knowledge and dictionaries by \emph{Wikipedia}. Additionally \emph{newspaper3k} for scraping newspaper articles and \emph{gensim} build by \cite{gensim2010} as high level abstractions for probabilistic topic models. In the future it would be good to rely less on certain libraries where it makes sense, e.g. not using \emph{newspaper3k} or \emph{Scipy} for clustering algorithms.
 
 
 
