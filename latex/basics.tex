@@ -40,11 +40,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     With this in mind there are two options on how to label unseen or new data:
 
       \begin{itemize}
-        \item Use a supervised classification algorithm to automatically label unlabelled data. A prerequisite is to have a labelled training set and to have a lot of data. To name a few candidates: \emph{Multinominal/Gaussian) Naive Bayes (NB)}, \emph{Multivariate Logistic/Linear Regression}, \emph{Neural Networks (ANN)}, \emph{Support Vector Machines (SVM)} or \emph{Random Forests (RF)}. \cite{Nothing}
+        \item Use a supervised classification algorithm to automatically label unlabelled data. A prerequisite is to have a labelled training set and to have a lot of data. To name a few candidates: \emph{Multinominal/Gaussian) Naive Bayes (NB)}, \emph{Multivariate Logistic/Linear Regression}, \emph{Neural Networks (ANN)}, \emph{Support Vector Machines (SVM)} or \emph{Random Forests (RF)}. \cite{BishopML}
         \item Use an unsupervised clustering algorithm to automatically label unlabelled data. This can be done by first forming clusters and then merging the nearest clusters until k distinct categories remain. Usually the merging criterion can be controlled by some threshold and high variance documents are sorted out into an outlier cluster.
       \end{itemize}
 
-    Unfortunately as it turns out clustering can only preselect certain groupings that can be further processed. Most clustering strategies are not accurate enough to automatically detect a ground truth label. Opposed to this supervised classification with well defined testing sets perform extraordinary well on unseen documents. Clustering algorithms therefore do not lead to very good groupings based on hard distinct labelling. The problem ultimately lies in the text domain itself. A lot of documents have different proportions of classes. A document about politics can equally have something to do with economics. And more often documents about two or more topics are picked for a cluster that represents two or more classes at once. \cite{Nothing} \\
+    Unfortunately as it turns out clustering can only preselect certain groupings that can be further processed. Most clustering strategies are not accurate enough to automatically detect a ground truth label. Opposed to this supervised classification with well defined testing sets perform extraordinary well on unseen documents. Clustering algorithms therefore do not lead to very good groupings based on hard distinct labelling. The problem ultimately lies in the text domain itself. A lot of documents have different proportions of classes. A document about politics can equally have something to do with economics. And more often documents about two or more topics are picked for a cluster that represents two or more classes at once.\\
     A greater problem lies in the fact that no matter how well tuned a supervised classifier or an unsupervised clustering algorithm is, words change over time. A document about politics in the 1980s might resemble different word proportions today and so accuracy will diminish over time. This time drift can happen much faster. Suppose you originally trained a classifier for putting an article into politics and economics. Where do you put stories on the financial criss 2008/2009? Lots of models try to overcome this gap by statistical assumptions.
 
 \newpage{}
@@ -68,7 +68,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     A corpus $C = \{d_1, d_2 \: .. \: d_m\}$ is defined as a collection of \emph{m} documents. A document $d = \{w_1, w_2 \: .. \: w_i\}$ contains words \emph{w} where $i = |d|$. Note that each document is not a text but a sequence of words. Often special stopwords are filtered out of these documents as well. A dictionary $D = \{w_1, w_2 \: .. \: w_n\}$ contains all the distinct words from each document.
 
   \subsection{Bag of words}
-    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0. One of the general assumptions is directly derived from bayesian inference that words are indenpendant of each other. That is, there are no relations between a given word and the following word in a document. In reality this is not true, but without this assumption most of the models would be computationally expensive (up to unsolvable) and hard to reason about. In real world examples this typically no problem. \cite{Nothing}
+    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0. One of the general assumptions is directly derived from bayesian inference that words are indenpendant of each other. That is, there are no relations between a given word and the following word in a document. In reality this is not true, but without this assumption most of the models would be computationally expensive (up to unsolvable) and hard to reason about. In real world examples this is typically no problem.
 
     \begin{table}[h!]
       \centering
@@ -117,7 +117,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       tfidf(t, d, D) = tf(t, d) * idf(t, D)
     \end{equation}
 
-    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words. There are other models such as graph based or tree based approaches. For the porpuse of this thesis these models are left out. \cite{Nothing}\\
+    The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words. There are other models such as graph based or tree based approaches. For the porpuse of this thesis these models are left out. \cite[chp. 6]{IRBook2008}\\
 
     One of the big problems with the vector space model is that feature inflation or feature explosion arises quickly. If documents have a high variance between other documents and the connections between two documents are small the sparsity can go up to 100\%. That means that no document has overlapping words and each document only accounts for the words that were originally in the document. Think of it another way, suppose one has 3 documents in 3 dimensional space with each axis set to zero but one (1,0,0), (0,1,0), (0,0,1) we have an independant basis. This means that all documents are orthogonal to each other, meeting at no point except at the null point (0,0,0). It is therefore not really possible to derive any connections between those 3 points. Thus each document represents its own topic.
     These kind of problems need a well thought out solution which is presented later in this section.
@@ -266,10 +266,10 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \end{equation}
 
     In the maximization step we then need to compute the probability that a term $t_m$ has a high probability to be in $c_k$ that is $P(t_m = 1|c_k)$ and the prior $\alpha_k$ that is the probability that any document is in $c_1..c_k$ given no evidence. In the expectation step we compute $r_{nk}$ that is the soft assignment of a document $d_n$ to a cluster $k$. $r_{nk}$ is computed with the soft assignments of the prior $\alpha_k$ and $P(t_m = 1|c_k)$.\\
-    A final inherent problem remains as was seen with the \emph{K-Means}: How do we choose the initial seed? \emph{EM} is self referencing so to begin an iteration the seed is most often just $k$ randomly build up distributions that will eventuelly converge well. For further information see \cite{IRBookStanford2008}.
+    A final inherent problem remains as was seen with the \emph{K-Means}: How do we choose the initial seed? \emph{EM} is self referencing so to begin an iteration the seed is most often just $k$ randomly build up distributions that will eventuelly converge well. For further information see \cite{IRBookStanford2008}. Later in the generative models section, the EM algorithm is a standard scheme for estimating parameters.
 
   \subsection{Hierarchical / Agglomerative clustering}
-    \emph{Hierarchical agglomerative clustering (HAC)} algorithms build up hierarchies of clusters with  documents on their leaf nodes. There are two approaches available. By bottom-up, assuming all documents to be clusters, agglomerating them upwards until a root node has been found. Or by top-down, starting with all documents in a cluster, splitting them down until the leafs are documents. Often we can constrain this process by limiting the cluster size as well. Then HAC performs clustering and by some heuristic the clusters are cut out of the tree by some distance threshold or a fixed k forming clusters by merging the smallest root clusters to the desired size. It is a big discussion in the scientific community if hierarchical clustering as opposed to partitional clustering algorithms give better results. \cite{Nothing}\\
+    \emph{Hierarchical agglomerative clustering (HAC)} algorithms build up hierarchies of clusters with  documents on their leaf nodes. There are two approaches available. By bottom-up, assuming all documents to be clusters, agglomerating them upwards until a root node has been found. Or by top-down, starting with all documents in a cluster, splitting them down until the leafs are documents. Often we can constrain this process by limiting the cluster size as well. Then HAC performs clustering and by some heuristic the clusters are cut out of the tree by some distance threshold or a fixed k forming clusters by merging the smallest root clusters to the desired size. It is a big discussion in the scientific community if hierarchical clustering as opposed to partitional clustering algorithms give better results. \cite[chp. 17]{IRBook2008}\\
     HACs typically have higher runtimes due to the fact that most of them infer the count of clusters and build up a hierarchy until convergence. The runtimes are often in $O(N^2)$ or $O(N^3)$. As seen below in figure \ref{hac_dendogram} hierarchical clusterings can be easily visualized as dendograms. Dendograms show a history of the merges of different clusters up to the root nodes.
 
     \begin{figure}[h!]
@@ -349,10 +349,12 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     In the literature one can find dozens of further strategies as to how clustering can be done. Often they are particulary good in specific domains such as images. In the text domain however they have high runtimes and are often not desirable in their output. They often lack good strategies to work with high dimensionality. We briefly note them here.
 
       \begin{enumerate}
-        \item \emph{Spectral} - these are graph based algorithms. Distances are based on graph partitioning problems, where shortest paths, min cuts and graph partitions are used to define clusters. These problems are perfect for small document groups and are often used as subcluster procedures. \cite{Nothing}
-        \item \emph{Density} - these algorithms try to find documents that are within a certain distance to each other. Often one needs to provide density thresholds or neighboorhood graphs that determine how two documents should be grouped. From a geometric point of view, we would like to cluster documents that are within a certain distance radius. These algorithms are locally aware in that they do not care about a global optimization. \cite{Nothing}
-        \item \emph{Grid} - the vector space of the documents is split into equally sized grids. We then compute the density of the grids and identify the maximizing grids. Then the problem to cluster each document to a distinct cluster is based on graph traversal techniques. The intuition is that we do not consider single points but rather the surrounding grids. \cite{Nothing}
+        \item \emph{Spectral} - these are graph based algorithms. Distances are based on graph partitioning problems, where shortest paths, min cuts and graph partitions are used to define clusters. These problems are perfect for small document groups and are often used as subcluster procedures.
+        \item \emph{Density} - these algorithms try to find documents that are within a certain distance to each other. Often one needs to provide density thresholds or neighboorhood graphs that determine how two documents should be grouped. From a geometric point of view, we would like to cluster documents that are within a certain distance radius. These algorithms are locally aware in that they do not care about a global optimization.
+        \item \emph{Grid} - the vector space of the documents is split into equally sized grids. We then compute the density of the grids and identify the maximizing grids. Then the problem to cluster each document to a distinct cluster is based on graph traversal techniques. The intuition is that we do not consider single points but rather the surrounding grids.
       \end{enumerate}
+
+    There are indepth studies on spectral, density and grid based algorithms in \cite{ClusteringBooAggarwalk2013}.
 
   \subsection{Evaluation}
     In order to know whether or not a particular clustering are reasonably good or bad, we need some mathematical intuition about the quality of the clusters. Each clustering algorithm creates cluster centers that connects the documents into groups. To evaluate how well the documents fit to their respective groups is part of this section.
@@ -424,16 +426,25 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
   The EM algorithm is a typical scheme of a generative model, found in the partitional clustering section. In the text domain topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By Bayesian inference we can draw much more adequate probabilities than it is the case for simple generative models. As with the EM algorithm we draw partial probabilities that a document was generated by the identified topics. Two widely used methods namely Latent Dirichlet Allocation (LDA) and Non Negative Matrix Factorization (NMF) come to mind. Like with clustering algorithms that have hierarchical and partitional models the generative models can be flat as in LDA or hierarchical as in Hierarchical Dirichlet Processes (HDP).
 
   \subsection{Topic modelling}
-    \cite{blei2011introduction, SemanticTopicModels2011, TopicModelsBlei2012, ProbTopicModelsSteyvers2006}
-    General probabilistic topic modelling
+    In probabilistic topic modelling is a generative approach where documents are assumed to be mixtures of topics. A topic is a mixture of words describing probabilities how much a word constitutes to a topic. The underlying question then: Given a set of documents $D$ and given random topic mixtures $Z=\{z_1..z_k\}$ what words $w_1..w_n$ of a particular document $d$ constitutes to which topic. Thusly given a collection of documents which original discourses (topics) could have generated them? Given a document $d$ with words $W=\{w_1..w_n\}$ and some mixtures over words $Z$ how often does a particular word from $W$ occur in topic $Z$. Further how common is topic $Z$ in the current document $d$. In the following we will briefly discuss topic modelling and its applications. \cite{TopicModelsBlei2012}
+
+    \paragraph{Bayes inference}
+
+      In bayesian inference one would like to know, given some evidence how likely is it that some event happens? You would like to know given some event A, evidenced by B, how probable is A? In order to do so we have to take the prior of $P(A|B)$ that is the probability that some event $A$ without any evidence is likely, called $P(A)$. Multiply it by the probability $P(B|A)$ that is the reversed probability of $P(A|B)$ dividing by the probability of evidence $B$, $P(B)$. Bayes is easy to understand when scaling it to the universe in set theory. $P(B)$ is the scaled down universe from all observations to the fraction that has $B$.
+
+      \begin{equation}
+        P(A|B) = \frac{P(A) * P(B|A)}{P(B)}
+      \end{equation}
+
+      With this in mind we would like to know the conditional probability given a topic $Z$, evidenced by some word $w$ of document $d$:
+
+      \begin{equation}
+        P(z|w,d) = \frac{P(z) * P(w,d|z)}{P(w,d)}
+      \end{equation}
 
     \paragraph{Multinominal Distributions}
 
       Distributions and their use cases
-
-    \paragraph{Bayes inference}
-
-      Bayesian inference
 
     \paragraph{Dirichlet Distributions}
 
@@ -441,11 +452,10 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       Chinese Restaurant Process \cite{Nothing}
 
   \subsection{Latent Dirichlet Allocation (LDA)}
-    \cite{PLSA2001, LDA2003}
-
+    \cite{TopicModelsBlei2012,PLSA2001, LDA2003}
+    as alternatives: Pachinko Allocation, Hierarchical Dirichlet Process (HDP)
+    
   \subsection{Non Negative Matrix Factorization (NMF)}
     \cite{NMF1999}
 
-  \subsection{Hierarchical Dirichlet Process (HDP)}
-    \cite{PLSA2001, LDA2003}
 
