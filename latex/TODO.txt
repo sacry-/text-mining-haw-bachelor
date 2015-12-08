@@ -1,0 +1,23 @@
+
+
+Basics:
+  + LSA, SVD explanation, check dimensions
+  + PCA, overhaul, check dimensions
+  + EM, read again, overhaul
+  + independence assumption bag of words
+  - small pLSI overhaul, formatting
+  - LDA, HDP
+  - NMF
+
+Data pipeline:
+  - Reread, overhaul
+
+Feature selection
+  - start
+  - concept
+
+Experiments
+  - start
+  - concept
+
+

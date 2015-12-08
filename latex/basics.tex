@@ -68,7 +68,8 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     A corpus $C = \{d_1, d_2 \: .. \: d_m\}$ is defined as a collection of \emph{m} documents. A document $d = \{w_1, w_2 \: .. \: w_i\}$ contains words \emph{w} where $i = |d|$. Note that each document is not a text but a sequence of words. Often special stopwords are filtered out of these documents as well. A dictionary $D = \{w_1, w_2 \: .. \: w_n\}$ contains all the distinct words from each document.
 
   \subsection{Bag of words}
-    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0. One of the general assumptions is directly derived from bayesian inference that words are indenpendant of each other. That is, there are no relations between a given word and the following word in a document. In reality this is not true, but without this assumption most of the models would be computationally expensive (up to unsolvable) and hard to reason about. In real world examples this is typically no problem.
+    The bag of words assumption says that a corpus can be represented as a count or word occurence matrix. That means \emph{m} documents form a subspace in an \emph{m x n} matrix where \emph{m} denotes the corpus size and \emph{n} the dictionary of the words. Typically the assumption is binary, that is an occurence of word \emph{i} in a document \emph{j} is set to 1 else set to 0. Bag of words is also another way of saying that words are exchangable in order. That means the joint probability of N following words is equal to any of its permutations $p(w_1..w_N) = p(w_N..w_1)$, thusly leading to the assumption that the probability of a sequence of words can be viewed as a mixture over words. Later we will see this applied to the \emph{expectation maximization} algorithm.\\
+    In reality this is not true, but without this assumption most of the models would be computationally expensive (up to unsolvable) and hard to reason about. In real world examples this is typically no problem but one has to account for the fact that indepedence of word sequences is a strong axiom that in reality is not true.
 
     \begin{table}[h!]
       \centering
@@ -156,14 +157,14 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     The vector space model comes with a variety of problems. First we have extremely high dimensions. As we see later this is particularly true for newspapers. Unlike Twitter the content of a newspaper article can be substantial and range over a variety of topics. This can lead to extremely poor clustering results. Several methods have been proposed to tackle this high dimensionality problem. One of the most strickening comes from linear algebra and was initially proposed in \cite{DeerwesterLSI1990} called Latent Semantic Analysis (LSA). It is based on Singular Value Decomposition (SVD). The Principal Component Analysis (PCA) on the other hand uses SVD in a different manner. Apart from these there are also much more elaborate techniques in the domain of topic modelling which will be reviewed later.
 
     \subsubsection{Latent Semantic Analysis}
-      Latent Semantic Analysis is a progress to reduce as much noise as possible from a given document x term matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is used for dealing with large sparse data to find the underlying connecting relations. \emph{LSA} is a truncated singular value decomposition \emph{(SVD)} on a term x document matrix. \emph{SVD} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into several parts and \emph{LSA} constrained by \emph{k}:
+      Latent Semantic Analysis is a progress to reduce as much noise as possible from a given term x document matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is used for dealing with large sparse data to find the underlying connecting relations. \emph{LSA} is a truncated singular value decomposition \emph{(SVD)} on a term x document matrix. \emph{SVD} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into three matrices $U$, $\Sigma$ and $V^{T}$. \emph{LSA} is constrained by the number of dimensions \emph{k}:
 
       \begin{align*}
-        svd(A) &= U_{mxm}\Sigma_{mxn} V'_{nxn} \\
-        lsa(A, k) &= U_{mxk}\Sigma_{kxk} V'_{kxn}
+        svd(A) &= U_{mxm}\Sigma_{mxn} V^{T}_{nxn} \\
+        lsa(A, k) &= U_{mxk}\Sigma_{kxk} V^{T}_{kxn}
       \end{align*}
 
-      The difference here really is the resulting dimensions. While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{m} words to \emph{k}. @TODO: Insert some explanation on right singular vectors U, left singular vectors V, and the singular value matrix $\Sigma$?\\
+      While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{n} words to \emph{k}. $\Sigma$ holds the k best singular values in sorted order. $V^{T}$ is a k x document matrix, where k are the reduced topics from the words.\\
       While we can do \emph{LSA} over documents, we can also use it for single summarizations of a single documents.
 
       \begin{figure}[h!]
@@ -175,11 +176,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
       The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}\\
 
-      The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. For a \emph{term x document} matrix this means that a lot of documents provide a lot of words. The higher the variance between each document the more single words there will be. Thus most of the words do not contribute anything to the relationships between documents. \emph{SVD} then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. The \emph{SVD} will also sort the words by highest impact and so smaller \emph{singular values} will appear in the lower part of the resulting decomposition.\\
+      The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. \emph{SVD} then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. This corresponce to a notion of topic overlap between different documents.
       Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning. Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
 
     \subsubsection{Principal Component Analysis (PCA)}
-    The \emph{Principal Component Analysis (PCA)} is a mulativariate technique seperating out correlating variables into principal components. \emph{PCA} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. \emph{SVD} is a part of this process. What makes \emph{PCA} different to \emph{LSA} is the underlying methodology.
+    The \emph{Principal Component Analysis (PCA)} is a mulativariate technique seperating out correlating variables into principal components. \emph{PCA} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. The difference between \emph{PCA} and \emph{LSA} is the input. \emph{PCA} takes a covariance matrix $A*A^{T}$ which means that either only word x word or document x document matrices are taken as input. This makes it perfect for reducing dimensions after creating a cosine similarity matrix from the documents to visualize results.
 
     \begin{figure}[h!]
       \centering
@@ -188,8 +189,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
         \label{pca}
     \end{figure}
 
-    In figure \ref{pca} we find the \emph{n} most likely components of a document by decomposing an original document matrix $X$ by factoring out $P$ principal components. The input is no $n\:x\:m$ matrix but rather a covariance matrix $n\:x\:n$. These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. In practice \emph{PCA} is conversion of a document by term matrix into a covariance matrix followed by \emph{SVD} where principal components resemble the highest singular values up to $k$. Primarily \emph{PCA} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.\\
-    The whole theoretical concept stems from least square projections. We cannot solve for the original system \emph{Ax = b} so we need to project components of $A$ onto an indepedant vector by some error $e$. \cite[chp. 4]{Strang2009}
+    In figure \ref{pca} we find the \emph{n} most likely components of a document by decomposing an original document matrix $X$ by factoring out $P$ principal components. The input is no $n\:x\:m$ matrix but rather a covariance matrix $n\:x\:n$ or $m\:x\:m$ . These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. In practice \emph{PCA} is conversion of a document by term matrix into a covariance matrix followed by \emph{SVD} where principal components resemble the highest singular values up to $k$. Primarily \emph{PCA} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.
 
 \section{Clustering algorithms}
   
@@ -252,7 +252,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     As the initial clusters are often picked randomly \emph{K-Means} is a non deterministic approach that will most likely result in different clusters after each run.
 
     \paragraph{Expectation Maximization (EM)}
-    The \emph{Expecation Maximization (EM)} algorithm is a generalization of the \emph{K-Means} and is a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary, gaussian distributions can tend to zero if no assignment was found and so EM could assign no label at all. If that is not desired and a soft and exhaustive clustering is prefered one can add additive smoothing, that other models like the Dirichlet model inheret. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to estimate a model $\Theta$ that is maximized using a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $D$, that is assumed to be normally distributed, we want to maximize the connection between $\Theta$ and $D$.
+    The \emph{Expecation Maximization (EM)} algorithm is a generalization of \emph{K-Means} and a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as random distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary, gaussian distributions can tend to zero if no assignment was found and so EM could assign no label at all. If that is not desired and a soft and exhaustive clustering is prefered one can add additive smoothing, that other models like the Dirichlet model inheret. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to estimate a model $\Theta$ that is maximized using a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $D$, that is assumed to be normally distributed, we want to maximize the connection between $\Theta$ and $D$.
 
       \begin{equation}
         \Theta = argmax\:\sum_{n=1}^{N}log\:P(d_n,\Theta)
@@ -266,7 +266,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \end{equation}
 
     In the maximization step we then need to compute the probability that a term $t_m$ has a high probability to be in $c_k$ that is $P(t_m = 1|c_k)$ and the prior $\alpha_k$ that is the probability that any document is in $c_1..c_k$ given no evidence. In the expectation step we compute $r_{nk}$ that is the soft assignment of a document $d_n$ to a cluster $k$. $r_{nk}$ is computed with the soft assignments of the prior $\alpha_k$ and $P(t_m = 1|c_k)$.\\
-    A final inherent problem remains as was seen with the \emph{K-Means}: How do we choose the initial seed? \emph{EM} is self referencing so to begin an iteration the seed is most often just $k$ randomly build up distributions that will eventuelly converge well. For further information see \cite{IRBookStanford2008}. Later in the generative models section, the EM algorithm is a standard scheme for estimating parameters.
+    The inherent problem remains: How do we choose $\alpha_k$ and $P(t_m = 1|c_k)$? $\alpha_k$ and $P(t_m = 1|c_k)$ are needed to recompute the soft assignments. At the beginning assignments are assumed to be randomly mixtured. After several iterations documents are weighted into the initial random selection until convergence. So to speak the documents contribute to the model over time up until no change has been seen to the iteration before. For further information see \cite{IRBookStanford2008}. Later we will discuss the generative models more indepthly. The \emph{EM} algorithm can work with a lot of distribution. Like the Gaussian distribution, we can work with other multinominal distributions assuming different priors and estimating different likelihoods.
 
   \subsection{Hierarchical / Agglomerative clustering}
     \emph{Hierarchical agglomerative clustering (HAC)} algorithms build up hierarchies of clusters with  documents on their leaf nodes. There are two approaches available. By bottom-up, assuming all documents to be clusters, agglomerating them upwards until a root node has been found. Or by top-down, starting with all documents in a cluster, splitting them down until the leafs are documents. Often we can constrain this process by limiting the cluster size as well. Then HAC performs clustering and by some heuristic the clusters are cut out of the tree by some distance threshold or a fixed k forming clusters by merging the smallest root clusters to the desired size. It is a big discussion in the scientific community if hierarchical clustering as opposed to partitional clustering algorithms give better results. \cite[chp. 17]{IRBook2008}\\
@@ -426,33 +426,48 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
   The \emph{EM} algorithm is a typical scheme of a generative model, found in the partitional clustering section. In the text domain topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By \emph{bayesian inference} we can draw conditional probabilities from word to document to topic proportions. Making sense of these quantities is part of probabilistic topic modelling and generative models. As with the \emph{EM} algorithm we draw partial probabilities that a document was generated by a mixture of topics. Two widely used methods namely \emph{Latent Dirichlet Allocation (LDA)} and \emph{Non Negative Matrix Factorization (NMF)} are found in the generative realm.
 
   \subsection{Topic modelling}
-    In probabilistic topic modelling is a generative approach where documents are assumed to be mixtures of topics. A topic is a mixture of words describing probabilities how much a word constitutes to a topic. The underlying question then: Given a set of documents $D$ and given random topic mixtures $Z=\{z_1..z_k\}$ what words $w_1..w_n$ of a particular document $d$ constitutes to which topic. Thusly given a collection of documents which original discourses (topics) could have generated them? Given a document $d$ with words $W=\{w_1..w_n\}$ and some mixtures over words $Z$ how often does a particular word from $W$ occur in topic $Z$. Further how common is topic $Z$ in the current document $d$. In the following we will briefly discuss topic modelling and its applications. \cite{TopicModelsBlei2012}
+    Probabilistic topic modelling is a generative approach where documents are assumed to be mixtures of topics. A topic is a mixture of words describing probabilities how much a word constitutes to a topic. The underlying question then: Given a set of documents $D$ and given random topic mixtures $Z=\{z_1..z_k\}$ what words $w_1..w_n$ of a particular document $d$ constitutes to which topic. Thusly given a collection of documents which original discourses (topics) could have generated them? Given a document $d$ with words $W=\{w_1..w_n\}$ and some mixtures over words $Z$ how often does a particular word from $W$ occur in topic $Z$. Further how common is topic $Z$ in the current document $d$. In the following we will briefly discuss topic modelling and its applications. See \cite{TopicModelsBlei2012}.In its very basic form topic models are drawn from multinominal mixtures over word proportions. We would like to know, given a document $d$ and some topics $Z$ how likely is it that a specific topic $z$ generated $d$?
+
+      \begin{equation}
+        p(d) = \sum_{Z} p(z) \prod_{w\:\in\:d}p(w|z)
+      \end{equation}
+
+    $p(z)$ is the probability that a random document is part of that topic distribution and $p(w|z)$ is the conditional probability that given a word $w$ evidenced by $z$, how likely is it to be drawn? This tones down to bayesian inference. We quickly see that in this process each document is drawn with the priors $p(z)$. Further each document gets hard assignments, a document is matched with a probability for a topic $z$. Statistical learning via \emph{EM} is required for all of these algorithms by drawing probabilities that estimate the maximum likelihood that a document $d$ is assigned to a topic $z$. The topic proportions need to be learned and so each document increments the parameter size to be estimated.
 
     \paragraph{Bayes inference}
 
-      In bayesian inference one would like to know, given some evidence how likely is it that some event happens? You would like to know given some event A, evidenced by B, how probable is A? In order to do so we have to take the prior of $P(A|B)$ that is the probability that some event $A$ without any evidence is likely, called $P(A)$. Multiply it by the probability $P(B|A)$ that is the reversed probability of $P(A|B)$ dividing by the probability of evidence $B$, $P(B)$. Bayes is easy to understand when scaling it to the universe in set theory. $P(B)$ is the scaled down universe from all observations to the fraction that has $B$.
+      In bayesian inference one would like to know, given some evidence how likely is it that some event happens? You would like to know given some event A, evidenced by B, how probable is A? In order to do so we have to take the prior of $P(A|B)$ that is the probability that some event $A$ without any evidence is likely, called $P(A)$. Multiply it by the probability $P(B|A)$ that is the reversed probability of $P(A|B)$ dividing by the probability of evidence $B$, $P(B)$.
 
       \begin{equation}
         P(A|B) = \frac{P(A) * P(B|A)}{P(B)}
       \end{equation}
 
-      With this in mind we would like to know the conditional probability given a topic $Z$, evidenced by some word $w$ of document $d$:
+      See \cite{Nothing} for a great introduction.
+    
+    \paragraph{pLSI} - Advancing on the above statement, \cite{PLSA2001} created the probabilistic latent semantic indexing (pLSI).
 
       \begin{equation}
-        P(z|w,d) = \frac{P(z) * P(w,d|z)}{P(w,d)}
-      \end{equation}
-      
-    \paragraph{Multinominal Distributions}
+        p(d, w_n) = p(d)\sum_{Z} p(w_n|z)\:p(z|d)
+      \end{equation} 
 
-      Distributions and their use cases
+    \emph{pLSI} takes into account that words contribute to a topic and documents are just sequences of words, so a document can contain several topics as well. The assumption: Several topics generated specific words in a document, so a document was generated by several topics. This is done by drawing $p(d)$ as before with the additional probability $p(w_n|z)$ that a word $w_n$ of a document $d$, evidenced by $z$ and $p(z|d)$ the most likely probability that a topic is drawn evidenced by $d$. Informally for each word $w_n$ in a document $d$ how likely was it generated by a topic $z$ given a document $d$.
 
-    \paragraph{Dirichlet Distributions}
+    \begin{algorithm}[H]
+    \begin{algorithmic}[1]
+      \caption{probabilistic latent semantic indexing}\label{pLSI}
+      \State $Choose\:a\:document\:d_m\:with\:p(d)$
+        \For{$w_n \in d_m$}
+          \State $z_n \gets multinominal\:from\:d_m\:p(z|d_m)$
+          \State $w_n \gets multinominal\:from\:z_n\:p(w|z_n)$
+        \EndFor
+    \end{algorithmic}
+    \end{algorithm}
 
-      What is a dirichlet distribution, a word on priors
-      Chinese Restaurant Process \cite{Nothing}
+    As seen in algorithm \ref{pLSI} the underlying problem is that topic distributions must be estimated for each document $d_m$ and for each topic $z_n$. This can be mitigated by using priors for topics instead of parameter estimations by \emph{EM}. For this reason \emph{Latent Dirichlet Allocation (LDA)} was proposed by \cite{LDA2003} where a Dirichlet prior is assumed before hand.
 
   \subsection{Latent Dirichlet Allocation (LDA)}
     \cite{TopicModelsBlei2012,PLSA2001, LDA2003}
+
     as alternatives: Pachinko Allocation, Hierarchical Dirichlet Process (HDP)
     
   \subsection{Non Negative Matrix Factorization (NMF)}
