@@ -8,15 +8,14 @@ from preprocessing import tokenize
 from utils import flatten
 from utils import unique
 from utils import flatmap
+from utils import is_iter
 
 
 class BBCDocuments():
 
-
   def __init__(self):
     self._categories = None
     self._cat_to_id = None
-    self._id_to_cat = None
 
     self._titles = None
     self._sents = None
@@ -38,9 +37,6 @@ class BBCDocuments():
       self._cat_to_id = { cat: cat_id for cat_id, cat 
                          in enumerate(unique(self.categories())) }
     return self._cat_to_id
-
-  def id_to_cat(self):
-    return { v: k for k, v in self.cat_to_id().items() }
 
   def titles(self):
     if not self._titles:
@@ -128,11 +124,10 @@ class BBCData():
   def _labels(self, data):    
     for category, point in data.items():
       category_id = self.bbc.cat_to_id()[category]
-      yield from flatmap( lambda x: category_id, point )
+      yield from map(lambda x: category_id, point)
 
   def _data(self, data):
-    for cat, point in data.items():
-      yield " ".join(flatten(point))
+    yield from flatmap(lambda x: " ".join(x), data.values())
   
   def X(self):
     return list( self._data(self.train) )
@@ -145,6 +140,14 @@ class BBCData():
 
   def y_test(self):
     return list( self._labels(self.test) )
+
+  def categories_train(self):
+    return {idx: self.bbc.categories()[_id] for idx, _id in 
+            enumerate(self.index_train)}
+
+  def category_ids_train(self):
+    return [self.bbc.cat_to_id()[self.bbc.categories()[_id]] 
+            for _id in self.index_train]
 
 
 
