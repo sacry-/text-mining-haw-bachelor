@@ -1,6 +1,18 @@
 
+- Global:
+  - diversify english
+  - make explanations as easy as possible
+  - make sentences short and concise
+  - fix language errors
+  - fix typos
+  - find a red line
 
-Basics:
+- Introduction:
+  + write introduction
+  - rewrite introduction 3/0
+  - reread 3/0
+
+- Basics:
   + LSA, SVD explanation, check dimensions
   + PCA, overhaul, check dimensions
   + EM, read again, overhaul
@@ -9,15 +21,24 @@ Basics:
   - LDA, HDP
   - NMF
 
-Data pipeline:
-  - Reread, overhaul
++ Data pipeline:
+  + Reread, overhaul
+  + Quotation
 
-Feature selection
+- Feature selection
   - start
   - concept
 
-Experiments
+- Experiments
   - start
   - concept
 
+- Results
+  - start
+  - concept
+
+Outlook
+  - start
+  - concept
+  - Quotation
 
