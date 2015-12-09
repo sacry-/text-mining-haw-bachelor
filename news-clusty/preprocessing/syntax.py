@@ -27,8 +27,11 @@ TAGGER = PerceptronTagger()
 EXTRACTOR = ConllExtractor()
 
 
-def get_blob(text):
+def get_fast_blob(text):
   return TextBlob(text, pos_tagger=TAGGER, np_extractor=EXTRACTOR) 
+
+def get_blob(text):
+  return TextBlob(text, np_extractor=EXTRACTOR) 
 
 def tokenize_string(doc):
   return word_tokenize(doc)

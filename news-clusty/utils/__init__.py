@@ -12,6 +12,9 @@ from utils.helpers import freadlines
 from utils.helpers import date_today
 from utils.helpers import unique
 from utils.helpers import flatten
+from utils.helpers import flatmap
+from utils.helpers import is_iter
+
 
 if __name__ == "__main__":
   pass

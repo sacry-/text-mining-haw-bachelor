@@ -1,5 +1,5 @@
 from preprocessing.syntax import tokenize
-from preprocessing.syntax import get_blob
+from preprocessing.syntax import get_fast_blob
 
 from preprocessing.ner_tagger import get_tagger
 from preprocessing.text_normalizer import TextNormalizer
@@ -49,7 +49,7 @@ class Preprocessor():
     self.text = str(text)
     self.tokenize_func = tokenize_func
     self.tokens = self.tokenize_func( self.text )
-    self.blob = get_blob(self.text)
+    self.blob = get_fast_blob(self.text)
     self.ner_tagger = get_tagger(self.tokens)
 
   def pos_tags(self):

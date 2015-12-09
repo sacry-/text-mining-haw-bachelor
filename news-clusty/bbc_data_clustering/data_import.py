@@ -111,7 +111,6 @@ def stream(categories):
       stream_to_set("nouns", doc["nouns"])
       stream_to_set("ners", doc["ners"])
 
-
 if __name__ == "__main__":
   categories = ["business", "entertainment", "politics", "sport", "tech"]
   stream(categories)

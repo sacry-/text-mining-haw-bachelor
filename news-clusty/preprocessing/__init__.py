@@ -10,6 +10,7 @@ from preprocessing.syntax import stemmatize
 from preprocessing.syntax import tokenize
 from preprocessing.syntax import sentence_tokenize
 from preprocessing.syntax import tokenize_string
+from preprocessing.syntax import get_blob
 
 
 from preprocessing.text_normalizer import TextNormalizer

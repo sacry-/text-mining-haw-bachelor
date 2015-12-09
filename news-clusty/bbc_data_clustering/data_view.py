@@ -7,13 +7,13 @@ from paths import model_path
 from preprocessing import tokenize
 from utils import flatten
 from utils import unique
+from utils import flatmap
 
 
 class BBCDocuments():
 
 
   def __init__(self):
-
     self._categories = None
     self._cat_to_id = None
     self._id_to_cat = None
@@ -24,7 +24,9 @@ class BBCDocuments():
 
     self._pos = None
     self._nouns = None
-    self._ners = None           
+    self._ners = None 
+
+    self._wordnet = None          
 
   def categories(self):
     if not self._categories:
@@ -70,11 +72,21 @@ class BBCDocuments():
       self._ners = get_ners()
     return self._ners
 
+  def wordnet(self):
+    if not self._wordnet:
+      self._wordnet = get_wordnet()
+    return self._wordnet
+
 
 class BBCData():
 
-  def __init__(self, bbc, percent=0.8):
+  def __init__(self, bbc, percent=0.8, data_domain=None):
     self.bbc = bbc
+
+    self._data_domain = data_domain
+    if not self._data_domain:
+      self._data_domain = self.bbc.sents()
+
     self.train = None
     self.test = None  
 
@@ -85,11 +97,6 @@ class BBCData():
 
     self._set_test_train_set()
 
-  def itrain(self, _id):
-    return self.index_train[_id]
-
-  def itest(self, _id):
-    return self.index_test[_id]
 
   def _set_test_train_set(self):
     print("Indexing and initializing training and test set")
@@ -97,7 +104,7 @@ class BBCData():
     segments = defaultdict(list)
     index = defaultdict(list)
 
-    for idx, (cat, sent) in enumerate(zip(self.bbc.categories(), self.bbc.sents())):
+    for idx, (cat, sent) in enumerate(zip(self.bbc.categories(), self._data_domain)):
       segments[cat].append(sent)
       index[cat].append(idx)
 
@@ -118,26 +125,26 @@ class BBCData():
       self.index_train.extend(doc_ids[:train])
       self.index_test.extend(doc_ids[train:])
 
+  def _labels(self, data):    
+    for category, point in data.items():
+      category_id = self.bbc.cat_to_id()[category]
+      yield from flatmap( lambda x: category_id, point )
 
-  def _labels(self, aset):    
-    return flatten([ [self.bbc.cat_to_id()[cat] for _ in cat_sent] 
-                      for cat, cat_sent in aset.items() ])
-
-  def _data(self, aset):
-    return flatten([ [". ".join(s) for s in cat_sent] 
-                      for _, cat_sent in aset.items() ])
+  def _data(self, data):
+    for cat, point in data.items():
+      yield " ".join(flatten(point))
   
   def X(self):
-    return self._data(self.train)
+    return list( self._data(self.train) )
 
   def y(self):
-    return self._labels(self.train)
+    return list( self._labels(self.train) )
 
   def X_test(self):
-    return self._data(self.test)
+    return list( self._data(self.test) )
 
   def y_test(self):
-    return self._labels(self.test)
+    return list( self._labels(self.test) )
 
 
 
@@ -184,6 +191,8 @@ def get_ners():
 def get_nouns():
   return get_csv_list("nouns")
 
+def get_wordnet():
+  return get_csv_list("wordnet")
 
 if __name__ == "__main__":
   l1 = len(get_categories())
