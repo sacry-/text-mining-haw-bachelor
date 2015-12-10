@@ -15,14 +15,15 @@
   + PCA, overhaul, check dimensions
   + EM, read again, overhaul
   + independence assumption bag of words
-  - small pLSI overhaul, formatting
+  + small pLSI overhaul, formatting
   - LDA, HDP
   - NMF
 
 + Data pipeline:
   + Reread, overhaul
   + Quotation
-  - The Clustering, Wikipedia, maybe saying something about CRaw, Raw etc.
+  + say something about CRaw, Raw etc.
+  + Wikipedia reference
 
 - Feature selection
   - start
