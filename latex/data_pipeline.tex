@@ -2,7 +2,7 @@
   ``Everything should be built top-down, except the first time.''
 }}{ Alan J. Perlis }
  
-This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and as a poitn of reference what the Columbia Newsblaster system did.
+This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and as a point of reference what the Columbia Newsblaster system did.
 
 \section{Pipeline}
   A data pipeline for text data has various modules of interest. Where do we get the textutal content from? How is it stored? How is it preprocessed? What intermediate representations are useful? How do we handle the ongoing stream of input? The system that was developed for this thesis which is an early version is currently called ``News-Clusty''. Scraping, preprocessing and clustering are in place. There is a command line interface to interact with scraping and preprocessing. Currently it is an open question how to incorporate clustering schemes by a command line. The summarization and output generation is yet an open topic.
@@ -16,7 +16,7 @@ This section explains a general dataflow and the necessary steps to get data fro
 
   The Columbia Newsblaster System by \cite{ColumbiaMultiDoc2001} is a very good point of reference. The core components of the Columbia Newsblaster are scraping, preprocessing, routing, clustering, summarizing and output generation. News-Clusty uses most of these components. They are briefly described in the following.
 
-  \paragraph{Scraping} - By scraping the process of retrieving documents of interest in its raw form from websites, archieves and other sources. In the news domain we talk about online newspagers such as ``The Guardian'' or news feeds like google news. The inherent goal is then to persist the found pages. It is crucial to identify correct pages by several heuristics:
+  \paragraph{Scraping} is the process of retrieving documents of interest in its raw form from websites, archieves and other sources. In the news domain we talk about online newspapers such as ``The Guardian'' or news feeds like google news. The inherent goal is then to persist the found pages. It is crucial to identify correct pages by several heuristics:
 
   \begin{enumerate}
     \item \emph{encoding} to utf-8 if working in english.
@@ -55,7 +55,7 @@ This section explains a general dataflow and the necessary steps to get data fro
 \section{Python and Libraries}
   \emph{News-Clusty} is entirely written in the programming language Python and a well versed collection of libraries.
 
-  \paragraph{Python} is a dynamic, object oriented higher level programming language with a rich environment for scientific computing. Python incoporates many different styles and assumptions, thusly leading to a variety of programming paradigms between object oriented and functional programming. From the Zen of Python: ``Beautiful is better than ugly. Explicit is better than implicit. Simple is better than complex.''. For a proper introduction to Python see \cite{NltkPython}.
+  \paragraph{Python} is a dynamic, object oriented higher level programming language with a rich environment for scientific computing. Python incorporates many different styles and assumptions, leading to a variety of programming paradigms between object oriented and functional programming. From the Zen of Python: ``Beautiful is better than ugly. Explicit is better than implicit. Simple is better than complex.''. For a proper introduction to Python see \cite{NltkPython}.
 
   \paragraph{The Persistence} of articles is held in \emph{Elasticsearch}. \emph{Elasticsearch} is a document store that can be easily distributed accross hundreds of nodes. It is schemaless and can be dynamically adjusted if need be. Its primary use case is for search and anything related to huge chunks of text. \emph{Redis} on the other hand is used as a cache for different feature selection strategies. It is a key value store and commonly chosen for fast execution. The common strategy is to first generate feature sets by querying \emph{Elasticsearch}. Each successful feature selection on a document will be persisted as a numerical feature vector into \emph{Redis}. Multiple accesses to the same documents will be read from \emph{Redis} if possible.\\
   While databases have huge advantages by querying documents, there is an overhead when accessing all files at once. If for a particular reason a whole dataset must be used, it is advised to use some of the serialization tools that output sparse matrix market formats or serializes to raw text files. Input and output on filesystems is faster if you do not need to query the data. This holds true as long as a single node filesystem is involved. \emph{Elasticsearch} for instance has its powers by leveraging clusters of servers (nodes).\\ 

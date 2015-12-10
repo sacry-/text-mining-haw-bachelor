@@ -9,8 +9,6 @@
 
 - Introduction:
   + write introduction
-  - rewrite introduction 3/0
-  - reread 3/0
 
 - Basics:
   + LSA, SVD explanation, check dimensions
@@ -24,6 +22,7 @@
 + Data pipeline:
   + Reread, overhaul
   + Quotation
+  - The Clustering, Wikipedia, maybe saying something about CRaw, Raw etc.
 
 - Feature selection
   - start

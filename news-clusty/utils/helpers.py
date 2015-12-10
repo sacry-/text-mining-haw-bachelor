@@ -62,7 +62,9 @@ def unique(seq):
   return [ x for x in seq if not (x in seen or seen_add(x)) ]
 
 def flatmap(f, seq):
-  yield from map(f, flatten_gen([seq]))
+  for item in seq:
+    yield from map(f, item)
+
 
 if __name__ == "__main__":
   for a in map(lambda x: " ".join(x), flatten_gen(["abcd"])):
