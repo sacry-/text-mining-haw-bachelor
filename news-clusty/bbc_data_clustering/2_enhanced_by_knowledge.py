@@ -2,11 +2,16 @@ from data_view import BBCDocuments
 from data_view import BBCData
 
 from cluster_run import find_optimum
-from cluster_report import report_on
+from cluster_report import report_for_run, Report
 
-from features import tfidf_vector
-from features import lsa
+from features import tfidf_vector, count_vector
+from features import lsa, pca
+from features import lda, nmf
+
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.metrics.pairwise import laplacian_kernel
+
 from sklearn.preprocessing import normalize
 from clustering import ward_linkage
 
@@ -21,39 +26,54 @@ def setup_data(bbc_data):
 
   return X, y
 
+def configuration():
+  for idx, topics in enumerate([5, 10, 20, 25, 225]):
+    yield (idx, 5, topics)
+
 
 if __name__ == "__main__":
   bbc = BBCDocuments()
+  knowledge = bbc.concat( bbc.wordnet("wordnet_hyper_1"), bbc.nouns() )
+  
   bbc_data = BBCData( 
     bbc, 
-    percent=0.95, 
-    data_domain=bbc.sents() 
+    percent=0.8, 
+    data_domain=list(knowledge)
   )
   X, y = setup_data(bbc_data)
 
   named_labels = bbc_data.categories_train()
   labels = bbc_data.category_ids_train()
 
-  runs = []
-  report_name = "1_tfidf_lsa_cosine_ward.txt"
+  runs, reports = [], []
+  report_name = "2_enhanced_by_knowledge.txt"
+  should_create_report = False
 
-  for (n_clusters, n_topics) in zip([5,5,5],[225, 235, 245]):
-    for run in find_optimum(X, 
-                  clusterer=lambda x, n_clusters: ward_linkage(x, n_clusters),
-                  topic_model=lambda x, n_topics: lsa(x, n_topics),
-                  similarity=lambda x: cosine_similarity(x),
-                  normalization=lambda x: normalize(x),
-                  labels=labels, 
-                  named_labels=named_labels,
-                  n_topics=225, 
-                  n_clusters=5, 
-                  num_iters=3
-                ):
+  for index, n_clusters, n_topics in configuration():
 
-      report = report_on(run, report_name)
-      runs.append( run )
+    run = find_optimum(X, 
+      clusterer=lambda x, n_clusters: ward_linkage(x, n_clusters),
+      topic_model=lambda x, n_topics: lsa(x, n_topics),
+      similarity=lambda x: cosine_similarity(x),
+      normalization=lambda x: normalize(x),
+      labels=labels, 
+      named_labels=named_labels,
+      n_topics=n_topics, 
+      n_clusters=n_clusters,
+      index=index
+    )
+
+    report = Report( run )
+    print( report.generate() )
+    runs.append( run )
+    reports.append( report )
 
   for run in sorted(runs, key=lambda x: -x.v_measure):
     print(run)
+
+    if should_create_report: 
+      report_for_run(run, reports).dump( report_name )
+
+
 
 

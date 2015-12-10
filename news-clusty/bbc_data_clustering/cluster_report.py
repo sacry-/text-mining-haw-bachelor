@@ -1,10 +1,20 @@
+from collections import defaultdict
+from collections import Counter
+
+from paths import base_path
+
+
+def report_for_run(run, reports):
+  for report in reports:
+    if report.index == run.index:
+      return report
 
 
 class Report():
 
   def __init__(self, run):
     self.run = run
-    self.iteration = self.run.iteration
+    self.index = self.run.index
     self.report_str = None
 
   def dump(self, report_name):

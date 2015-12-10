@@ -20,7 +20,7 @@ from gensim import corpora
 ''' 
 def count_vector(features, 
                 ngram=(1,1),
-                n_features=None, 
+                max_features=None, 
                 max_df=0.95, 
                 min_df=2):
   vectorizer = CountVectorizer(
@@ -29,7 +29,7 @@ def count_vector(features,
     stop_words = 'english',
     max_df=max_df,
     min_df=min_df,
-    max_features=n_features
+    max_features=max_features
   )
   fitted = vectorizer.fit( features )
   return fitted.transform( features ), fitted

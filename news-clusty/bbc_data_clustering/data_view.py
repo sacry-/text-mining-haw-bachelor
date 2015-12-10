@@ -68,10 +68,16 @@ class BBCDocuments():
       self._ners = get_ners()
     return self._ners
 
-  def wordnet(self):
+  def wordnet(self, namespace="wordnet"):
     if not self._wordnet:
-      self._wordnet = get_wordnet()
+      self._wordnet = get_wordnet(namespace)
     return self._wordnet
+
+  def cons(self, obj, seq):
+    yield from map(lambda x: [x[0]] + x[1], zip(obj, seq))
+
+  def concat(self, d1, d2):
+    yield from map(lambda x: x[0]+x[1], zip(d1, d2))
 
 
 class BBCData():
@@ -194,8 +200,8 @@ def get_ners():
 def get_nouns():
   return get_csv_list("nouns")
 
-def get_wordnet():
-  return get_csv_list("wordnet")
+def get_wordnet(namespace):
+  return get_csv_list(namespace)
 
 if __name__ == "__main__":
   l1 = len(get_categories())

@@ -12,118 +12,112 @@ from data_view import BBCData
 from data_view import grouper
 from data_import import stream_to_set
 
-from features import tfidf_vector
+from preprocessing import lemmatize
 
 
-def n_nyms(nyms, n):
-  if nyms:
-    return nyms[:n]
-  return []
+# Experimental
+def prune(seq, max_df=0.8, min_df=1):
+  counted = sorted(Counter(seq).items(), key=lambda x: x[1])
+  min_dfd = [x for (x, c) in counted if c >= min_df]
+  return min_dfd[:int(len(min_dfd) * max_df)]
 
-def n_synssets(w, n):
-  return n_nyms( wn.synsets(w, pos=wn.NOUN), n )
+def commons(synset1, synset2, depth=2):
+  result = []
+  for i, syn1 in enumerate(hyper_hierarchy(synset1, depth)):
+    for j, syn2 in enumerate(hyper_hierarchy(synset2, depth)):
+      if i != j:
+        result += syn1.lowest_common_hypernyms(syn2)
+  return prune( [lemma_name(x) for x in result] )
 
-def n_hyponyms(syn, n):
-  return n_nyms( syn.hyponyms(), n )
-
-def n_hypernyms(syn, n):
-  return n_nyms( syn.hypernyms(), n )
-
-def lemma_names(nyms):
-  return flatten( 
-    [[y.name() for y in syn.lemmas()] 
-      for syn in nyms]
-  )
-
-def synsets_for_word(word, n):
-  syns = n_synssets(word, n)
-  hypers = flatten( [n_hypernyms(syn, 1) for syn in syns] )[:n]
-  hypos = flatten( [n_hyponyms(syn, 1) for syn in syns] )[:n]
-  return flatten([
-    syns, 
-    hypers,
-    hypos,
-  ])
-
+# Helpers
 def unique_nouns(nouns):
   unique_nouns = set([])
   for noun in nouns:
     unique_nouns.update(tokenize(noun))
   return unique_nouns
 
-def get_synsets(nouns):
-  synsets = []
-  for noun in nouns:
-    synsets.append( synsets_for_word( noun, n=5 ) )
-  return synsets
+def noun_tokens(nouns):
+  return tokenize(" ".join(nouns))
 
-def paired_sets(synsets):
-  for noun_set in synsets:
-    for id1, syn1 in enumerate(noun_set):
-      for id2, syn2 in enumerate(noun_set):
-        if id1 != id2:
-          yield (syn1, syn2)
+def lemma_names(syns):
+  return [syn.lemmas()[0].name().lower() for syn in syns]
 
-def argmax(group):
-  result = set([])
-  for s1 in group:
-    for s2 in group:
-      if s1 != s2:
-        result.update( 
-          lemma_names( s1.lowest_common_hypernyms(s2) )
-        )
-  return result
+def hyper_hierarchy(syns, depth):
+  for s in syns:
+    if depth > 0:
+      yield from hyper_hierarchy( s.hypernyms(), depth - 1 )
+    yield s
 
-def cut(seq, max_df=0.8, min_df=1):
-  counted = sorted(Counter(seq).items(), key=lambda x: x[1]) 
-  min_dfd = [(x, c) for (x, c) in counted if c >= min_df]
-  return dict(min_dfd[:int(len(min_dfd) * max_df)])
+def hypo_hierarchy(syns, depth):
+  for s in syns:
+    if depth > 0:
+      yield from hypo_hierarchy( s.hyponyms(), depth - 1 )
+    yield s
 
-def peek(mapping):
-  for k, v in list(mapping.items())[:5]:
-    print(" ", k, v)
-  print("-"*40)
+def gloss(noun, depth):
+  syns = wn.synsets(noun)
+  if not syns:
+    return [], []
 
-def wordnet_projection( bbc ):
-  tn = TextNormalizer()
+  fst = syns[0]
+  nyms = list( hyper_hierarchy(x, depth) )
+  new_syns = nyms[:nyms.index(fst)+1]
+  return new_syns, lemma_names( new_syns )
 
-  for idx, entry in enumerate(bbc.nouns()):
-    nouns = unique_nouns( entry )
-    synsets = get_synsets( nouns )
-
-    mapping = defaultdict(list)
-    total = []
-    for noun, group in zip(nouns, synsets):
-      for maximized in argmax(group):
-        mapping[noun].append( maximized )
-        total.append(maximized)
-
-    normalized = cut( total, max_df=0.7, min_df=1 )
-
-    final_mapping = defaultdict(list)  
-    for noun, group in mapping.items():
-      for syn in group:
-        if syn in normalized:
-          final_mapping[noun].append(syn)
-
-    doc = tn.tnormalize( " ".join( 
-      ["{} {}".format(k, " ".join(v)) for k, v in final_mapping.items()] 
-    ))
-
-    yield (idx, doc)
+def lemma_name(syn):
+  return syn.name().split(".")[0]
 
 
-def stream_wordnet_projection():
-  bbc = BBCDocuments()
-  for (idx, doc) in wordnet_projection( bbc ):
+# Wordnet Strategies
+def wordnet_hypernyms(bbc, depth=1):
+
+  def hypers(nouns, depth):
+    result = set([])
+    for noun in nouns: 
+      _, lemmas = gloss(noun, depth)
+      result.update( lemmas )
+    return result
+
+  for idx, nouns in enumerate(bbc.nouns()):    
+    yield idx, hypers(sent, depth)
+
+
+def wordnet_fst_hyper(bbc):
+
+  def firsts(nouns):
+    result = []
+    for noun in nouns: 
+      synset = wn.synsets(word)
+      if synset:
+        fst = synset[0].hypernyms()
+        if fst:
+          result.append( lemma_name(fst[0]) )
+    return result
+
+  for idx, nouns in enumerate(bbc.nouns()):    
+    yield idx, firsts(sent)
+
+
+def wordnet_lemmatize(bbc):
+  
+  def convert_sents(sent):
+    s = flatten(map(lambda x: lemmatize(tokenize(x)), sent))
+    return [x for x in s if len(x) > 1]
+
+  for idx, sent in enumerate(bbc.sents()):
+    yield idx, convert_sents(sent)
+
+
+# Main
+def stream_wordnet_projection( bbc ):
+  for idx, doc in wordnet_lemmatize( bbc ):
     stream_to_set("wordnet", doc)
     print(idx, bbc.titles()[idx])
     print(" ", doc)
 
 if __name__ == "__main__":
   bbc = BBCDocuments()
-  bbc_data = BBCData(bbc, percent=0.8, data_domain=bbc.wordnet())
-  X = bbc_data.X()
-  X, vsmodel = tfidf_vector( X, ngram=(1,1), max_df=0.8, min_df=3 )
-  print("X: {}".format(X.shape))
+  # stream_wordnet_projection( bbc )
+
+
 

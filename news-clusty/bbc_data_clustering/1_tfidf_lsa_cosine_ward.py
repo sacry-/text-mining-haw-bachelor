@@ -2,7 +2,7 @@ from data_view import BBCDocuments
 from data_view import BBCData
 
 from cluster_run import find_optimum
-from cluster_report import report_on
+from cluster_report import report_for_run, Report
 
 from features import tfidf_vector
 from features import lsa
@@ -21,13 +21,21 @@ def setup_data(bbc_data):
 
   return X, y
 
+def configuration():
+  for idx, topics in enumerate([10, 15, 20, 25, 225]):
+    yield (idx, 5, topics)
+
 
 if __name__ == "__main__":
   bbc = BBCDocuments()
+
   bbc_data = BBCData( 
     bbc, 
     percent=0.95, 
-    data_domain=bbc.wordnet() 
+    data_domain=bbc.concat(
+      bbc.sents(), 
+      bbc.wordnet("wordnet_fst_hyper")
+    )
   )
   X, y = setup_data(bbc_data)
 
@@ -36,32 +44,29 @@ if __name__ == "__main__":
 
   runs, reports = [], []
   report_name = "1_tfidf_lsa_cosine_ward.txt"
+  should_create_report = True
 
-  for iteration, (n_clusters, n_topics) in enumerate(zip([5,5,5],[225, 235, 245])):
-    for run in find_optimum(X, 
-                  clusterer=lambda x, n_clusters: ward_linkage(x, n_clusters),
-                  topic_model=lambda x, n_topics: lsa(x, n_topics),
-                  similarity=lambda x: cosine_similarity(x),
-                  normalization=lambda x: normalize(x),
-                  labels=labels, 
-                  named_labels=named_labels,
-                  n_topics=225, 
-                  n_clusters=5, 
-                  num_iters=3,
-                  iteration=iteration
-                ):
+  for index, n_clusters, n_topics in configuration():
 
-      report = Report( run )
-      report_str = report.generate()
-      runs.append( run )
-      reports.append( report )
+    run = find_optimum(X, 
+      clusterer=lambda x, n_clusters: ward_linkage(x, n_clusters),
+      topic_model=lambda x, n_topics: lsa(x, n_topics),
+      similarity=lambda x: cosine_similarity(x),
+      normalization=lambda x: normalize(x),
+      labels=labels, 
+      named_labels=named_labels,
+      n_topics=n_topics, 
+      n_clusters=n_clusters,
+      index=index
+    )
+
+    report = Report( run )
+    print( report.generate() )
+    runs.append( run )
+    reports.append( report )
 
   for run in sorted(runs, key=lambda x: -x.v_measure):
     print(run)
-    for report in reports:
-      if report.iteration == run.iteration:
-        report.dump()
-
-
-
-
+    
+    if should_create_report: 
+      report_for_run(run, reports).dump( report_name )

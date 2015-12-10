@@ -22,28 +22,26 @@ def find_optimum(x, clusterer,
     named_labels=[],
     n_topics=225, 
     n_clusters=5, 
-    num_iters=3, 
+    num_iters=None, 
     dr_dim=None,
-    iteration=iteration
+    index=None
   ):
 
   run_config = (n_clusters, n_topics)
+  print(index, "-"*20, run_config, "-"*20)
 
-  for iteration in range(0, num_iters + 1):
-    print(iteration + 1, "-"*20, run_config, "-"*20)
+  run = Run(
+    clusterer,
+    config=run_config,
+    topic_model=topic_model,
+    similarity=similarity,
+    normalization=normalization,
+    index=index
+  )
+  run.invoke( x, labels, named_labels )
+  run.evaluate()
 
-    run = Run(
-      clusterer,
-      config=run_config,
-      topic_model=topic_model,
-      similarity=similarity,
-      normalization=normalization
-      iteration=iteration,
-    )
-    run.invoke( x, labels, named_labels )
-    run.evaluate()
-
-    yield run
+  return run
 
 
 class Run():
@@ -54,7 +52,7 @@ class Run():
       topic_model=None,
       similarity=None,
       normalization=None,
-      iteration=iteration,
+      index=None
     ):
 
     self.clusterer = clusterer
@@ -63,6 +61,8 @@ class Run():
     self.topic_model = topic_model
     self.similarity = similarity
     self.normalization = normalization
+
+    self.index = index
 
   def invoke(self, x, labels, named_labels):
     self.labels = labels

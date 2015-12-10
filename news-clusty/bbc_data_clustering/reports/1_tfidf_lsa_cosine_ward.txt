@@ -1,193 +1,81 @@
 
 ----------------------------------------
 Ward Linkage:
-  config: 5, 225
+  config: 5, 20
   ----------------------------------------
-  0: precision: 99.375% - [('sport', 477), ('tech', 3)]
-  1: precision: 97.45042492917847% - [('entertainment', 344), ('tech', 7), ('politics', 1), ('business', 1)]
-  2: precision: 89.72431077694235% - [('politics', 358), ('business', 22), ('tech', 14), ('entertainment', 3), ('sport', 2)]
-  3: precision: 89.66202783300199% - [('business', 451), ('politics', 32), ('tech', 14), ('entertainment', 3), ('sport', 3)]
-  4: precision: 91.68900804289544% - [('tech', 342), ('entertainment', 16), ('business', 10), ('politics', 5)]
+  0: precision: 99.16492693110646% - [('sport', 475), ('tech', 3), ('entertainment', 1)]
+  1: precision: 96.38297872340425% - [('business', 453), ('entertainment', 6), ('politics', 5), ('sport', 4), ('tech', 2)]
+  2: precision: 97.44318181818183% - [('entertainment', 343), ('tech', 8), ('business', 1)]
+  3: precision: 88.15489749430525% - [('politics', 387), ('business', 18), ('tech', 17), ('entertainment', 14), ('sport', 3)]
+  4: precision: 95.1086956521739% - [('tech', 350), ('business', 12), ('politics', 4), ('entertainment', 2)]
   ----------------------------------------
-  Precision: 93.54838709677419%
-  V Measure 0.8238788149944489
-  Adjusted rand score 0.8507429456979833
-  Adjusted mutual info score 0.822797604058863
-  Completeness score 0.8232183869250225
-  Silhouette 0.11083093993785038
+  Precision: 95.2561669829222%
+  V Measure 0.8586591086283167
+  Adjusted rand score 0.8882665287432839
+  Adjusted mutual info score 0.858178722836825
+  Completeness score 0.8585154866857474
+  Silhouette 0.27953743796840375
+----------------------------------------
+Ward Linkage:
+  config: 5, 25
+  ----------------------------------------
+  0: precision: 98.75776397515527% - [('sport', 477), ('tech', 4), ('politics', 1), ('entertainment', 1)]
+  1: precision: 96.94444444444444% - [('entertainment', 349), ('tech', 7), ('business', 2), ('politics', 1), ('sport', 1)]
+  2: precision: 90.625% - [('business', 464), ('politics', 25), ('tech', 15), ('sport', 4), ('entertainment', 4)]
+  3: precision: 91.47869674185463% - [('politics', 365), ('tech', 12), ('business', 11), ('entertainment', 11)]
+  4: precision: 96.61016949152543% - [('tech', 342), ('business', 7), ('politics', 4), ('entertainment', 1)]
+  ----------------------------------------
+  Precision: 94.73434535104364%
+  V Measure 0.8449210159588569
+  Adjusted rand score 0.8757480534043401
+  Adjusted mutual info score 0.8434074786843356
+  Completeness score 0.8437793251864537
+  Silhouette 0.2544806411040001
+----------------------------------------
+Ward Linkage:
+  config: 5, 15
+  ----------------------------------------
+  0: precision: 98.95615866388309% - [('sport', 474), ('tech', 3), ('entertainment', 2)]
+  1: precision: 96.63865546218487% - [('entertainment', 345), ('tech', 8), ('business', 2), ('politics', 1), ('sport', 1)]
+  2: precision: 94.61883408071749% - [('business', 422), ('tech', 9), ('entertainment', 7), ('politics', 4), ('sport', 4)]
+  3: precision: 83.98268398268398% - [('politics', 388), ('business', 51), ('entertainment', 11), ('tech', 9), ('sport', 3)]
+  4: precision: 96.42857142857143% - [('tech', 351), ('business', 9), ('politics', 3), ('entertainment', 1)]
+  ----------------------------------------
+  Precision: 93.92789373814043%
+  V Measure 0.8345725094676293
+  Adjusted rand score 0.8563306068012799
+  Adjusted mutual info score 0.8341333752687125
+  Completeness score 0.8345272350340108
+  Silhouette 0.3135476770171088
 ----------------------------------------
 Ward Linkage:
   config: 5, 225
   ----------------------------------------
-  0: precision: 98.75776397515527% - [('sport', 477), ('business', 4), ('tech', 2)]
-  1: precision: 93.58288770053476% - [('entertainment', 350), ('tech', 11), ('politics', 8), ('business', 4), ('sport', 1)]
-  2: precision: 80.54968287526427% - [('politics', 381), ('business', 65), ('tech', 18), ('entertainment', 6), ('sport', 3)]
-  3: precision: 97.79411764705883% - [('business', 399), ('tech', 4), ('politics', 3), ('entertainment', 1), ('sport', 1)]
-  4: precision: 93.24324324324324% - [('tech', 345), ('business', 12), ('entertainment', 9), ('politics', 4)]
+  0: precision: 99.3723849372385% - [('sport', 475), ('tech', 3)]
+  1: precision: 90.7928388746803% - [('entertainment', 355), ('tech', 25), ('politics', 8), ('business', 3)]
+  2: precision: 96.98375870069606% - [('business', 418), ('entertainment', 4), ('tech', 4), ('politics', 3), ('sport', 2)]
+  3: precision: 83.47826086956522% - [('politics', 384), ('business', 51), ('tech', 14), ('entertainment', 6), ('sport', 5)]
+  4: precision: 95.97701149425288% - [('tech', 334), ('business', 12), ('politics', 1), ('entertainment', 1)]
   ----------------------------------------
-  Precision: 92.59962049335864%
-  V Measure 0.8116091390247796
-  Adjusted rand score 0.829136381878656
-  Adjusted mutual info score 0.8109560622309158
-  Completeness score 0.8118136527392318
-  Silhouette 0.11062392516897969
+  Precision: 93.26375711574953%
+  V Measure 0.8257491358868709
+  Adjusted rand score 0.8442501120997579
+  Adjusted mutual info score 0.8251012884046992
+  Completeness score 0.8259820444253185
+  Silhouette 0.11609884952386505
 ----------------------------------------
 Ward Linkage:
-  config: 5, 225
+  config: 5, 10
   ----------------------------------------
-  0: precision: 99.37369519832986% - [('sport', 476), ('tech', 3)]
-  1: precision: 93.4065934065934% - [('entertainment', 340), ('tech', 22), ('business', 1), ('sport', 1)]
-  2: precision: 85.06787330316742% - [('politics', 376), ('business', 26), ('entertainment', 22), ('tech', 16), ('sport', 2)]
-  3: precision: 93.73695198329854% - [('business', 449), ('politics', 17), ('tech', 6), ('entertainment', 4), ('sport', 3)]
-  4: precision: 96.80232558139535% - [('tech', 333), ('business', 8), ('politics', 3)]
+  0: precision: 97.16024340770791% - [('sport', 479), ('business', 10), ('tech', 3), ('entertainment', 1)]
+  1: precision: 96.65738161559888% - [('entertainment', 347), ('tech', 8), ('politics', 3), ('business', 1)]
+  2: precision: 90.30303030303031% - [('business', 447), ('politics', 42), ('tech', 5), ('entertainment', 1)]
+  3: precision: 93.01075268817203% - [('politics', 346), ('tech', 13), ('entertainment', 8), ('sport', 3), ('business', 2)]
+  4: precision: 90.23136246786633% - [('tech', 351), ('business', 24), ('entertainment', 9), ('politics', 5)]
   ----------------------------------------
-  Precision: 93.64326375711575%
-  V Measure 0.8285541600239423
-  Adjusted rand score 0.8537949907146517
-  Adjusted mutual info score 0.8276019082649131
-  Completeness score 0.8280112825823533
-  Silhouette 0.11149425438665955
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 99.37369519832986% - [('sport', 476), ('tech', 3)]
-  1: precision: 93.12169312169311% - [('entertainment', 352), ('politics', 14), ('tech', 7), ('business', 5)]
-  2: precision: 96.94323144104804% - [('business', 444), ('tech', 6), ('sport', 4), ('politics', 3), ('entertainment', 1)]
-  3: precision: 88.78281622911695% - [('politics', 372), ('business', 26), ('tech', 15), ('entertainment', 4), ('sport', 2)]
-  4: precision: 93.31550802139037% - [('tech', 349), ('entertainment', 9), ('business', 9), ('politics', 7)]
-  ----------------------------------------
-  Precision: 94.54459203036053%
-  V Measure 0.841337348167738
-  Adjusted rand score 0.8738205729632882
-  Adjusted mutual info score 0.8403510157361026
-  Completeness score 0.8419460185384627
-  Silhouette 0.11287723603575854
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 98.34710743801654% - [('sport', 476), ('tech', 4), ('business', 4)]
-  1: precision: 94.79452054794521% - [('entertainment', 346), ('politics', 8), ('tech', 7), ('business', 2), ('sport', 2)]
-  2: precision: 93.37606837606837% - [('business', 437), ('politics', 18), ('tech', 7), ('entertainment', 4), ('sport', 2)]
-  3: precision: 89.92628992628993% - [('politics', 366), ('business', 28), ('tech', 10), ('sport', 2), ('entertainment', 1)]
-  4: precision: 91.66666666666666% - [('tech', 352), ('entertainment', 15), ('business', 13), ('politics', 4)]
-  ----------------------------------------
-  Precision: 93.78557874762808%
-  V Measure 0.8217872774781659
-  Adjusted rand score 0.8553048001653335
-  Adjusted mutual info score 0.8210638058586993
-  Completeness score 0.8220863856764347
-  Silhouette 0.11170420117156121
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 98.55072463768117% - [('sport', 476), ('business', 4), ('tech', 3)]
-  1: precision: 94.72222222222221% - [('entertainment', 341), ('politics', 9), ('tech', 7), ('business', 2), ('sport', 1)]
-  2: precision: 88.8015717092338% - [('business', 452), ('politics', 38), ('tech', 13), ('entertainment', 4), ('sport', 2)]
-  3: precision: 94.73684210526315% - [('politics', 342), ('business', 14), ('entertainment', 2), ('sport', 2), ('tech', 1)]
-  4: precision: 90.12658227848101% - [('tech', 356), ('entertainment', 19), ('business', 12), ('politics', 7), ('sport', 1)]
-  ----------------------------------------
-  Precision: 93.3111954459203%
-  V Measure 0.8147430763497223
-  Adjusted rand score 0.8448369233878219
-  Adjusted mutual info score 0.8133784964463875
-  Completeness score 0.8138216483985927
-  Silhouette 0.11031991364577481
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 99.16839916839916% - [('sport', 477), ('tech', 4)]
-  1: precision: 97.92899408284023% - [('entertainment', 331), ('tech', 7)]
-  2: precision: 96.65924276169265% - [('business', 434), ('tech', 8), ('sport', 3), ('politics', 2), ('entertainment', 2)]
-  3: precision: 86.12975391498881% - [('politics', 385), ('business', 37), ('entertainment', 14), ('tech', 9), ('sport', 2)]
-  4: precision: 89.56743002544529% - [('tech', 352), ('entertainment', 19), ('business', 13), ('politics', 9)]
-  ----------------------------------------
-  Precision: 93.88045540796965%
-  V Measure 0.8343271450494412
-  Adjusted rand score 0.8583282101867569
-  Adjusted mutual info score 0.8339057242701521
-  Completeness score 0.8343001254022573
-  Silhouette 0.11443390700409563
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 99.37369519832986% - [('sport', 476), ('tech', 3)]
-  1: precision: 96.045197740113% - [('entertainment', 340), ('tech', 12), ('politics', 1), ('business', 1)]
-  2: precision: 90.01996007984032% - [('business', 451), ('politics', 29), ('tech', 14), ('sport', 4), ('entertainment', 3)]
-  3: precision: 88.88888888888889% - [('politics', 360), ('entertainment', 20), ('business', 19), ('tech', 4), ('sport', 2)]
-  4: precision: 94.03794037940379% - [('tech', 347), ('business', 13), ('politics', 6), ('entertainment', 3)]
-  ----------------------------------------
-  Precision: 93.64326375711575%
-  V Measure 0.825073789712246
-  Adjusted rand score 0.8524350569707451
-  Adjusted mutual info score 0.8240468899049828
-  Completeness score 0.8244647057448482
-  Silhouette 0.11156978438253624
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 98.35390946502058% - [('sport', 478), ('tech', 4), ('business', 4)]
-  1: precision: 97.43589743589743% - [('entertainment', 342), ('tech', 7), ('politics', 2)]
-  2: precision: 95.32293986636972% - [('business', 428), ('tech', 10), ('entertainment', 6), ('politics', 4), ('sport', 1)]
-  3: precision: 85.52338530066815% - [('politics', 384), ('business', 43), ('tech', 13), ('entertainment', 6), ('sport', 3)]
-  4: precision: 92.76139410187668% - [('tech', 346), ('entertainment', 12), ('business', 9), ('politics', 6)]
-  ----------------------------------------
-  Precision: 93.83301707779886%
-  V Measure 0.8295522168111402
-  Adjusted rand score 0.8559071834844857
-  Adjusted mutual info score 0.8291069259817059
-  Completeness score 0.8295127216108391
-  Silhouette 0.11426683799653006
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 99.375% - [('sport', 477), ('tech', 3)]
-  1: precision: 96.67590027700831% - [('entertainment', 349), ('tech', 7), ('politics', 4), ('business', 1)]
-  2: precision: 83.04721030042919% - [('politics', 387), ('business', 58), ('tech', 13), ('entertainment', 5), ('sport', 3)]
-  3: precision: 96.71361502347418% - [('business', 412), ('tech', 7), ('entertainment', 3), ('politics', 2), ('sport', 2)]
-  4: precision: 93.33333333333333% - [('tech', 350), ('business', 13), ('entertainment', 9), ('politics', 3)]
-  ----------------------------------------
-  Precision: 93.69070208728652%
-  V Measure 0.8359285554584818
-  Adjusted rand score 0.8527602587480928
-  Adjusted mutual info score 0.835304446459828
-  Completeness score 0.8361619370187128
-  Silhouette 0.11270483192915363
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 97.15447154471545% - [('sport', 478), ('business', 10), ('tech', 4)]
-  1: precision: 92.22520107238606% - [('entertainment', 344), ('tech', 26), ('business', 2), ('politics', 1)]
-  2: precision: 91.21338912133892% - [('business', 436), ('politics', 29), ('tech', 11), ('entertainment', 1), ('sport', 1)]
-  3: precision: 87.71084337349397% - [('politics', 364), ('business', 25), ('entertainment', 19), ('tech', 5), ('sport', 2)]
-  4: precision: 95.42857142857143% - [('tech', 334), ('business', 11), ('politics', 2), ('entertainment', 2), ('sport', 1)]
-  ----------------------------------------
-  Precision: 92.78937381404174%
-  V Measure 0.8078822918132005
-  Adjusted rand score 0.8340271811944376
-  Adjusted mutual info score 0.807027066221181
-  Completeness score 0.8074852950255467
-  Silhouette 0.10944744598202917
-----------------------------------------
-Ward Linkage:
-  config: 5, 225
-  ----------------------------------------
-  0: precision: 98.55371900826447% - [('sport', 477), ('business', 4), ('tech', 3)]
-  1: precision: 94.73684210526315% - [('entertainment', 342), ('politics', 10), ('tech', 6), ('business', 2), ('sport', 1)]
-  2: precision: 92.91845493562232% - [('business', 433), ('politics', 20), ('tech', 8), ('entertainment', 4), ('sport', 1)]
-  3: precision: 88.07785888077859% - [('politics', 362), ('business', 33), ('tech', 8), ('entertainment', 5), ('sport', 3)]
-  4: precision: 91.96891191709845% - [('tech', 355), ('entertainment', 15), ('business', 12), ('politics', 4)]
-  ----------------------------------------
-  Precision: 93.40607210626186%
-  V Measure 0.8146800419638709
-  Adjusted rand score 0.8473328102477595
-  Adjusted mutual info score 0.8139532409521926
-  Completeness score 0.8149655782621453
-  Silhouette 0.11254398348895975
+  Precision: 93.45351043643264%
+  V Measure 0.8236276156719655
+  Adjusted rand score 0.848753532786116
+  Adjusted mutual info score 0.8225094685473948
+  Completeness score 0.8229309354106354
+  Silhouette 0.35789702257121475

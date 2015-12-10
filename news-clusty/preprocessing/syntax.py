@@ -72,7 +72,12 @@ def stem(tokens):
 def stemmatize(tokens):
   for token in tokens:
     if word_is_valid(token):
-      yield PORTER.stem(WN_LEMMATIZER.lemmatize(token)).lower()
+      lemma = WN_LEMMATIZER.lemmatize(token)
+      
+      if not lemma:
+        lemma = token
+
+      yield PORTER.stem(lemma).lower()
 
 def lemmatize(tokens):
   for token in tokens:
