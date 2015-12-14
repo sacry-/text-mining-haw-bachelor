@@ -57,34 +57,6 @@ def grouper(n, iterable, fillvalue=None):
 def topics_single_sentence(words, domain2synsets, synset2domains):
   result = defaultdict(int)
   cache = {}
-  '''
-  for idx, (w1, w2) in enumerate(zip(words, words[1:])):
-
-    n_gram = wn.synsets(w1 + "_" + w2)
-    if n_gram:
-      sy = n_gram[0]
-      concepts = set(hyper_closure(sy))
-      if not concepts:
-        for x in set(normalizer.tnormalize(sy.definition())):
-          c = wn.synsets(x)
-          if c:
-            concepts.add(c[0])
-
-    else:
-      sy1 = wn.synsets(w1)
-      sy2 = wn.synsets(w2)
-
-      if not sy1 or not sy2:
-        continue
-
-      sy1 = sy1[0]
-      sy2 = sy2[0]
-
-      concepts = n_gram_concepts(
-        hyper_closure(sy1), 
-        hyper_closure(sy2)
-      )
-  '''
   for w in words:
     concepts = wn.synsets(w)
 

@@ -89,6 +89,7 @@ class BBCDocuments():
     for entry in zip(*args):
       yield list( flatten( entry ) )
 
+
 class BBCData():
 
   def __init__(self, bbc, percent=0.8, data_domain=None):
@@ -211,6 +212,8 @@ def get_nouns():
 
 def get_wordnet(namespace):
   return get_csv_list("wordnet_{}".format(namespace))
+
+
 
 if __name__ == "__main__":
   l1 = len(get_categories())
