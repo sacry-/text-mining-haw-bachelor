@@ -16,8 +16,7 @@
   + EM, read again, overhaul
   + independence assumption bag of words
   + small pLSI overhaul, formatting
-  - LDA, HDP
-  - NMF
+  + LDA, HDP
 
 + Data pipeline:
   + Reread, overhaul
@@ -25,20 +24,17 @@
   + say something about CRaw, Raw etc.
   + Wikipedia reference
 
-- Feature selection
-  - start
+- Features selection and semantics
   - concept
 
 - Experiments
-  - start
+  + start
   - concept
 
 - Results
-  - start
   - concept
 
 Outlook
-  - start
   - concept
   - Quotation
 

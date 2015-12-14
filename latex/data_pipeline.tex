@@ -5,7 +5,8 @@
 This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and as a point of reference what the Columbia Newsblaster system did.
 
 \section{Pipeline}
-  A data pipeline for text data has various modules of interest. Where do we get the textutal content from? How is it stored? How is it preprocessed? What intermediate representations are useful? How do we handle the ongoing stream of input? The system that was developed for this thesis which is an early version is currently called ``News-Clusty''. Scraping, preprocessing and clustering are in place. There is a command line interface to interact with scraping and preprocessing. Currently it is an open question how to incorporate clustering schemes by a command line. The summarization and output generation is yet an open topic.
+  
+  A data pipeline for text data has various modules of interest. Where do we get the textutal content from? How is it stored? How is it preprocessed? What intermediate representations are useful? How do we handle the ongoing stream of input?
 
   \begin{figure}[h!]
     \centering
@@ -14,7 +15,7 @@ This section explains a general dataflow and the necessary steps to get data fro
       \label{news_clusty}
   \end{figure}
 
-  The Columbia Newsblaster System by \cite{ColumbiaMultiDoc2001} is a very good point of reference. The core components of the Columbia Newsblaster are scraping, preprocessing, routing, clustering, summarizing and output generation. News-Clusty uses most of these components. They are briefly described in the following.
+  The system that was developed for this thesis which is an early version is currently called ``News-Clusty''. Scraping, preprocessing and clustering are in place. There is a command line interface to interact with scraping and preprocessing. Currently it is an open question how to incorporate clustering schemes by a command line. The summarization and output generation is yet an open topic. The Columbia Newsblaster System by \cite{ColumbiaMultiDoc2001} is a very good point of reference. The core components of the Columbia Newsblaster are scraping, preprocessing, routing, clustering, summarizing and output generation. News-Clusty uses most of these components. They are briefly described in the following.
 
   \paragraph{Scraping} is the process of retrieving documents of interest in its raw form from websites, archieves and other sources. In the news domain we talk about online newspapers such as ``The Guardian'' or news feeds like google news. The inherent goal is then to persist the found pages. It is crucial to identify correct pages by several heuristics:
 
@@ -41,6 +42,7 @@ This section explains a general dataflow and the necessary steps to get data fro
 
   \paragraph{The Clustering} module does several transformations as displayed in figure \ref{clustering_cycle}. Feature selection is the process of picking features that are of most interest. This often happens mathematically by \emph{TF-IDF} or by formulas describing information density of words. If desired, resulting features can be enhanced by definitions and categories of \emph{Wikipedia} or projected via \emph{Wordnet} ontologies. Second transformation to any kind of vector space model like \emph{TF-IDF}, then decomposing the matrix by topic models and dimensionality reduction techniques. Before the actual clustering algorithm is run similarity matrices and normalization to unit vectors is done. After this documents can be clustered by any kind of clustering algorithm. Outcomes are evaluated and redone if desired evaluation criterias were not met.
 
+  \newpage
     \begin{figure}[h!]
       \centering
         \includegraphics[width=0.7\textwidth]{clustering_cycle.png}

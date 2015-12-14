@@ -5,8 +5,8 @@
 The goal of this section is to give some intuition and the necessary theoretical background for the following chapters. The areas where clustering problems arise are huge. It provides solutions to problems like market segmentation, classification, document organization or indexing.\\
 Firstly we will have a look at the definition of clustering and summarization. How they are related and the variety of possibilities this imposes.\\
 Secondly the vector space model (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by singular value decomposition (SVD).\\
-Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Expectation Maximization) family will be presented. Part of this is exemplifying the quality of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth).\\
-Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.\\
+Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Expectation Maximization) family will be presented. Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.\\
+At last we will have a glance at, how to measure the quality of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth).\\
 The reader is assumed to have prior knowledge on linear algebra, statistics and linguistics. This is by no means a complete reference but should cover the topics fairly well.\\
 
 
@@ -20,7 +20,8 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \item \emph{Stream of documents} - The same as clustering a corpus with the constraint that over time the size of the corpus grows.
   \end{itemize}
 
-  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section. Data clustering is a computationally expensive \emph{NP-hard} problem. That means there is currently no efficient way to group objectcs in an optimal way. Therefore heuristics are applied such that algorithms converge at a  \emph{local minimum}. Theoretically a local minimum can vary vastly compared to a global minimum, in practice however a close to 80\% solution seems reasonable.
+  Document clustering on large corpora can be seen as a summarization of the underlying concepts. The representation of documents as feature vectors is described with the vector space model in the next section. Data clustering is a computationally expensive \emph{NP-hard} problem. That means there is currently no efficient way to group objectcs in an optimal way. Therefore heuristics are applied such that algorithms converge at a  \emph{local minimum}. Theoretically a local minimum can vary vastly compared to a global minimum, in practice however a close to 80\% solution seems reasonable.\\ 
+  In this context a distinction has to be made between online and offline learning. Where we have a continuous stream of documents it is often reasonable to run a clustering algorithm continuously. This is called \emph{online learning}. Most clustering algorithms need all documents at once, as a batch, to generate clusters. This is refered to as \emph{offline learning}. The property of an algorithm that can partially cluster documents is desirable. In continuous clustering, several things are much more difficult compared to batch clustering. How can we assign or create new clusters for unseen documents? How do we choose a good representative seed to start off from? Specifically to newspapers, how do we track that a topic is not fresh anymore? On the contrary to this, batch algorithms can be used to cluster a full day of newspaper articles. We then connect clusters or in this case events with the day before and after. Then, clustering are groupings of events, that were written about at the same time. Events of two days can be merged when the distance between both is low e.g. the similarity is high.
 
   \paragraph{Automatic text summarization} on the other hand, is the process of reducing textual content to the most important concepts in a readable, formatted form to the user. \cite{SumEvaluation2001} We have to distinct between summarization of single documents and a collection of documents as well. In multi-summarization the problem lies in identifying topics accross documents, finding the most relevant sentences, reducing and removing redundant/duplicate information. Moreover syntactically it is often inappropriate to merge sentences of different documents. The Columbia Newsblaster and Google News are prime examples of summarization engines. Both continuously scrape news, cluster them and summarize the content into cohesive summaries. This is by no means an easy task and involves several components. These topics will be evaluated later and will take a major part of this thesis. See \cite{NewsBlaster2002, ColumbiaExperimentsSum2002}.\\
   The text summarization and clustering task are closely related. But how can clustering help in improving or creating textual summaries over documents or single articles?
@@ -160,13 +161,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \subsubsection{Latent Semantic Analysis}\label{lsa_section}
       Latent Semantic Analysis is a progress to reduce as much noise as possible from a given term x document matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is used for dealing with large sparse data to find the underlying connecting relations. \emph{LSA} is a truncated singular value decomposition \emph{(SVD)} on a term x document matrix. \emph{SVD} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into three matrices $U$, $\Sigma$ and $V^{T}$. \emph{LSA} is constrained by the number of dimensions \emph{k}:
 
-      \begin{align*}
-        svd(A) &= U_{mxm}\Sigma_{mxn} V^{T}_{nxn} \\
-        lsa(A, k) &= U_{mxk}\Sigma_{kxk} V^{T}_{kxn}
-      \end{align*}
+      \begin{equation}
+        svd(A) = U_{mxm}\Sigma_{mxn} V^{T}_{nxn} \to lsa(A, k) = U_{mxk}\Sigma_{kxk} V^{T}_{kxn}
+      \end{equation}
 
-      While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{n} words to \emph{k}. $\Sigma$ holds the k best singular values in sorted order. $V^{T}$ is a k x document matrix, where k are the reduced topics from the words.\\
-      While we can do \emph{LSA} over documents, we can also use it for single summarizations of a single documents.
+      While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{n} words to \emph{k}. $\Sigma$ holds the k best singular values in sorted order. $V^{T}$ is a k x document matrix, where k are the reduced topics from the words. While we can do \emph{LSA} over documents, we can also use it for summarizations of single documents.
 
       \begin{figure}[h!]
         \centering
@@ -175,8 +174,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
           \label{svd_lsa}
       \end{figure}
 
-      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}\\
-
+      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}
       The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. \emph{SVD} then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. This corresponce to a notion of topic overlap between different documents.
       Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning. Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
 
@@ -213,11 +211,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
         \label{kmeans_clustering}
     \end{figure}
 
-    Figure \ref{kmeans_clustering} is a typical clustering result. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. 
+    Figure \ref{kmeans_clustering} is a typical clustering result. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. \\
 
     \emph{Partitional clustering} algorithms typically have linear running times and thus are often used in practical real world applications. We will see later that this comes with a price mostly in accuracy and by providing the number of clusters. Most of the time we do not know how many clusters will be in the final result so we need algorithms that can find an approximately optimal clustering. In particular partitional algorithms can be globally approximated given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(d_i) \geq f(d_j), \forall d \in D$  or minimizes $f(d_i) \leq f(d_j), \forall d \in D$. Often they are much easier to implement because constraints are kept low and requirements are kept to a minimum. $d_i,d_j$ are all pairs of documents in a collection of documents $D$. There are also online versions available which make it possible to scale algorithms such as K-means with \emph{map reduce} on several processors. This is not true for hierarchical algorithms that build up a hierarchy bottom-up or top-down. The difference is that partitonal algorithms assign to cluster centers, while hierarichal algorithms build up pairs of merges, resembling a merge tree. This makes it difficult to scale hierarchical algorithms as they need a global picture of distances to be generated.
 
-    \paragraph{K-Means}
+    \subsubsection{K-Means}
     The \emph{K-Means} clustering algorithm is a centroid based algorithm. Each document is assigned to a cluster center in each iteration. In order to do this \emph{k} centroids are drawn as a initial cluster centers from the documents. Then interdistance similarity measures, typically $l_2\:norm$, decide if a document is closer to a certain centroid. Centroids will be moved to the new location in vector space by averaging over the assigned documents. In the next iteration a document then might be reconsidered for another cluster. \emph{K-Means} typically forms clusters of equal sizes and is a hard clustering algorithm \cite{IRBookStanford2008}.\\
     Typically a \emph{K-Means} algorithm will be run with respect to an objective cost function to be minimized. Globally this can be used for chosing a suitable \emph{k} for the underlying data. The objective goal is to minimize the residual sum of squares of within cluster distances \cite{IRBookStanford2008}:
 
@@ -253,7 +251,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     Another strategy has been proposed by \cite{KMeansPlusPlus2007} that maximizes the intercluster distance by spreading the clusters as far from each other as possible. 
     As the initial clusters are often picked randomly \emph{K-Means} is a non deterministic approach that will most likely result in different clusters after each run.
 
-    \paragraph{Expectation Maximization (EM)}
+    \subsubsection{Expectation Maximization (EM)}
     The \emph{Expecation Maximization (EM)} algorithm is a generalization of \emph{K-Means} and a soft clustering algorithm with fuzzy associations between clusters and documents. The underlying methodology is that we would like to find a model that generated the given documents. The way this works is first by assuming that the clusters are represented as random distributions over terms. They can be assumed as a normal gaussian distribution. Note: the kind of distribution can vary, gaussian distributions can tend to zero if no assignment was found and so EM could assign no label at all. If that is not desired and a soft and exhaustive clustering is prefered one can add additive smoothing, that other models like the Dirichlet model inheret. What we would like to know is: How does a data point \emph{x} relate to the different \emph{k} guassian distributions? Formally we need to estimate a model $\Theta$ that is maximized using a cost function such as \emph{maximum likelihood estimation (MLE)} given some data. The intution is, by estimating the likelihood of a given incomplete dataset $D$, that is assumed to be normally distributed, we want to maximize the connection between $\Theta$ and $D$.
 
       \begin{equation}
@@ -282,7 +280,8 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \end{figure}
 
     On the \emph{y} label there are decreasing distances. The \emph{x} label presents the leaf nodes where at most two documents are paired to each other. For instance ``unsupervised clustering'' occurs twice so the distance between these two is 0. While at the same time ``supervised clustering'' seems to be close. The merge one hierarchy up could resemble a cluster where the 3 documents resemble one bigger cluster. The distance at the \emph{y} level is monotonically increasing bottom up. Each successive merge must be at a higher distance than the merge before. By threshold, distance density or a fixed cluster size k, we can form clusters at different granularities. To start hierarchical clustering a $m\:x\:m$ distance matrix has to be created. The closest two documents will be iteratively merged until no unassigned document remains. Keeping track of the merging processes in each iteration can be seen as overlapping clustering centers.\\
-    A simple HAC scheme first finds the maximizing next distance between two documents that have not yet been merged. Then these maximized document pairs $d_1$ and $d_2$ will be merged resulting in a new higher level merge. The similarity in \emph{HACs} are stated by linkage criterias. The question then is: given two merges $c_1,c_2$ how can we compare them?
+
+    A simple \emph{HAC} scheme first finds the maximizing next distance between two documents that have not yet been merged. Then these maximized document pairs $d_1$ and $d_2$ will be merged resulting in a new higher level merge. The similarity in \emph{HACs} are stated by linkage criterias. The question then is: given two merges $c_1,c_2$ how can we compare them?
 
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
@@ -307,6 +306,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \end{algorithmic}
     \end{algorithm}
 
+    \subsubsection{Linkage strategies}
     In the following we will explore some of these different linkage clustering strategies.
     The refered to distance function will be one of the conventional distances such as \emph{cosine} or \emph{euclidean}.
 
@@ -346,6 +346,55 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \paragraph{Birch} is a specialized version of \emph{HACs}. It scales well to large datasets and is an incremental algorithm. It operates in different phases and can be constrained by an optional cluster size \emph{k}. One can provide parameters for maximum nodes per cluster and minimum density threshold as to when a document should be assigned to a cluster. See 
     \cite{BIRCH1996} for more information. As with the partitional algorithms this was studied extensively by \cite{ClusteringBooAggarwalk2013, ClusterAlgoSurveyIBM, IRBook2008}. Top down approaches are not of special interest here. They are primarily suitable for large scale topic browsers where linear time constraints play a role.
 
+    \subsection{Generative Models}    
+      According to \cite[Wikipedia]{Nothing} a generative model is a model for randomly generating observable data values, typically given some hidden parameters. It specifies a joint probability distribution over observations and label sequences. In the area of document clustering and text summarization they play a role in modelling documents by word distributions assigned to topics. The \emph{EM} algorithm is a typical scheme of a generative model, found in the partitional clustering section. In the text domain topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By \emph{bayesian inference} we can draw conditional probabilities from word to document to topic proportions. Making sense of these quantities is part of probabilistic topic modelling. As with the \emph{EM} algorithm we draw partial probabilities that a document was generated by a mixture of topics. Several widely used methods namely \emph{Latent Dirichlet Allocation (LDA)}, \emph{Hierarchical Dirichlet Process (HDP)} as well as the beforementioned \emph{Latent semantic analysis (LSA)} are found in the generative realm. Usually generative models are too expensive for large datasets. That is why most of the algorithms use variational inference resulting in the possibility to use online methods.
+
+      \subsubsection{Topic modelling}
+        Probabilistic topic modelling is a generative approach where documents are assumed to be mixtures of topics. A topic is a mixture of words describing probabilities how much a word constitutes to a topic. The underlying question then: Given a set of documents $D$ and given random topic mixtures $Z=\{z_1..z_k\}$ what words $w_1..w_n$ of a particular document $d$ constitutes to which topic. Thusly given a collection of documents which original discourses (topics) could have generated them? Given a document $d$ with words $W=\{w_1..w_n\}$ and some mixtures over words $Z$ how often does a particular word from $W$ occur in topic $Z$. Further how common is topic $Z$ in the current document $d$. In the following we will briefly discuss topic modelling and its applications. See \cite{TopicModelsBlei2012}.In its very basic form topic models are drawn from multinominal mixtures over word proportions. We would like to know, given a document $d$ and some topics $Z$ how likely is it that a specific topic $z$ generated $d$?
+
+          \begin{equation}
+            p(d) = \sum_{Z} p(z) \prod_{w\:\in\:d}p(w|z)
+          \end{equation}
+
+        $p(z)$ is the probability that a random document is part of that topic distribution and $p(w|z)$ is the conditional probability that given a word $w$ evidenced by $z$, how likely is it to be drawn? This tones down to bayesian inference. We quickly see that in this process each document is drawn with the priors $p(z)$. Further each document gets hard assignments, a document is matched with a probability for a topic $z$. Statistical learning via \emph{EM} is required for all of these algorithms by drawing probabilities that estimate the maximum likelihood that a document $d$ is assigned to a topic $z$. The topic proportions need to be learned and so each document increments the parameter size to be estimated.
+
+        \paragraph{Bayesian inference}
+          In bayesian inference one would like to know, given some evidence how likely is it that some event happens? You would like to know given some event A, evidenced by B, how probable is A? In order to do so we have to take the prior of $P(A|B)$ that is the probability that some event $A$ without any evidence is likely, called $P(A)$. Multiply it by the probability $P(B|A)$ that is the reversed probability of $P(A|B)$ dividing by the probability of evidence $B$, $P(B)$.
+
+          \begin{equation}
+            P(A|B) = \frac{P(A) * P(B|A)}{P(B)}
+          \end{equation}
+
+          See \cite{Nothing} for a great introduction.
+        
+        The definition of a prior or prior distribution is important. A prior is a raw distribution over the outcomes of some event A, \emph{without} any evidence B. It is knowledge that needs to be observed. If no observations took place, we have to assume, beforehand, that the prior is randomly distributed. The generative process then weights in the words of each document and approximates the prior distributions. In the context of topic modelling, priors are topic distributions over words or documents.\\ 
+        
+      \subsubsection{Probabilistic latent semantic indexing (PLSI)}
+      Advancing on the above statement, \cite{PLSA2001} created the \emph{probabilistic latent semantic indexing (PLSI)}.
+
+        \begin{equation}
+          p(d, w_n) = p(d)\sum_{Z} p(w_n|z)\:p(z|d)
+        \end{equation} 
+
+      \emph{PLSI} takes into account that words contribute to a topic. Documents are sequences of words, so a document can contain several topics as well. The assumption: A topic generated a specific word, so a document was generated by several topics. This is done by drawing $p(d)$ as before with the additional probability $p(w_n|z)$ that a word $w_n$ of a document $d$, evidenced by $z$ and $p(z|d)$ the most likely probability that a topic is drawn evidenced by $d$. Informally for each word $w_n$ in a document $d$ how likely was it generated by a topic $z$ given a document $d$.
+
+      \begin{algorithm}[H]
+      \begin{algorithmic}[1]
+        \caption{probabilistic latent semantic indexing}\label{PLSI}
+        \State $Choose\:a\:document\:d_m\:with\:p(d)$
+          \For{$w_n \in d_m$}
+            \State $z_n \gets multinominal\:from\:d_m\:p(z|d_m)$
+            \State $w_n \gets multinominal\:from\:z_n\:p(w|z_n)$
+          \EndFor
+      \end{algorithmic}
+      \end{algorithm}
+
+      As seen in algorithm \ref{PLSI} the underlying problem is that topic distributions must be estimated for each document $d_m$ and for each topic $z_n$. This can be mitigated by using priors for topics instead of parameter estimations by \emph{EM}. For this reason \emph{Latent Dirichlet Allocation (LDA)} was proposed by \cite{LDA2003} where a Dirichlet prior is assumed before hand. For completeness the two models are briefly described.
+
+      \subsubsection{Latent Dirichlet Allocation (LDA)}
+        Latent Dirichlet Allocation created by \cite{LDA2003} is \emph{PLSI} assuming a Dirichlet prior. Dirichlet distributions are often used as prior distributions in Bayesian statistics. The Dirichlet distribution is the conjugate prior of the categorical distribution and multinomial distribution. Its probability density function returns the belief that the probabilities of $k$ rival events are $x_i$ given that each event has been observed $\alpha_i-1$ times. \cite[Wikipedia quote for Dirichlet processes]{Nothing}\\
+        This fact comes in handy especially when assuming that \emph{LDA} should generate $k$ distinct topic distributions over words that can be mapped to a topic distribution over documents. \cite{TopicModelsBlei2012}
+        Alternatives to this are more complicated models like the \emph{Hierarchical Dirichlet Process (HDP)} by \cite{HDP2006} that can automatically infer the size of the topics or the \emph{Pachinko allocation} creating a hierarchy with directed acyclic graphs (DAGs). \cite{NonParametricBayes2007}
     \subsection{Others}
     In the literature there are a lot more strategies involved how clustering can be done. Often they are particulary good in specific domains such as images. In the text domain however they have high runtimes and are often not desirable in their output. They often lack good strategies to work with high dimensionality. We briefly note them here.
 
@@ -357,126 +406,65 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
     There are indepth studies on spectral, density and grid based algorithms in \cite{ClusteringBooAggarwalk2013}.
 
-  \subsection{Evaluation}
-    In order to comprehend if a clustering result is reasonably good or bad, we need to evaluate them. This can be done by purely mathematical formulas that output numbers a human expert can interpret or by displaying intuitive results via plots, topic browsers or text. The second category is highly subjective to the reviwer, while the first, at least, holds some objective criterias. Evaluation is a black art. Clustering itself has no real goal in terms of the domain. The primary goal is to group similar and dissimilar data points. What similarity and dissimilarity actually means is an open topic. All results of evaluation metrics need to be analysed and interpreted, otherwhise its numbers. High numbers can correspond to dense clusters, low numbers can correspond to scattered clusters. The actual numbers only make sense compared to what the domain needs to be solved.\\
-    Formally we have two groups of measurements, the internal measures and the external measures. Going ahead a bit for the sake of this thesis we will use the \emph{precision}, \emph{V-measure} and \emph{silhouette coefficient} for evaluation of clustering results.
 
-    \paragraph{Internal measures}
-      Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters and by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. Internal measures on the other hand have better scores if the dimensions are lower. Using \emph{LSA} reducing the dimensions down to 1 will lead to extra ordinary high scores. The results of internal measures can thusly only be compared to other clusterings of the same dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
+\section{Cluster evaluation}
+  In order to comprehend if a clustering result is reasonably good or bad, we need to evaluate them. This can be done by purely mathematical formulas that output numbers a human expert can interpret or by displaying intuitive results via plots, topic browsers or text. The second category is highly subjective to the reviwer, while the first, at least, holds some objective criterias. Evaluation is a black art. Clustering itself has no real goal in terms of the domain. The primary goal is to group similar and dissimilar data points. What similarity and dissimilarity actually means is an open topic. All results of evaluation metrics need to be analysed and interpreted, otherwhise its numbers. High numbers can correspond to dense clusters, low numbers can correspond to scattered clusters. The actual numbers only make sense compared to what the domain needs to be solved.\\
+  Formally we have two groups of measurements, the internal measures and the external measures. Going ahead a bit for the sake of this thesis we will use the \emph{purity}, \emph{V-measure} and \emph{silhouette coefficient} for evaluation of clustering results.
 
-      \begin{enumerate}
-        \item \emph{The silhouette coefficient} is a measure for how dissimilar a document $d$ is to its own cluster $C_d$ and how dissimilar a document $d$ is to the closest neighbouring cluster in $C_{d \not \in C}$. Often denoted as $a(d)$ it is the average dissimilarity from $d$ to all other documents in $C_d$ and $b(d)$ picks the minimum dissimilarity of $d$ to all clusters $C_{d \not \in C}$. Then the silhouette of a document $d$ for a clustering $C$ is defined as
+  \subsection{Internal measures}
+    Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters and by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. Internal measures on the other hand have better scores if the dimensions are lower. Using \emph{LSA} reducing the dimensions down to 1 will lead to extra ordinary high scores. The results of internal measures can thusly only be compared to other clusterings of the same dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
 
-          \begin{equation}
-            s(d, C) = \frac{b(d, C_{d \not \in C}) - a(d, C_d)}{max(\:b(d, C_{d \not \in C}), a(d, C_d)\:)}
-          \end{equation} 
-
-        The coefficient is 1 if the dissimilarity $a$ is low and dissimilarity $b$ is high, meaning $d$ is well clustered into $C_d$. Near to 0 if both are fairly equal, which means $d$ could fit into the neighbouring cluster almost as good as $C_d$. Finally -1 if the clustering went bad and $d$ is falsely assigned to $C_d$ whereas it should have been assigned to its neighbour. See \cite{Silhouettes1987} for detailed explanations.
-
-        \item \emph{The Davies–Bouldin index} is a measure of distance between assigned intra cluster distances and inter cluster distances. That is a clustering is best if there is low intra cluster distance and high inter cluster distance to all clusters. A smaller value means better clustering. See \cite{DavisBouldin1979} for detailed explanations. 
-
-        \item \emph{The Dunn index} minimizes the distance between two clusters $c_1$ and $c_2$ with a variety of possible distance metrices such as average, maximum or euclidean and divides it by the maximized intra cluster distances. Thus the Dunn index is like the Davies-Bouldin index a measure of intra cluster compactness and inter cluster variance. See \cite{DunnIndex1973} for detailed explanations. 
-      \end{enumerate}
-
-    \paragraph{External measures}
-      External measures describe how well a clustering performed provided with a ground truth of the documents. We often refer to this as the golden standard where human labellers assigned concrete classes to documents. With newspaper articles this is often the category of the article, like politics or business. Clustering results are measured by their ratios of labels to clusters and clusters to labels. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for the documents? This is adressed by only labelling a few documents of the original dataset and is called the training set. While this tackles the issue of spending time for labelling other problems arise. In clustering for summarization our inherent goal is not to group documents that necessarily share a label. Maybe we are interested in groups of documents that share proportions of labels as well.\\
-      What we are mostly interested in are metrics that faciliates the notion of facts and predicition accuracy. The problem with clustering is that we do not know what the clusters actually mean. Before we can compare them to their respective labels we need to know for each cluster how documents were labeled. By counting all the occurences we can infer if documents were grouped into clusters with the same labels. If this is not the case then the labels either were not accurate enough or were accurate but the structure of the documents could not capture the assumptions. Generally we would like a high true positive score, meaning most of the documents that share the same label were in the same cluster. While at the same time maintaining a false positive score, meaning documents assigned to the wrong clusters. Wrong however seems relative if we are really not interested in a hard labelled clustering.
-
-      \begin{enumerate}
-        \item \emph{Precision} is a basic score and facilitates the rate between correctly predicted results in relation to false results. Formally:
-
-          \begin{equation}
-            \frac{True\:Positives}{True\:Positives + False\:Positives}
-          \end{equation}
-
-        It is the ratio between all correctly predicted results the examples that were assigned into the correct cluster \emph{true positives} as a ratio to those that were falsely assigned to another cluster \emph{false positives}. A High precision indicates low error ratio in the False positives. This only accounts for the false and true assignments. But what is about labels that are partially in all clusters? We have to account for the variance how labels are spread too. It is actually worse if we have 5 clusters and 5 labels and one label is partially found in all 5 clusters how can we account for that?
-
-        \item \emph{V-Measure} is an entropy based measure. It relies on the homogeneity score that measures if all of the clusters $c_1..c_k$ contain documents that are labelled with the same class and completeness score that measures if all documents that are members of a class are elements of the same cluster. Completeness and homogenity run in opposite directions. Informally if all points are in a single global cluster, then all classes are part of the same single cluster, thusly generating a high completeness score and a low homegeneity score. If each document is assigned to its own cluster, having as many clusters as documents, the homogeneity score is very high and the completeness score extremely low. The V-Measure then favours solutions where classes are assigned to a correct cluster (completeness), while keeping the classes distinct between clusters (homgeneity) \cite{VMeasure2007}:
-          
-          \begin{equation}
-            homogeneity = 1 - \frac{H(C|K)}{H(C)}\\
-            completeness = 1 - \frac{H(K|C)}{H(K)}
-          \end{equation}
-
-        where $H(C|K)$ is the conditional entropy of the classes given the cluster assignments (similary for completeness, change the conditional probability):
-
-          \begin{equation}
-            H(C|K) = - \sum_{c=1}^{|C|} \sum_{k=1}^{|K|} \frac{n_{c,k}}{n}\cdot \log\left(\frac{n_{c,k}}{n_k}\right)
-          \end{equation}
-
-        and $H(C)$ is the entropy of the classes:
-
-          \begin{equation}
-            H(C) = - \sum_{c=1}^{|C|} \frac{n_c}{n} \cdot \log\left(\frac{n_c}{n}\right)
-          \end{equation}
-
-        \cite{VMeasure2007} then define the V-measure as the harmonic mean of homogeneity and completeness:
-
-          \begin{equation}
-            v = 2 \cdot \frac{h \cdot c}{h + c}
-          \end{equation}
-
-        \item \emph{Adjusted Rand Index} - The Rand Index computes a similarity measure between two clusterings by considering all pairs of samples and counting pairs that are assigned in the same or different clusters in the predicted and true clusterings. The adjusted score than weights in an error rate that accounts for chance, meaning that all pairs could be randomly formed accounting for pure chance. See \cite{RandIndex1971} for more information.
-      \end{enumerate}
-
-    There are more models such as \emph{adjusted mutual information} or \emph{F-Measure}. All these measures have the underlying assumptions that a human labeller did a good job in finding the underlying topics of a document. Often though these scores are skewed and are at best information about total failure or an approximative good solution. As said before documents can be partially assigned to different topics and thusly all metrics measuring the performance by hard labels will fail in actually stating if the desired goal was found. What if we would like to have clusterings where certain topics such as sports and business have an overlap? In summarization we might want to consider that sports can be about business decisions as well. Getting more diversified summarizations by finding connections between different labels can be desirable. Thusly scoring too high on the V-Measure scale might indicate that there are no topic overlaps, while at the same time clusterings obviously fail if the score is near to zero.
-
-\section{Generative Models}    
-
-  Generative models are special algorithmic schemes. In the area of document clustering and text summarization they play a huge role in modelling documents by a predictive model.
-  The \emph{EM} algorithm is a typical scheme of a generative model, found in the partitional clustering section. In the text domain topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By \emph{bayesian inference} we can draw conditional probabilities from word to document to topic proportions. Making sense of these quantities is part of probabilistic topic modelling and generative models. As with the \emph{EM} algorithm we draw partial probabilities that a document was generated by a mixture of topics. Two widely used methods namely \emph{Latent Dirichlet Allocation (LDA)} and \emph{Non Negative Matrix Factorization (NMF)} are found in the generative realm.
-
-  \subsection{Topic modelling}
-    Probabilistic topic modelling is a generative approach where documents are assumed to be mixtures of topics. A topic is a mixture of words describing probabilities how much a word constitutes to a topic. The underlying question then: Given a set of documents $D$ and given random topic mixtures $Z=\{z_1..z_k\}$ what words $w_1..w_n$ of a particular document $d$ constitutes to which topic. Thusly given a collection of documents which original discourses (topics) could have generated them? Given a document $d$ with words $W=\{w_1..w_n\}$ and some mixtures over words $Z$ how often does a particular word from $W$ occur in topic $Z$. Further how common is topic $Z$ in the current document $d$. In the following we will briefly discuss topic modelling and its applications. See \cite{TopicModelsBlei2012}.In its very basic form topic models are drawn from multinominal mixtures over word proportions. We would like to know, given a document $d$ and some topics $Z$ how likely is it that a specific topic $z$ generated $d$?
+    \paragraph{The silhouette coefficient} is a measure for how dissimilar a document $d$ is to its own cluster $C_d$ and how dissimilar a document $d$ is to the closest neighbouring cluster in $C_{d \not \in C}$. Often denoted as $a(d)$ it is the average dissimilarity from $d$ to all other documents in $C_d$ and $b(d)$ picks the minimum dissimilarity of $d$ to all clusters $C_{d \not \in C}$. Then the silhouette of a document $d$ for a clustering $C$ is defined as
 
       \begin{equation}
-        p(d) = \sum_{Z} p(z) \prod_{w\:\in\:d}p(w|z)
-      \end{equation}
-
-    $p(z)$ is the probability that a random document is part of that topic distribution and $p(w|z)$ is the conditional probability that given a word $w$ evidenced by $z$, how likely is it to be drawn? This tones down to bayesian inference. We quickly see that in this process each document is drawn with the priors $p(z)$. Further each document gets hard assignments, a document is matched with a probability for a topic $z$. Statistical learning via \emph{EM} is required for all of these algorithms by drawing probabilities that estimate the maximum likelihood that a document $d$ is assigned to a topic $z$. The topic proportions need to be learned and so each document increments the parameter size to be estimated.
-
-    \paragraph{Bayes inference}
-
-      In bayesian inference one would like to know, given some evidence how likely is it that some event happens? You would like to know given some event A, evidenced by B, how probable is A? In order to do so we have to take the prior of $P(A|B)$ that is the probability that some event $A$ without any evidence is likely, called $P(A)$. Multiply it by the probability $P(B|A)$ that is the reversed probability of $P(A|B)$ dividing by the probability of evidence $B$, $P(B)$.
-
-      \begin{equation}
-        P(A|B) = \frac{P(A) * P(B|A)}{P(B)}
-      \end{equation}
-
-      See \cite{Nothing} for a great introduction.
-    
-    The definition of a prior or prior distribution is important. A prior is a raw distribution over the outcomes of some event A, \emph{without} any evidence B. It is knowledge that needs to be observed. If no observations took place, we have to assume, beforehand, that the prior is randomly distributed. The generative process then weights in the words of each document and approximates the prior distributions. In the context of topic modelling, priors are topic distributions over words or documents.\\ 
-    Advancing on the above statement, \cite{PLSA2001} created the \emph{probabilistic latent semantic indexing (PLSI)}.
-
-      \begin{equation}
-        p(d, w_n) = p(d)\sum_{Z} p(w_n|z)\:p(z|d)
+        s(d, C) = \frac{b(d, C_{d \not \in C}) - a(d, C_d)}{max(\:b(d, C_{d \not \in C}), a(d, C_d)\:)}
       \end{equation} 
 
-    \emph{PLSI} takes into account that words contribute to a topic. Documents are sequences of words, so a document can contain several topics as well. The assumption: A topic generated a specific word, so a document was generated by several topics. This is done by drawing $p(d)$ as before with the additional probability $p(w_n|z)$ that a word $w_n$ of a document $d$, evidenced by $z$ and $p(z|d)$ the most likely probability that a topic is drawn evidenced by $d$. Informally for each word $w_n$ in a document $d$ how likely was it generated by a topic $z$ given a document $d$.
+    The coefficient is 1 if the dissimilarity $a$ is low and dissimilarity $b$ is high, meaning $d$ is well clustered into $C_d$. Near to 0 if both are fairly equal, which means $d$ could fit into the neighbouring cluster almost as good as $C_d$. Finally -1 if the clustering went bad and $d$ is falsely assigned to $C_d$ whereas it should have been assigned to its neighbour. See \cite{Silhouettes1987} for detailed explanations.
 
-    \begin{algorithm}[H]
-    \begin{algorithmic}[1]
-      \caption{probabilistic latent semantic indexing}\label{PLSI}
-      \State $Choose\:a\:document\:d_m\:with\:p(d)$
-        \For{$w_n \in d_m$}
-          \State $z_n \gets multinominal\:from\:d_m\:p(z|d_m)$
-          \State $w_n \gets multinominal\:from\:z_n\:p(w|z_n)$
-        \EndFor
-    \end{algorithmic}
-    \end{algorithm}
+    \paragraph{The Davies–Bouldin index} is a measure of distance between assigned intra cluster distances and inter cluster distances. That is a clustering is best if there is low intra cluster distance and high inter cluster distance to all clusters. A smaller value means better clustering. See \cite{DavisBouldin1979} for detailed explanations.
 
-    As seen in algorithm \ref{PLSI} the underlying problem is that topic distributions must be estimated for each document $d_m$ and for each topic $z_n$. This can be mitigated by using priors for topics instead of parameter estimations by \emph{EM}. For this reason \emph{Latent Dirichlet Allocation (LDA)} was proposed by \cite{LDA2003} where a Dirichlet prior is assumed before hand.
+    \paragraph{The Dunn index} minimizes the distance between two clusters $c_1$ and $c_2$ with a variety of possible distance metrices such as average, maximum or euclidean and divides it by the maximized intra cluster distances. Thus the Dunn index is like the Davies-Bouldin index a measure of intra cluster compactness and inter cluster variance. See \cite{DunnIndex1973} for detailed explanations. 
 
-  \subsection{Latent Dirichlet Allocation (LDA)}
-    Latent Dirichlet Allocation created by \cite{LDA2003} is \emph{PLSI} assuming a Dirichlet prior. Dirichlet distributions are often used as prior distributions in Bayesian statistics. The Dirichlet distribution is the conjugate prior of the categorical distribution and multinomial distribution. Its probability density function returns the belief that the probabilities of $k$ rival events are $x_i$ given that each event has been observed $\alpha_i-1$ times. \cite[Wikipedia quote for Dirichlet processes]{Nothing}\\
-    This fact comes in handy especially when assuming that \emph{LDA} should generate $k$ distinct topic distributions over words that can be mapped to a topic distribution over documents. \cite{TopicModelsBlei2012}
+  \subsection{External measures}
+    External measures describe how well a clustering performed provided with a ground truth of the documents. We often refer to this as the golden standard where human labellers assigned concrete classes to documents. With newspaper articles this is often the category of the article, like politics or business. Clustering results are measured by their ratios of labels to clusters and clusters to labels. The question that arises is: why use clustering for any kind of grouping in the first place if we already have class labels for the documents? This is adressed by only labelling a few documents of the original dataset and is called the training set. While this tackles the issue of spending time for labelling other problems arise. In clustering for summarization our inherent goal is not to group documents that necessarily share a label. Maybe we are interested in groups of documents that share proportions of labels as well.\\
+    What we are mostly interested in are metrics that faciliates the notion of facts and predicition accuracy. The problem with clustering is that we do not know what the clusters actually mean. Before we can compare them to their respective labels we need to know for each cluster how documents were labeled. By counting all the occurences we can infer if documents were grouped into clusters with the same labels. If this is not the case then the labels either were not accurate enough or were accurate but the structure of the documents could not capture the assumptions. Generally we would like a high true positive score, meaning most of the documents that share the same label were in the same cluster. While at the same time maintaining a false positive score, meaning documents assigned to the wrong clusters. Wrong however seems relative if we are really not interested in a hard labelled clustering.
 
-    Formula, Image? Explanation of Formula.
+    \paragraph{Purity} is a basic score and facilitates the rate between correctly predicted results in relation to false results. Formally:
 
+      \begin{equation}
+        \frac{True\:Positives}{True\:Positives + False\:Positives}
+      \end{equation}
 
-    Alternatives to this are much more complicated models like the \emph{Hierarchical Dirichlet Process (HDP)} that can automatically infer the size of the topics and the \emph{Pachinko allocation} (building on top of LDA). \cite{Nothing}
-    
-  \subsection{Non Negative Matrix Factorization (NMF)}
-    Non negative matrix factorization is a matrix decomposition. \cite{NMF1999}
+    It is the ratio between all correctly predicted results the examples that were assigned into the correct cluster \emph{true positives} as a ratio to those that were falsely assigned to another cluster \emph{false positives}. A High purity indicates low error ratio in the False positives. This only accounts for the false and true assignments. But what is about labels that are partially in all clusters? We have to account for the variance how labels are spread too. It is actually worse if we have 5 clusters and 5 labels and one label is partially found in all 5 clusters how can we account for that?
+
+    \paragraph{V-Measure} is an entropy based measure. It relies on the homogeneity score that measures if all of the clusters $c_1..c_k$ contain documents that are labelled with the same class and completeness score that measures if all documents that are members of a class are elements of the same cluster. Completeness and homogenity run in opposite directions. Informally if all points are in a single global cluster, then all classes are part of the same single cluster, thusly generating a high completeness score and a low homegeneity score. If each document is assigned to its own cluster, having as many clusters as documents, the homogeneity score is very high and the completeness score extremely low. The V-Measure then favours solutions where classes are assigned to a correct cluster (completeness), while keeping the classes distinct between clusters (homgeneity) \cite{VMeasure2007}:
+      
+      \begin{equation}
+        homogeneity = 1 - \frac{H(C|K)}{H(C)}\\
+        completeness = 1 - \frac{H(K|C)}{H(K)}
+      \end{equation}
+
+    where $H(C|K)$ is the conditional entropy of the classes given the cluster assignments (similary for completeness, change the conditional probability):
+
+      \begin{equation}
+        H(C|K) = - \sum_{c=1}^{|C|} \sum_{k=1}^{|K|} \frac{n_{c,k}}{n}\cdot \log\left(\frac{n_{c,k}}{n_k}\right)
+      \end{equation}
+
+    and $H(C)$ is the entropy of the classes:
+
+      \begin{equation}
+        H(C) = - \sum_{c=1}^{|C|} \frac{n_c}{n} \cdot \log\left(\frac{n_c}{n}\right)
+      \end{equation}
+
+    \cite{VMeasure2007} then define the V-measure as the harmonic mean of homogeneity and completeness:
+
+      \begin{equation}
+        v = 2 \cdot \frac{h \cdot c}{h + c}
+      \end{equation}
+
+    \paragraph{Adjusted Rand Index} - The Rand Index computes a similarity measure between two clusterings by considering all pairs of samples and counting pairs that are assigned in the same or different clusters in the predicted and true clusterings. The adjusted score than weights in an error rate that accounts for chance, meaning that all pairs could be randomly formed accounting for pure chance. See \cite{RandIndex1971} for more information.
+
+  There are more models such as \emph{adjusted mutual information} or \emph{F-Measure}. All these measures have the underlying assumptions that a human labeller did a good job in finding the underlying topics of a document. Often though these scores are skewed and are at best information about total failure or an approximative good solution. As said before documents can be partially assigned to different topics and thusly all metrics measuring the performance by hard labels will fail in actually stating if the desired goal was found. What if we would like to have clusterings where certain topics such as sports and business have an overlap? In summarization we might want to consider that sports can be about business decisions as well. Getting more diversified summarizations by finding connections between different labels can be desirable. Thusly scoring too high on the V-Measure scale might indicate that there are no topic overlaps, while at the same time clusterings obviously fail if the score is near to zero.
 
 

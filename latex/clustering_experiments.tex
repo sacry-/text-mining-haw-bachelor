@@ -2,11 +2,9 @@
   ``An algorithm must be seen to be believed.''
 }}{ Donald Knuth }
 
-In this section two strategies for clustering are proposed. The Strategies were implemented with the help of Python and several open source libraries. 
-
-Due to time constraints there is only one model for covering a single day and one model covering multiple days of the scraped newspapers. 
-
-For more strategies see the github project.
+In this section we evaluate some strategies for single day clustering and multiple day clustering. First we will cluster documents by their day. Multiple days clustering then connects overlapping clusters. Due to time constraints it was not possible to elaborately test multiple days clustering. Instead we will focus on the single day and present strategies that can be tried in the multiple days clustering.\\
+For testing and showing results we used the dataset by \cite{BBCData2006}. The documents are not sorted by date. The original project works with real world data consisting of scraped newspaper articles collected over the course of several months as described in section 3. The BBC dataset had a few limitations in the sense that named entities would not work, dates were not provided, meta data were not given by the authors. Apart from this, the categorical labelling is much more elaborate.\\
+For the source code see the \href{https://github.com/sacry-/text-mining-haw-bachelor/}{News-Clusty Github repository}.
 
 \section{Single day clustering}
   \subsection{Implementation}
@@ -14,8 +12,5 @@ For more strategies see the github project.
   \subsection{Interpretation}
 
 \section{Multiple days clustering}
-  \subsection{Implementation}
-  \subsection{Evaluation}
-  \subsection{Interpretation}
-
-\section{Summarization}
+  \subsection{Time data}
+  \subsection{Time data}
