@@ -1,14 +1,13 @@
 # My Stuff
 latex/out/
 literature/todo/
-*/knowledge/wikipedia_sources/*.txt
-*/knowledge/wikipedia_sources/cat_id_topics.json
-*/knowledge/wikipedia_sources/*.npy
-*/knowledge/wikipedia_sources/*.pkl
+*/knowledge/wiki/*.txt
+*/knowledge/wiki/cat_id_topics.json
+*/knowledge/wiki/*.npy
+*/knowledge/wiki/*.pkl
 */migrations/*.p
 */cluster_analysis/es_pickles/*.p
-*/knowledge/wikipedia_sources/*.pkl
-*/knowledge/wikipedia_sources/enwiki-latest-pages-articles.xml.bz2
+*/knowledge/wiki/enwiki-latest-pages-articles.xml.bz2
 */config/app_config.json
 backups/
 Abgabebogen.pdf

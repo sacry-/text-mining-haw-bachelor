@@ -3,15 +3,12 @@
 from nltk.corpus import wordnet as wn
 from collections import Counter
 from collections import defaultdict
+
 from utils import flatten
 from utils import unique
+
 from preprocessing import tokenize
 from preprocessing import TextNormalizer
-from data_view import BBCDocuments
-from data_view import BBCData
-from data_view import grouper
-from data_import import stream_to_set
-
 from preprocessing import lemmatize
 
 
@@ -35,9 +32,6 @@ def unique_nouns(nouns):
   for noun in nouns:
     unique_nouns.update(tokenize(noun))
   return unique_nouns
-
-def noun_tokens(nouns):
-  return tokenize(" ".join(nouns))
 
 def lemma_names(syns):
   return [syn.lemmas()[0].name().lower() for syn in syns]
@@ -69,24 +63,24 @@ def lemma_name(syn):
 
 
 # Wordnet Strategies
-def wordnet_hypernyms(bbc, depth=1):
+def wordnet_hypernyms(nouns, depth=1):
 
-  def hypers(nouns, depth):
+  def hypers(noun_list, depth):
     result = set([])
-    for noun in nouns: 
+    for noun in noun_list: 
       _, lemmas = gloss(noun, depth)
       result.update( lemmas )
     return result
 
-  for idx, nouns in enumerate(bbc.nouns()):    
-    yield idx, hypers(sent, depth)
+  for idx, noun_list in enumerate( nouns ):    
+    yield idx, hypers(noun_list, depth)
 
 
-def wordnet_fst_hyper(bbc):
+def wordnet_fst_hyper( nouns ):
 
-  def firsts(nouns):
+  def firsts(noun_list):
     result = []
-    for noun in nouns: 
+    for noun in noun_list: 
       synset = wn.synsets(word)
       if synset:
         fst = synset[0].hypernyms()
@@ -94,30 +88,22 @@ def wordnet_fst_hyper(bbc):
           result.append( lemma_name(fst[0]) )
     return result
 
-  for idx, nouns in enumerate(bbc.nouns()):    
-    yield idx, firsts(sent)
+  for idx, noun_list in enumerate( nouns ):    
+    yield idx, firsts( noun_list )
 
 
-def wordnet_lemmatize(bbc):
+def wordnet_lemmatize( sents ):
   
   def convert_sents(sent):
     s = flatten(map(lambda x: lemmatize(tokenize(x)), sent))
     return [x for x in s if len(x) > 1]
 
-  for idx, sent in enumerate(bbc.sents()):
+  for idx, sent in enumerate( sents ):
     yield idx, convert_sents(sent)
 
 
-# Main
-def stream_wordnet_projection( bbc ):
-  for idx, doc in wordnet_lemmatize( bbc ):
-    stream_to_set("wordnet", doc)
-    print(idx, bbc.titles()[idx])
-    print(" ", doc)
-
 if __name__ == "__main__":
-  bbc = BBCDocuments()
-  # stream_wordnet_projection( bbc )
+  pass
 
 
 

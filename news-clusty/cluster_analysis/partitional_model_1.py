@@ -89,10 +89,10 @@ if dim_reduction_method:
   x, _ = dim_reduction_method(x, plot_dimension)
 
 if has_args:
-  centroids, c, k = clusterer(x, n_clusters)
+  cl, (centroids, c, k) = clusterer(x, n_clusters)
 
 else:
-  centroids, c, k = clusterer(x)
+  cl, (centroids, c, k) = clusterer(x)
 
 for idx, centroid in enumerate(centroids):
   print(idx, centroid)

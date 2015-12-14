@@ -39,7 +39,7 @@ def dbscan(x, eps=0.2, min_samples=5):
   labels = db.labels_
   k = len(set(labels)) - (1 if -1 in labels else 0)
 
-  return None, labels, k
+  return db, (None, labels, k)
 
 
 

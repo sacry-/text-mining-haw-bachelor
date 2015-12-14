@@ -10,7 +10,6 @@ from utils import unique
 from sklearn.naive_bayes import MultinomialNB
 from collections import defaultdict
 from features import tfidf_vector
-from features import nmf
 
 from sklearn.metrics import f1_score
 
@@ -77,12 +76,9 @@ def cross_validate(bayes, vsmodel, bbc):
   accuracy_report( bayes, x_test, y_test, bbc.id_to_cat(), verbose=True )
 
 
-if __name__ == "__main__":
-  bbc = BBCDocuments()
-  bbc_data = BBCData( bbc, percent=0.8)
-
+def setup_data(bbc_data):
   X = bbc_data.X()
-  X, vsmodel = tfidf_vector( X, ngram=(1,2), max_df=0.99 )
+  X, vsmodel = tfidf_vector( X, ngram=(1,2), max_df=0.8, min_df=3 )
   print("X: {}".format(X.shape))
 
   y = bbc_data.y()
@@ -93,6 +89,24 @@ if __name__ == "__main__":
   print("X_test: {}".format(X_test.shape))
   y_test = bbc_data.y_test()
   print("y_test: {}".format(len(y_test)))
+
+  return vsmodel, X, y, X_test, y_test
+
+
+if __name__ == "__main__":
+  bbc = BBCDocuments()
+  knowledge = bbc.concat(
+    bbc.title_tokens(),
+    bbc.sents() 
+  )
+
+  bbc_data = BBCData( 
+    bbc, 
+    percent=0.8, 
+    data_domain=list(knowledge)
+  )
+
+  vsmodel, X, y, X_test, y_test = setup_data( bbc_data )
 
   bayes = MultinomialNB(alpha=0.0001)
   bayes.fit( X, y )

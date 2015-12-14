@@ -8,62 +8,17 @@ from sklearn.externals import joblib
 from preprocessing import TextNormalizer
 from sklearn.preprocessing import StandardScaler
 
-from transformation import hash_vector
-from transformation import term_vector
-from transformation import tfidf
-
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
 
 from wiki_categories import get_lines
 from wiki_categories import wiki_base_path
 
-from utils.helpers import unique
+from utils import unique
 
-
-
-def any_model_testing():
-  line_per_category=100
-
-  print("Train Logistic Regression...\n\twith {} features".format(line_per_category))
-  log_reg = LogisticRegression(
-    penalty="l2",
-    C=0.0001, 
-    class_weight="balanced",
-    max_iter=50, 
-    multi_class="multinomial", 
-    solver="lbfgs"
-  )
-  print(log_reg)
-
-  category_to_titles = list( get_lines(line_per_category=line_per_category) )
-  cat_to_id, x_train, y_train, vsmodel = preprocess( category_to_titles )
-  
-  if True: x_train = StandardScaler(with_mean=False).fit_transform(x_train)
-
-  log_reg.fit(x_train, y_train)
-
-  return log_reg, vsmodel, cat_to_id
-
-def disjunctize(features):
-  print(" Disjunct...")
-  new_cluster = {}
-  docs = [(cat_id, set(cat_docs)) for cat_id, cat_docs in features.items()]
-  for cat_id1, doc1 in docs:
-    for cat_id2, doc2 in docs:
-      if cat_id1 == cat_id2:
-        continue
-
-      if cat_id1 in new_cluster:
-        new_cluster[cat_id1] = new_cluster[cat_id1] - doc2
-
-      else:
-        new_cluster[cat_id1] = doc1 - doc2
-  return new_cluster
 
 
 def get_test_set():

@@ -44,12 +44,11 @@ Sources:
   Society for Industrial and Applied Mathematics (2007)
   - http://scikit-learn.org/stable/modules/clustering.html#k-means
 '''
-def kmeans(x, n_clusters=1):
+def kmeans(x, n_clusters=5, init='k-means++', n_init=20):
   km = KMeans(
-    init='k-means++', 
+    init=init, 
     n_clusters=n_clusters, 
-    n_init=20, 
-    copy_x=True
+    n_init=n_init
   )
   km.fit(x)
 
@@ -57,7 +56,7 @@ def kmeans(x, n_clusters=1):
   c = km.labels_
   k = km.n_clusters
 
-  return centroids, c, k
+  return km, (centroids, c, k)
 
 
 
@@ -100,7 +99,7 @@ def mean_shift(x, quantile=0.08):
   c_unique = np.unique(c)
   k = len(c_unique)
 
-  return centroids, c, k
+  return ms, (centroids, c, k)
 
 
 if __name__ == "__main__":

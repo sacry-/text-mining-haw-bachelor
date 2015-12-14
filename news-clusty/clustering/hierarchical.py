@@ -38,27 +38,35 @@ Description:
 Sources:
   - http://scikit-learn.org/stable/modules/clustering.html#hierarchical-clustering
 '''
-def ward_linkage(x, n_clusters=20):
-  # knn_graph = kneighbors_graph(x, 40, include_self=False)
-  return __agglomerative__(x, n_clusters, "ward", None)
+def ward_linkage(x, n_clusters=20, 
+    affinity='euclidean', connectivity=None, 
+    n_components=None, compute_full_tree='auto'):
+  return __agglomerative__(x, n_clusters, "ward", affinity, connectivity, n_components, compute_full_tree)
 
-def average_linkage(x, n_clusters=20):
-  return __agglomerative__(x, n_clusters, "average", None)
+def average_linkage(x, n_clusters=20, 
+    affinity='euclidean', connectivity=None, 
+    n_components=None, compute_full_tree='auto'):
+  return __agglomerative__(x, n_clusters, "average", affinity, connectivity, n_components, compute_full_tree)
 
-def complete_linkage(x, n_clusters=20):
-  return __agglomerative__(x, n_clusters, "complete", None)
+def complete_linkage(x, n_clusters=20, 
+    affinity='euclidean', connectivity=None, 
+    n_components=None, compute_full_tree='auto'):
+  return __agglomerative__(x, n_clusters, "complete", affinity, connectivity, n_components, compute_full_tree)
 
 
-def __agglomerative__(x, n_clusters, linkage, connectivity):
+def __agglomerative__(x, n_clusters, linkage, affinity, connectivity, n_components, compute_full_tree):
   ac = AgglomerativeClustering(
     n_clusters=n_clusters,
     connectivity=connectivity,
-    linkage=linkage
+    linkage=linkage,
+    affinity=affinity,
+    n_components=n_components,
+    compute_full_tree=compute_full_tree
   )
   ac.fit(x)
   c = ac.labels_
   k = ac.n_clusters
-  return None, c, k, ac
+  return ac, (None, c, k)
 
 
 
@@ -103,7 +111,7 @@ def birch(x, n_clusters=None, threshold=0.5, branching_factor=5):
   c = birch_model.labels_
   k = len(centroids)
 
-  return centroids, c, k
+  return birch_model, (centroids, c, k)
 
 
 

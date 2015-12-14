@@ -101,7 +101,8 @@ def stream_bbc_data_by_category(category):
     if new_doc:
       yield new_doc
 
-def stream(categories):
+
+def stream_bbc_data(categories):
   for category in categories:
     for doc in stream_bbc_data_by_category(category):
       stream_to_set("categories", [category])
@@ -111,8 +112,17 @@ def stream(categories):
       stream_to_set("nouns", doc["nouns"])
       stream_to_set("ners", doc["ners"])
 
+
+def stream_wordnet_projection():
+  bbc = BBCDocuments()
+  for idx, doc in wordnet_lemmatize( bbc ):
+    stream_to_set("wordnet", doc)
+    print(idx, bbc.titles()[idx])
+    print(" ", doc)
+
+
 if __name__ == "__main__":
   categories = ["business", "entertainment", "politics", "sport", "tech"]
-  stream(categories)
+  stream_bbc_data(categories)
 
 

@@ -1,0 +1,81 @@
+
+----------------------------------------
+Ward Linkage
+  config: 5, 20
+  ----------------------------------------
+  0: purity: 96.03960396039604% - [('sport', 388), ('politics', 13), ('entertainment', 2), ('tech', 1)]
+  1: purity: 95.17684887459808% - [('tech', 296), ('entertainment', 10), ('business', 3), ('politics', 1), ('sport', 1)]
+  2: purity: 94.72361809045226% - [('business', 377), ('politics', 8), ('entertainment', 6), ('sport', 5), ('tech', 2)]
+  3: purity: 87.71428571428571% - [('politics', 307), ('tech', 19), ('business', 16), ('entertainment', 7), ('sport', 1)]
+  4: purity: 90.7051282051282% - [('entertainment', 283), ('business', 12), ('sport', 11), ('politics', 4), ('tech', 2)]
+  ----------------------------------------
+  Purity: 93.01408450704226%
+  V Measure 0.7993437131304018
+  Adjusted rand score 0.8370092235412553
+  Adjusted mutual info score 0.7985402410562158
+  Completeness score 0.7995787860423837
+  Silhouette 0.2695366960222916
+----------------------------------------
+Ward Linkage
+  config: 5, 25
+  ----------------------------------------
+  0: purity: 94.91525423728814% - [('sport', 392), ('politics', 12), ('business', 4), ('entertainment', 4), ('tech', 1)]
+  1: purity: 96.72131147540983% - [('tech', 295), ('entertainment', 6), ('business', 3), ('politics', 1)]
+  2: purity: 93.82716049382715% - [('business', 380), ('politics', 15), ('entertainment', 8), ('sport', 1), ('tech', 1)]
+  3: purity: 85.26912181303116% - [('politics', 301), ('tech', 23), ('entertainment', 17), ('business', 10), ('sport', 2)]
+  4: purity: 91.30434782608695% - [('entertainment', 273), ('business', 11), ('sport', 11), ('politics', 4)]
+  ----------------------------------------
+  Purity: 92.45070422535211%
+  V Measure 0.7897532437059231
+  Adjusted rand score 0.8259425750123207
+  Adjusted mutual info score 0.7887083939908093
+  Completeness score 0.7893050411664665
+  Silhouette 0.24412052973477014
+----------------------------------------
+Ward Linkage
+  config: 5, 225
+  ----------------------------------------
+  0: purity: 96.53465346534654% - [('sport', 390), ('politics', 12), ('entertainment', 1), ('tech', 1)]
+  1: purity: 92.01277955271566% - [('tech', 288), ('entertainment', 20), ('business', 3), ('sport', 2)]
+  2: purity: 94.41624365482234% - [('business', 372), ('entertainment', 9), ('politics', 7), ('sport', 4), ('tech', 2)]
+  3: purity: 85.0828729281768% - [('politics', 308), ('business', 22), ('tech', 19), ('entertainment', 12), ('sport', 1)]
+  4: purity: 88.0794701986755% - [('entertainment', 266), ('business', 11), ('tech', 10), ('sport', 9), ('politics', 6)]
+  ----------------------------------------
+  Purity: 91.49295774647888%
+  V Measure 0.7688250436119916
+  Adjusted rand score 0.8072506115943532
+  Adjusted mutual info score 0.7680511340100294
+  Completeness score 0.7689442250084748
+  Silhouette 0.09981590873608144
+----------------------------------------
+Ward Linkage
+  config: 5, 10
+  ----------------------------------------
+  0: purity: 95.36585365853658% - [('sport', 391), ('politics', 13), ('business', 4), ('entertainment', 1), ('tech', 1)]
+  1: purity: 87.87878787878788% - [('tech', 290), ('entertainment', 36), ('business', 2), ('politics', 1), ('sport', 1)]
+  2: purity: 89.17050691244239% - [('business', 387), ('politics', 29), ('entertainment', 9), ('tech', 9)]
+  3: purity: 90.7936507936508% - [('politics', 286), ('tech', 19), ('business', 4), ('entertainment', 3), ('sport', 3)]
+  4: purity: 90.55944055944056% - [('entertainment', 259), ('business', 11), ('sport', 11), ('politics', 4), ('tech', 1)]
+  ----------------------------------------
+  Purity: 90.87323943661973%
+  V Measure 0.7649709672769043
+  Adjusted rand score 0.7960402529915866
+  Adjusted mutual info score 0.7629998605536463
+  Completeness score 0.76366912170099
+  Silhouette 0.3539807304480071
+----------------------------------------
+Ward Linkage
+  config: 5, 5
+  ----------------------------------------
+  0: purity: 78.19148936170212% - [('tech', 294), ('entertainment', 41), ('politics', 18), ('sport', 14), ('business', 9)]
+  1: purity: 96.93877551020408% - [('sport', 380), ('politics', 11), ('entertainment', 1)]
+  2: purity: 82.6330532212885% - [('politics', 295), ('business', 37), ('tech', 21), ('entertainment', 3), ('sport', 1)]
+  3: purity: 97.19887955182072% - [('business', 347), ('politics', 5), ('entertainment', 5)]
+  4: purity: 88.05460750853243% - [('entertainment', 258), ('business', 15), ('sport', 11), ('tech', 5), ('politics', 4)]
+  ----------------------------------------
+  Purity: 88.67605633802816%
+  V Measure 0.7257806380280865
+  Adjusted rand score 0.7475122426448022
+  Adjusted mutual info score 0.724396386821053
+  Completeness score 0.7263889826772946
+  Silhouette 0.5181653995265523

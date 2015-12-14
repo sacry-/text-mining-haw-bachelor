@@ -63,7 +63,7 @@ if __name__ == "__main__":
   print(x_train.shape)
   x_train, _ = lsa(x_train, n_clusters)
   x_train, _ = pca(x_train, 2)
-  centroids, c, k = algorithm(
+  alg, (centroids, c, k) = algorithm(
     x_train, 
     n_clusters=n_clusters
   )

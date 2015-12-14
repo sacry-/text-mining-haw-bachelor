@@ -213,7 +213,7 @@ CATEGORIES = get_categories()
 
 def wiki_base_path():
   base = "/".join(os.path.abspath(__file__).split("/")[:-1])
-  return "{}/wikipedia_sources".format(base)
+  return "{}/wiki".format(base)
 
 def wiki_path(category):
   return "{}/wiki_{}.txt".format(wiki_base_path(), category)

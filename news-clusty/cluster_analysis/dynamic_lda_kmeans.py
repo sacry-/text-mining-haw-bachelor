@@ -29,7 +29,7 @@ if __name__ == "__main__":
   x, lda_model, lda_corpus = single_lda("20150703", corpus, dictionary, n_topics)
 
   x = pca(x, 2)
-  centroids, c, k = kmeans(x, n_topics)
+  km, (centroids, c, k) = kmeans(x, n_topics)
   cluster_plot_2d(x, centroids, c, k)
 
   clusters = {}

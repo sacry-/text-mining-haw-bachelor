@@ -10,6 +10,8 @@ from utils import unique
 from utils import flatmap
 from utils import is_iter
 
+from preprocessing import TextNormalizer
+
 
 class BBCDocuments():
 
@@ -38,10 +40,20 @@ class BBCDocuments():
                          in enumerate(unique(self.categories())) }
     return self._cat_to_id
 
+  def id_to_cat(self):
+    return {v: k for k, v in self.cat_to_id().items()}
+
   def titles(self):
     if not self._titles:
       self._titles = get_titles()
     return self._titles
+
+  def title_tokens(self):
+    tn = TextNormalizer()
+    result = []
+    for title in self.titles():
+      result.append( tn.tnormalize( title ) )
+    return result
 
   def sents(self):
     if not self._sents:
@@ -68,17 +80,14 @@ class BBCDocuments():
       self._ners = get_ners()
     return self._ners
 
-  def wordnet(self, namespace="wordnet"):
+  def wordnet(self, namespace):
     if not self._wordnet:
       self._wordnet = get_wordnet(namespace)
     return self._wordnet
 
-  def cons(self, obj, seq):
-    yield from map(lambda x: [x[0]] + x[1], zip(obj, seq))
-
-  def concat(self, d1, d2):
-    yield from map(lambda x: x[0]+x[1], zip(d1, d2))
-
+  def concat(self, *args):
+    for entry in zip(*args):
+      yield list( flatten( entry ) )
 
 class BBCData():
 
@@ -179,7 +188,7 @@ def get_csv_single(model_name):
   with open(model_path(model_name), "r+") as fp:
     csv_reader = csv.reader(fp, delimiter=";")
     for line in csv_reader:
-      result.append(line[0]) 
+      result.append( line[0] )
   return result
 
 def get_categories():
@@ -201,7 +210,7 @@ def get_nouns():
   return get_csv_list("nouns")
 
 def get_wordnet(namespace):
-  return get_csv_list(namespace)
+  return get_csv_list("wordnet_{}".format(namespace))
 
 if __name__ == "__main__":
   l1 = len(get_categories())

@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
   plot_dimension = 2
   x, _ = pca(x, plot_dimension)
-  centroids, c, k = kmeans(x, n_clusters)
+  km, (centroids, c, k) = kmeans(x, n_clusters)
   plot(x, centroids, c, k, "K-Means", plot_dimension)
   if fids: 
     print_clusters(c, fids)

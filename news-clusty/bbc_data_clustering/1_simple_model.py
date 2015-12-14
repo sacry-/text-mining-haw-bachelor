@@ -1,7 +1,8 @@
 from data_view import BBCDocuments
 from data_view import BBCData
 
-from cluster_run import find_optimum
+from cluster_run import Run
+from cluster_eval import ClusterEval
 from cluster_report import report_for_run, Report
 
 from features import tfidf_vector, count_vector
@@ -13,7 +14,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import laplacian_kernel
 
 from sklearn.preprocessing import normalize
-from clustering import ward_linkage
+from clustering import ward_linkage, kmeans
 
 
 def setup_data(bbc_data):
@@ -33,7 +34,11 @@ def configuration():
 
 if __name__ == "__main__":
   bbc = BBCDocuments()
-  knowledge = bbc.concat( bbc.wordnet("wordnet_hyper_1"), bbc.nouns() )
+  knowledge = bbc.concat(
+    bbc.title_tokens(),
+    bbc.nouns(),
+    bbc.sents()
+  )
   
   bbc_data = BBCData( 
     bbc, 
@@ -46,25 +51,32 @@ if __name__ == "__main__":
   labels = bbc_data.category_ids_train()
 
   runs, reports = [], []
-  report_name = "2_enhanced_by_knowledge.txt"
-  should_create_report = False
+  report_name = "1_simple_model.txt"
+  algo_name = "Ward Linkage"
+  should_create_report = True
 
   for index, n_clusters, n_topics in configuration():
+    print(index, "-"*20, (n_clusters, n_topics), "-"*20)
 
-    run = find_optimum(X, 
-      clusterer=lambda x, n_clusters: ward_linkage(x, n_clusters),
-      topic_model=lambda x, n_topics: lsa(x, n_topics),
-      similarity=lambda x: cosine_similarity(x),
-      normalization=lambda x: normalize(x),
+    run = Run( 
+      clusterer=ward_linkage,
+      cluster_config=(n_clusters,),
+      topic_model=lsa,
+      similarity=cosine_similarity,
+      normalization=normalize,
       labels=labels, 
       named_labels=named_labels,
-      n_topics=n_topics, 
-      n_clusters=n_clusters,
+      n_topics=n_topics,
       index=index
     )
+    x, c, k = run.start( X )
 
-    report = Report( run )
-    print( report.generate() )
+    evaluation = ClusterEval(x, c, labels, named_labels)
+    evaluation.calculate_scores()
+    run.set_scores(evaluation)
+
+    report = Report( run, evaluation )
+    print( report.generate( algo_name ) )
     runs.append( run )
     reports.append( report )
 
@@ -73,7 +85,3 @@ if __name__ == "__main__":
 
     if should_create_report: 
       report_for_run(run, reports).dump( report_name )
-
-
-
-

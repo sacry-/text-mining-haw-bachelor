@@ -54,7 +54,7 @@ def spectral(x, num_clusters):
   c = spec.labels_
   k = len(np.unique(c))
 
-  return None, c, k
+  return spec, (None, c, k)
 
 
 '''
@@ -106,7 +106,7 @@ def affinity_propagation(x, damping=0.9):
   c = ap.labels_
   k = len(centroids)
   
-  return centroids, c, k
+  return ap, (centroids, c, k)
 
 
 if __name__ == "__main__":
