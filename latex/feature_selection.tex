@@ -2,17 +2,40 @@
   ``Coming up with features is difficult, time-consuming, requires expert knowledge. "Applied machine learning" is basically feature engineering.''
 }}{ Andrew Ng }
 
-This section is about engineering the right features for clustering that contain enough information to firstly represent the document itself and secondly to link documents to each other. To do so the document domain of newspapers will be discussed. 
-The feature selection process of a document by taking several processing steps is examined.
-At the heart: How can we expand the knowledge of a feature set by adding semantics to it?
+Considering the ``right'' features for clustering is a demanding and error prone process. Currently there is really just one way of describing documents: The vector space model. It breaks down to counting occurences and cooccurences of words and measuring distance by mathematical functions. We could just take all the words of a document, removing stopwords before, and put them into a feature vector. This results in dimensionality explosion and extreme noise. Contrary to a document vector $d = \{w_1,w_2..w_n\}$, the feature vector is a narrowed down version $\{c_1,c_2,..c_j\}$ where $j <= n$. It is a projection of the original document by fewer dimensions and a lifting of words. This lifting is bestly described as combining several words of a document, often occuring in the same sentence, extracting a shared meaning. We hope to find fewer words that share enough information with the original word, that the following holds:
+  
+  \begin{equation}
+    f : d=\{w_1,w_2,..w_n\} \to \{c_1,c_2,..c_j\}\:where\:j \leq n
+  \end{equation}
 
-\section{Document domain}
-  \subsection{Document structure}
-  \subsection{Categories}
-  \subsection{Metadata}
+The function $f$ transforms a sequence of words $w_1..w_n$ of a document $d$ to a sequence of concepts $c_1..c_j$. The concepts can be derived in a lot of ways.
 
-\section{Selection process}
+  \begin{enumerate}
+    \item Pruning words of low and high significance.
+    \item Using syntactic parsing to retrieve noun phrases, named entity tags or part of speech tags.
+    \item Using ontologies of wordnet to derive a shared meaning of words.
+    \item Mapping documents to wikipedia categories.
+    \item Using kernel methods, preselecting initial clusters in a semi-supervised way.
+  \end{enumerate}
 
-\section{Adding Semantics}
+In the end, feature selection is probably the most demanding task. Expert knolwedge needs to be applied and can change over time. A computer handles documents in vector space, by counting. A human however perceives content differently. For any sufficiently adavanced algorithm that works with a knowledge base it is still: Garbage in, garbage out. More fancy algorithms will only lead to more fallacies in selecting the features. Complexity goes down when algorithms are simple and the selection of features is fine tuned.\\
+
+Some final words about measurement. It is highly debatable if any of the semantic enhancements has a measureable impact. If a user however views a website with summarizations of the daily news it makes a difference if phrases and references can be made to Wikipedia. It makes a difference in lexical diversity. Topic browsers with external knowledge sources are more diverse than browsers without. This cannot be measured in a mathematical way. The impact might be very small. The reason, the impact is so low is rather obvious: Without knowledge sources and Wordnet ontologies most clustering algorithms work just fine. Enhancing a good running model with additional feature selection heuristics can only make it better if there is mathematical proof that it does. It can certainly not proof if a human likes or dislikes the outcome.\\
+
+In the following we will briefly explain what \emph{semantics} mean, especially in the \emph{domain} of newspapers. How \emph{feature selection} generally works and how this can be enhanced by \emph{syntactic parsing}. Strategies using \emph{Wordnet} and \emph{Wikipedia} are explained. In the experimental chapter we will then present how all these mechanisms come together.
+
+
+\section{Semantics}
+  \subsection{Linguistics}
+  \subsection{Satistics}
+  \subsection{Domain}
+    Newspaper Article, Categories, Metadata
+
+\section{Selection}
   \subsection{Syntactic parsing}
-  \subsection{Wikipedia and Wordnet}
+  
+\section{Wordnet}
+
+\section{Wikipedia}
+  
+
