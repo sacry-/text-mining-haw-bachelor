@@ -2,7 +2,7 @@
   ``Everything should be built top-down, except the first time.''
 }}{ Alan J. Perlis }
  
-This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and as a point of reference what the Columbia Newsblaster system did.
+This section explains a general dataflow and the necessary steps to get data from an external source into a vectorized form. It will be held short giving intuition about a general setup, necessary preprocessing steps and as a point of reference what the Columbia Newsblaster system did. For the source code used throughout this thesis see the \href{https://github.com/sacry-/text-mining-haw-bachelor/}{News-Clusty Github repository}.
 
 \section{Pipeline}
   
@@ -40,7 +40,7 @@ This section explains a general dataflow and the necessary steps to get data fro
 
   In figure \ref{preprocessing} ``Raw'' is the parsed text from the html, while ``CRaw'' represents text that contain no numbers, stopwords, short words, punctuations and special characters. The tokenization is not a whitespace splitter, it is a fully trained statistical parser that detects sentences and boundaries, as well as sentence tokens. The same goes for noun phrase extractors, pos-taggers and ner-taggers. ``CRaw'' is used as a representation of the text, while ``Raw'' is used to generate the beforementioned concepts.
 
-  \paragraph{The Clustering} module does several transformations as displayed in figure \ref{clustering_cycle}. Feature selection is the process of picking features that are of most interest. This often happens mathematically by \emph{TF-IDF} or by formulas describing information density of words. If desired, resulting features can be enhanced by definitions and categories of \emph{Wikipedia} or projected via \emph{Wordnet} ontologies. Second transformation to any kind of vector space model like \emph{TF-IDF}, then decomposing the matrix by topic models and dimensionality reduction techniques. Before the actual clustering algorithm is run similarity matrices and normalization to unit vectors is done. After this documents can be clustered by any kind of clustering algorithm. Outcomes are evaluated and redone if desired evaluation criterias were not met.
+  \paragraph{The Clustering} module does several transformations as displayed in figure \ref{clustering_cycle}. Feature selection is the process of picking features that are of most interest. This often happens mathematically by \emph{TF-IDF} or by formulas describing information density of words. If desired, resulting features can be enhanced by definitions and categories of \emph{Wikipedia} or projected via \emph{Wordnet} ontologies. Before the actual clustering algorithm is run similarity matrices and normalization to unit vectors is done. After this documents can be clustered by any kind of clustering algorithm. Outcomes are evaluated and redone if desired evaluation criterias were not met.
 
   \newpage
     \begin{figure}[h!]
