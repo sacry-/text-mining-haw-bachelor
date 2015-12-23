@@ -8,7 +8,7 @@ function clear {
 }
 
 function copy_resources_to_out {
-  cp ../hawstyle.sty .
+  cp ../*.sty .
   cp ../thesis.bib .
   cp -r ../logo .
   cp -r ../*.png .
