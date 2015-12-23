@@ -24,9 +24,10 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
 
 \section{Semantics}
+\label{sec:semantics}
   
   Semantics is the study of meaning. Given some symbols, characters, words or phrases what is their underlying meaning? The question is inherently hard and lots of literature focuses on how computers can get better at this. Semantics can also be viewed from a statistical point of view. Given a lot of phrases and words, can we infer their underlying structure that generated them? How can statistical patterns reveal what was meant and to what degree?\\
-  In computational linguistics we often speak of \emph{word-sense disambiguation (WSD)}. \emph{WSD} is short for identifying sense of a word in a sentence or paragraph. The sentence\\ 
+  In computational linguistics we often speak of \emph{word-sense disambiguation (WSD)}. \emph{WSD} is short for identifying sense of a word, if a word can have several meanings, in a sentence or paragraph. The sentence\\ 
 
     \emph{``The bail out during the financial crisis of the Lehmann brothers bank, was much too late.''}\\
 
@@ -45,16 +46,78 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
         \label{wsd_analysis}
     \end{figure} 
 
-  \emph{Meronyms} are ``part-of'' relations, \emph{hyponyms} have a ``type-of'' relation to a higher concept, called \emph{hypernyms}.
+  \emph{Meronyms} are ``part-of'' relations, \emph{hyponyms} have a ``type-of'' relation to a higher concept, called \emph{hypernyms}. In figure \ref{wsd_analysis} we see that from a single concept ``car'' we can infer a semantic field around it. We will see later how this works, a statistical concept around this is \emph{LSI} and \emph{probabilistic topic modelling}. The symbolic way is to use knowledge bases such as Wordnet or Wikipedia.\\
 
-  \subsection{Domain}
-    Newspaper Article, Categories, Metadata
+  In the text \emph{domain} of newspaper articles a few problems arise. Analyzing a long book, a long speech or journal articles from the scientific community, is easier compared to high varying fragments from different authors on different topics. A long book written by one person will use a specific language that is typical of that author. Speeches for a specific person contain similar concepts and often use the same language as well. In the scientific community rhethorial and anecdotal phrasing is uncommon. Facts, citation and correct formatting is of central importance. The text might be heterogenous but the fact remains that a certain wording / glossary, is shared throughout these examples.\\
+
+  This does not hold true for newspaper articles. \emph{Topics} about different events co-occuring on the world. Different \emph{authors} with different writing styles. Different \emph{newspapers} with different directions of content presentation. \emph{Long} and very \emph{short} articles. And this does not take images, videos or comments into account. When dealing with a vast landscape of different topics, spanning connections between two documents becomes a hard task. In context of such sparse data, that is documents with almost no connecting words, clustering works poorly. This can also be described as a high variance problem, where each document contributes a lot of unseen words to the feature vector.\\
+
+  In order to avoid these variance problems, we need to find a solution to \emph{WSD} and then apply a lifting from the original concept to a hypernym. Going back to figure \ref{wsd_analysis} we see that \emph{car} and \emph{motored vehicle} might mean the same thing. Both are about cars, if we project the concept \emph{car} to \emph{motored vehicle} the concept would connect both the documents containing car and motored vehicle. This is not always what we want to achieve but it could drastically improve similarity between documents that would miss each other by synonymy and polysemy.
 
 \section{Selection}
-  \subsection{Syntactic parsing}
-  
-\section{Wordnet}
+\label{sec:selection}
 
-\section{Wikipedia}
+  As described before we want to tackle \emph{WSD} and find ways to connect documents that share common meaning but not a lot of common words. To do so we have several strategies at our disposal. First, word pruning is presented, it is probably the most widely used technique for lowering dimensions and removing insignificant words. Second, synctactic parsing is described in by part of speech tagging, noun phrase extraction and named entity recognition. One topic which is left out are the kernels. They are important to retrieve better results in a semi supervised way but could not make it into the thesis experiments.
+
+  \subsection{Word pruning}
+  \label{sec:word_pruning}
+
+    Before pruning words we have to convert the documents into a suitable vsm such as \emph{counting vectors} or \emph{TF-IDF} described in \ref{sec:bag_of_words}. The counting alone in its basic form is sufficient in telling if a term has a high or low connection with all other documents. The \emph{TF-IDF} on the other hand is a measure of importance and solely based on the resulting frequencey per word. It is possible to make significant pruning on both representations. The \emph{TF-IDF} variant is prefered as it normalizes frequencies. Higher or lower counts are weighted into a formula that better represents the significance of a term.\\
+
+    Either way we need to create a cooccurence matrix $M = count(C, D)$ where $C$ is a corpus and $D$ is the dictionary of the corpus. Then we transform by \emph{TF-IDF}, $M = tfidf(M)$ or leave it with the \emph{term frequency}.\\
+
+    Pruning $M$ is done by cutting off the documents with a very low ratio of counts with respect to all documents. This can be done by threshold in proportion to all terms, a percentage, removing $j$ terms. It can also be achieved by a hard count, cutting of all terms that have no counts higher than that. This means, we remove insignificant terms or terms that do not contribute to any connection. Semantically this means, we cut off words that have a high meaning in a single document and a very low in others. Those words are redundant, or in other words they have no discriminant value to the clustering process.
+
+      \begin{equation}
+      \begin{split}
+        m &= [0, 1, 5, 0, 4, 0, 1, 1, 2, 3] \\
+        m_s &= sort( [0, 0, 0, 1, 1, 1, 2, 3, 4, 5] ) \\
+        percentcut(m_s, 0.2) &= [0, 1, 1, 1, 2, 3, 4, 5] \\
+        totalcut(m_s, 1) &= [2, 3, 4, 5]
+      \end{split}
+      \end{equation}
+
+    The min cut on percentage $0.2 = 20\%$ cuts the first 2 samples or removes the first 6 in case of a total count. The parameter has to be varied, depending on the outcome of a cost function. Further we can take off the top $j$ words as well by the same principle. The problem with the top words is, that they highly correlate with a lot of different documents, meaning a high correlation between a term and the corpus. Leaving them out erases a lot of connections, resulting in more discriminant features. This is what we want to achieve, finding the middle words, that are common in certain documents and uncommon in others. During clustering this will result in much more coherent clusters.
+
+      \begin{equation}
+      \begin{split}
+        m &= [0, 1, 5, 0, 4, 0, 1, 1, 2, 3] \\
+        m_s &= sort( [0, 0, 0, 1, 1, 1, 2, 3, 4, 5] ) \\
+        maxcut(m_s, 0.8) &= [0, 0, 0, 1, 1, 1, 2, 3]
+      \end{split}
+      \end{equation}
+
+    The max cut works with a ratio that selects from lowest to highest 80\% except the last 20\%. Note that the samples are not on $m$ dimensional vectors. For this to work we have to aggregate the counts and then prune the most insignificant words. The great thing of this approach is that it can follow any feature selection strategy. There are several ways to intialize the dictionary, which itself is a feature selection. By using this approach we can make sure that better feature selection strategies are fine tuned by upper and lower bounds.
+
+  \subsection{Syntactic parsing}
+  \label{sec:syntactic_parsing}
+
+  Syntactic parsing reduces symbols or characters, in this field, words to a parsed tree of following expressions. In order to do this a grammar has to be defined. Defining grammars for file standards like \emph{json} or \emph{csv} is easy. Defining grammars for a \emph{programming language} that is also intuitive to use, is a lot harder. When it comes to parsing expressions from english language to a meaningful representation for the computer, the problem becomes \emph{NP-Hard}. The problem at hand is not solvable and even the most fine grained parsers from \emph{Stanford} cannot make sense of all sentences in English. The next problem is that syntactic parsing often consists of dozens of supervised, trained models, where accuracy has been increased over decades. Using those models on anything else than English text, will render the models useless. All is not lost, most solutions nowadays, combine knowledge bases with statistical assumptions to get closer to optimal results.
+
+  In the following we will look more closely at English parsing with part of speech tags, noun phrases and named entities.
+
+  \subsubsection{English parsing and part of speech}
+
+  bla
+
+  \subsubsection{Noun phrases}
+
+  bla
+
+  \subsubsection{Named entities}
+
+  bla
+
+
+\section{Semantic selection}
+\label{sec:semantic_selection}
+  
+  Combining the topic of selection by syntactical criterias and semantics, we get something like semantic selection. In the following we will combine the classical feature selection with \emph{Wordnet} and \emph{Wikipedia}.
+
+  \subsection{Wordnet}
+  \label{sec:wordnet}
+  
+  \subsection{Wikipedia}
+  \label{sec:wikpedia}
   
 
