@@ -92,13 +92,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
   \subsection{Syntactic parsing}
   \label{sec:syntactic_parsing}
 
-  Syntactic parsing reduces symbols or characters, in this field, words to a parsed tree of following expressions. In order to do this a grammar has to be defined. Defining grammars for file standards like \emph{json} or \emph{csv} is easy. Defining grammars for a \emph{programming language} that is also intuitive to use, is a lot harder. When it comes to parsing expressions from english language to a meaningful representation for the computer, the problem becomes \emph{NP-Hard}. The problem at hand is not solvable and even the most fine grained parsers from \emph{Stanford} cannot make sense of all sentences in English. The next problem is that syntactic parsing often consists of dozens of supervised, trained models, where accuracy has been increased over decades. Using those models on anything else than English text, will render the models useless. All is not lost, most solutions nowadays, combine knowledge bases with statistical assumptions to get closer to optimal results.
-
-  In the following we will look more closely at English parsing with part of speech tags, noun phrases and named entities.
-
-  \subsubsection{English parsing and part of speech}
-
-  bla
+  Syntactic parsing reduces symbols or characters, to a parsed tree of following expressions. What the actual alphabet, in this sense valid characters of a language defines is defined within the specific domain. For this we often state grammars and valid tokens of an alphabet. This if often found for file standards like \emph{json}, \emph{csv} or \emph{programming languages}. When it comes to parsing expressions from English language to a meaningful representation for the computer, the problem statement gets a lot more difficult. It starts with defining what the actual valid words look like. Generally one could provide a dictionary as before. Everything not in the dictionary is not a valid character set. The problem becomes clear, because newspaper articles use different language styles and often make up words. However statistical parsers like the \emph{Stanford} parser are very accurate in identifying valid syntactic English expressions. In order to work, most of these parsers are supervised, trained models on a subset of English training samples. In the following we will look more closely at noun phrase extraction and named entity recognition. They can be used as initial seeds for the feature space of a corpus.
 
   \subsubsection{Noun phrases}
 
@@ -109,10 +103,12 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
   bla
 
 
-\section{Semantic selection}
+\section{External Knowledge}
 \label{sec:semantic_selection}
   
-  Combining the topic of selection by syntactical criterias and semantics, we get something like semantic selection. In the following we will combine the classical feature selection with \emph{Wordnet} and \emph{Wikipedia}.
+  \newcommand\waw{\emph{Wordnet} and \emph{Wikipedia}}
+
+  In order to enhance the syntactical selection models we can add a knowledge base such as \waw{}. The data reresentation is often defined as a typical dictionary. For a definition of a word we can infer semantic fields and additional text describing the words in more detail. Moreover knowledge bases such as \emph{Wikipedia} categorize/classify concepts into ontologies. \waw{} are great in the sense that human authors around the world add missing information and enhance the models frequently. The knoledge bases are enhanced frequently by writing rules and reviewing processes.
 
   \subsection{Wordnet}
   \label{sec:wordnet}
