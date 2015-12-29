@@ -42,7 +42,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
     \begin{figure}[h!]
       \centering
-        \includegraphics[width=0.7\textwidth]{wsd_analysis.png}
+        \includegraphics[width=0.9\textwidth]{wsd_analysis.png}
         \caption{"Semantic fields, hierarchies"}
         \label{wsd_analysis}
     \end{figure} 
@@ -65,7 +65,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
     Before pruning words we have to convert the documents into a suitable vsm such as \emph{counting vectors} or \emph{TF-IDF} described in \ref{sec:bag_of_words}. The counting alone in its basic form is sufficient in telling if a term has a high or low connection with all other documents. The \emph{TF-IDF} on the other hand is a measure of importance and solely based on the resulting frequencey per word. It is possible to make significant pruning on both representations. The \emph{TF-IDF} variant is prefered as it normalizes frequencies. Higher or lower counts are weighted into a formula that better represents the significance of a term.\\
 
-    Either way we need to create a cooccurence matrix $M = count(C, D)$ where $C$ is a corpus and $D$ is the dictionary of the corpus. Then we transform by \emph{TF-IDF}, $M = tfidf(M)$ or leave it with the \emph{term frequency}.\\
+    Either way we need to create a cooccurence matrix $M = count(C, D)$ where $C$ is a corpus and $D$ is the dictionary of the corpus. Then we transform by $M = tfidf(M)$ or leave it with the \emph{term frequency}.\\
 
     Pruning $M$ is done by cutting off the documents with a very low ratio of counts with respect to all documents. This can be done by threshold in proportion to all terms, a percentage, removing $j$ terms. It can also be achieved by a hard count, cutting of all terms that have no counts higher than that. This means, we remove insignificant terms or terms that do not contribute to any connection. Semantically this means, we cut off words that have a high meaning in a single document and a very low in others. Those words are redundant, or in other words they have no discriminant value to the clustering process.
 
@@ -97,22 +97,29 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
     \begin{figure}[h!]
       \centering
-        \includegraphics[width=0.7\textwidth]{sentence_structure.png}
-        \caption{"Syntactic parsing"}
+        \includegraphics[width=0.9\textwidth]{sentence_structure.png}
+        \caption{"Syntactic parsing \cite[Spacy]{Nothing}"}
         \label{syntactic_parsing}
     \end{figure} 
 
-  The figure \ref{syntactic_parsing} is displayed as a projective tree, where each word has exactly one (or none) incoming and outgoing edge. The outgoing edge is refered to as head. Edges contain information about the relation between both words. Each word has a part of speech tag described by many corpuses. \cite[Wordnet, Penn-treebank, Google-ngrams]{Nothing}
+  Figure \ref{syntactic_parsing} is displayed as a projective tree, where each word has exactly one (or none) incoming and outgoing edge. The outgoing edge is refered to as head. Edges contain information about the relation between both words. Each word has a part of speech tag described by many corpuses. \cite[Wordnet, Penn-treebank, Google-ngrams]{Nothing}
   The parsing of English grammatical structures is entirely dependant upon specification of the rules. What part of speech tagging system is used? How is the grammar defined? These are all linguistic questions resulting in type-1 Chomsky grammars. \cite[Chomsky]{Nothing}
   In clustering this is not a huge problem, because the granularity of the task is not that fine tuned. A slightly false parse might still yield good feature results.
 
   \subsubsection{Noun phrases}
-  Noun phrases are generally a good way of describing what a sentence is about. They examplify real world entities and nouns that depicts a subject object relationship.
+  Noun phrases are often referred to as key phrases. Formally a noun phrase is a phrase with a noun as its head word. A head is a word that determines the syntactic type of a phrase. Generally a noun phrase is a part of a sentence that captures meaning of a sentence. Thusly they are good samples to represent a document. However noun phrases are rather bad samples for clustering. They do not connect well to other documents due to their unique occurences. In the \emph{Wordnet} section we will see how they are great for projecting to their respective hypernyms.
 
   \subsubsection{Named entities}
+  Named entity recognition is the task of information retrieval that extracts and classifies  names of persons, organizations, locations, expressions of times, quantities, monetary values, percentages, etc. \cite[Wikipedia]{Nothing}. 
 
-  bla
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.9\textwidth]{ner_tags.png}
+        \caption{"Named entities"}
+        \label{ner_tags}
+    \end{figure} 
 
+  As seen in figure \ref{ner_tags} we are interested in informative terms. Often occuring named entities tend to give a direction what a document is about. If Google occurs in one document, it most likely will have to do with a lot of other documents that are about Google. We would like to favor documents that are connected by their respective named entities and weight them in more than others. Named entities like noun phrases are very discriminative. In systems like the Columbia Newsblaster system, named entities would be used to determine if a document is rather biographical or has todo with an event of the past. \cite[Columbia stuff]{Nothing}
 
 \section{External Knowledge}
 \label{sec:semantic_selection}
