@@ -102,6 +102,7 @@ def stream_bbc_data_by_category(category):
       yield new_doc
 
 
+# Stream classes
 def stream_bbc_data(categories):
   for category in categories:
     for doc in stream_bbc_data_by_category(category):
@@ -110,6 +111,12 @@ def stream_bbc_data(categories):
       stream_to_set("sents", doc["sents"])
       stream_to_set("pos", doc["pos"])
       stream_to_set("nouns", doc["nouns"])
+      stream_to_set("ners", doc["ners"])
+
+def stream_bbc_ners(categories):
+  for category in categories:
+    for idx, doc in enumerate(stream_bbc_data_by_category(category)):
+      print(" ", idx, "-", doc["title"])
       stream_to_set("ners", doc["ners"])
 
 
@@ -123,6 +130,6 @@ def stream_wordnet_projection():
 
 if __name__ == "__main__":
   categories = ["business", "entertainment", "politics", "sport", "tech"]
-  stream_bbc_data(categories)
+  stream_bbc_ners(categories)
 
 
