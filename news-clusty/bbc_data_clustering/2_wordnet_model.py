@@ -36,7 +36,7 @@ if __name__ == "__main__":
   bbc = BBCDocuments()
   knowledge = bbc.concat( 
     bbc.wordnet("fst_hyper"), 
-    bbc.nouns()
+    bbc.nouns() 
   )
 
   bbc_data = BBCData( 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
   runs, reports = [], []
   report_name = "2_wordnet_model.txt"
   algo_name = "Ward Linkage"
-  should_create_report = True
+  should_create_report = False
 
   for index, n_clusters, n_topics in configuration():
     print(index, "-"*20, (n_clusters, n_topics), "-"*20)

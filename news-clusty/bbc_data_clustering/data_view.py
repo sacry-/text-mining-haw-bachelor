@@ -67,7 +67,7 @@ class BBCDocuments():
 
   def pos(self):
     if not self._pos:
-      self._pos = get_pos()
+      self._pos = self.unfold( get_pos() )
     return self._pos
 
   def nouns(self):
@@ -77,7 +77,7 @@ class BBCDocuments():
 
   def ners(self):
     if not self._ners:
-      self._ners = get_ners()
+      self._ners = self.unfold( get_ners() ) 
     return self._ners
 
   def wordnet(self, namespace):
@@ -88,6 +88,9 @@ class BBCDocuments():
   def concat(self, *args):
     for entry in zip(*args):
       yield list( flatten( entry ) )
+
+  def unfold(self, seq):
+    return [ [x for (x, _) in s] for s in seq ]
 
 
 class BBCData():
@@ -119,7 +122,6 @@ class BBCData():
     for idx, (cat, sent) in enumerate(zip(self.bbc.categories(), self._data_domain)):
       segments[cat].append(sent)
       index[cat].append(idx)
-
 
     self.train = defaultdict(list)
     self.test = defaultdict(list)
