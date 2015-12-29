@@ -2,7 +2,7 @@
   ``Coming up with features is difficult, time-consuming, requires expert knowledge. "Applied machine learning" is basically feature engineering.''
 }}{ Andrew Ng }
 
-Considering the ``right'' features for clustering is a demanding and error prone process. Currently there is really just one way of describing documents: The vector space model. It breaks down to counting occurences and cooccurences of words and measuring distance by mathematical functions. We could just take all the words of a document, removing stopwords, and put them into a feature vector. This results in dimensionality explosion and extreme noise. Contrary to a document vector $d = \{w_1,w_2..w_n\}$, the feature vector represents a document by concepts $\{c_1,c_2,..c_j\}$. It is a projection of the original document often by fewer dimensions and a lifting of words. This lifting is bestly described as combining several words of a document, often occuring in the same sentence, extracting a shared meaning. We hope to find fewer words that share enough information with the original word, that the following holds:
+Considering the ``right'' features for clustering is a demanding and error prone process. Currently there is really just one way of describing documents: The vector space model. It breaks down to counting occurences and cooccurences of words and measuring distance by mathematical functions. We could just take all the words of a document, removing stopwords, and put them into a feature vector. This results in dimensionality explosion and extreme noise. Contrary to a document vector $d = \{w_1,w_2..w_n\}$, the feature vector represents a document by concepts $\{c_1,c_2,..c_j\}$. It is a projection of the original document $d = \{w_1,w_2..w_n\}$ to more general concepts resulting in fewer dimensions. This lifting is bestly described as combining several words of a document, often occuring in the same sentence, extracting a shared meaning. We hope to find fewer words that share enough information with the original word, that the following holds:
   
   \begin{equation}
     f : d=\{w_1,w_2,..w_n\} \to \{c_1,c_2,..c_j\}
@@ -18,7 +18,7 @@ The function $f$ transforms a sequence of words $w_1..w_n$ of a document $d$ to 
     \item Using kernel methods, preselecting initial clusters in a semi-supervised way.
   \end{enumerate}
 
-In the end, feature selection is probably the most demanding task. Expert knolwedge needs to be applied and can change over time. A computer handles documents in vector space, by counting. A human however perceives content differently. For any sufficiently adavanced algorithm that works with a knowledge base it is still: Garbage in, garbage out. More fancy algorithms will only lead to more fallacies in selecting the features. Complexity goes down when algorithms are simple and the selection of features is fine tuned.\\
+In the end, feature selection is probably the most demanding task. Expert knolwedge needs to be applied and can change over time, called time drift. A computer handles documents in vector space, by counting. A human however perceives content differently. For any sufficiently adavanced algorithm that works with a knowledge base it is still: Garbage in, garbage out. More fancy algorithms will lead to better results, but better features will accelerate the accuracy.\\
 
 In the following we will briefly explain what \emph{semantics} mean, especially in the \emph{domain} of newspapers. How \emph{feature selection} generally works and how this can be enhanced by \emph{syntactic parsing}. Strategies using \emph{Wordnet} and \emph{Wikipedia} are explained. In the experimental chapter we will then present how all these mechanisms come together.
 
@@ -37,6 +37,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
       pos\-tag(d=[w_1,w_2,..w_n]) = [(w_1, tag_1), (w_2, tag_2),.. (w_n, tag_n)]
     \end{equation}
 
+  Part of speech tagging works by parsing a document sentence by sentence. Tagging each word by identifying its position relative to other words and predicting what their tags might look like. See \cite{Nothing} for an extensive study.
   For clustering we want to identify these \emph{semantic fields}, a set of words grouped by meaning. We then often analyze \emph{WSD} through \emph{synonymy, polysemy, hyponymy, hypernymy and meronymy}. All of those concepts are important to taxonomies and ontologies. A \emph{taxonomy} is refered to as a simple hierarchical structure of parent-child relationships, that change in granularity per hierarchy level. An \emph{ontology} is much broader and can have complex relations other than parent-child. In that sense both taxonomies and ontologies are structures, showing how to classify words in context to each other. Traversing through these hierarchical structures is typically done by hyponyms and hypernyms. 
 
     \begin{figure}[h!]
@@ -87,16 +88,26 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
       \end{split}
       \end{equation}
 
-    The max cut works with a ratio that selects from lowest to highest 80\% except the last 20\%. Note that the samples are not on $m$ dimensional vectors. For this to work we have to aggregate the counts and then prune the most insignificant words. The great thing of this approach is that it can follow any feature selection strategy. There are several ways to intialize the dictionary, which itself is a feature selection. By using this approach we can make sure that better feature selection strategies are fine tuned by upper and lower bounds.
+    The max cut works with a ratio that selects from lowest to highest 80\% except the last 20\%. Note that the samples are not on $m$ dimensional vectors. For this to work we have to aggregate the counts and then prune the most insignificant words. The great thing of this approach is that it can follow any feature selection strategy. By using word pruning on feature vectors, the selection process can be refined. The fine tuning is necessary in gaining percentages in accuracy.
 
   \subsection{Syntactic parsing}
   \label{sec:syntactic_parsing}
 
-  Syntactic parsing reduces symbols or characters, to a parsed tree of following expressions. What the actual alphabet, in this sense valid characters of a language defines is defined within the specific domain. For this we often state grammars and valid tokens of an alphabet. This if often found for file standards like \emph{json}, \emph{csv} or \emph{programming languages}. When it comes to parsing expressions from English language to a meaningful representation for the computer, the problem statement gets a lot more difficult. It starts with defining what the actual valid words look like. Generally one could provide a dictionary as before. Everything not in the dictionary is not a valid character set. The problem becomes clear, because newspaper articles use different language styles and often make up words. However statistical parsers like the \emph{Stanford} parser are very accurate in identifying valid syntactic English expressions. In order to work, most of these parsers are supervised, trained models on a subset of English training samples. In the following we will look more closely at noun phrase extraction and named entity recognition. They can be used as initial seeds for the feature space of a corpus.
+  Parsing reduces symbols, to a parsed tree of following expressions. In English parsing, probabilistic shift reduce parsers in combination with trained neural networks is state of the art. \cite[Stanford, Spacy]{Nothing} Valid words and characters are defined within the rules of the English alphabet. In figure \ref{syntactic_parsing} we can see a parse tree for an English sentence parser. The parsing is syntactical based on English grammar. When it comes to parsing expressions from English language to a meaningful representation for the computer, the problem statement gets a lot more difficult. Too many words, too many forms of sentences - statistics in combination with structural parsers come to the rescue. Solely syntactic parsers that work on symbols work well in a specific domain up to a certain parsing accuracy. Statistical models remove these barriers by likelikhoods and predictions, finding answers accross domains. The most inherent problem is overfitting. Overfitting describes that a probabilistic parser works well on a specific problem domain or data source, because it learned the domain well. Unseen domains and datasets perform poorly due to the missing knowledge. The problem becomes more clear, in the domain of newspaper articles where different language styles and domains are frequent. Statistical parsers like the \emph{Stanford} parser are very accurate in identifying valid syntactic English expressions. In the following we will look more closely at noun phrase extraction and named entity recognition. They can be used as initial seeds for the feature space of a corpus.
+
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{sentence_structure.png}
+        \caption{"Syntactic parsing"}
+        \label{syntactic_parsing}
+    \end{figure} 
+
+  The figure \ref{syntactic_parsing} is displayed as a projective tree, where each word has exactly one (or none) incoming and outgoing edge. The outgoing edge is refered to as head. Edges contain information about the relation between both words. Each word has a part of speech tag described by many corpuses. \cite[Wordnet, Penn-treebank, Google-ngrams]{Nothing}
+  The parsing of English grammatical structures is entirely dependant upon specification of the rules. What part of speech tagging system is used? How is the grammar defined? These are all linguistic questions resulting in type-1 Chomsky grammars. \cite[Chomsky]{Nothing}
+  In clustering this is not a huge problem, because the granularity of the task is not that fine tuned. A slightly false parse might still yield good feature results.
 
   \subsubsection{Noun phrases}
-
-  bla
+  Noun phrases are generally a good way of describing what a sentence is about. They examplify real world entities and nouns that depicts a subject object relationship.
 
   \subsubsection{Named entities}
 
@@ -108,7 +119,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
   
   \newcommand\waw{\emph{Wordnet} and \emph{Wikipedia}}
 
-  In order to enhance the syntactical selection models we can add a knowledge base such as \waw{}. The data reresentation is often defined as a typical dictionary. For a definition of a word we can infer semantic fields and additional text describing the words in more detail. Moreover knowledge bases such as \emph{Wikipedia} categorize/classify concepts into ontologies. \waw{} are great in the sense that human authors around the world add missing information and enhance the models frequently. The knoledge bases are enhanced frequently by writing rules and reviewing processes.
+  In order to enhance the syntactical selection models we can add a knowledge base such as \waw{}. The data reresentation is often defined as a typical dictionary. For a definition of a word we can infer semantic fields and additional text describing the words in more detail. Moreover knowledge bases such as \emph{Wikipedia} categorize/classify concepts into ontologies. \waw{} are great in the sense that human authors around the world add missing information and enhance the models frequently. The knowledge bases are enhanced frequently by writing rules and reviewing processes.
 
   \subsection{Wordnet}
   \label{sec:wordnet}
