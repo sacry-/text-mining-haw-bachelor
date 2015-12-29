@@ -86,7 +86,7 @@ def lemmatize(tokens):
 
 
 if __name__ == "__main__":
-  s = "it was a very long and cool day. I am satisfied! Mr. crowley said this."
+  s = "It was a very long and cool day. 'I am satisfied!' Mr. crowley said. Have you heard that Google held a lot of coding competitions in the past?"
   tokens = tokenize(s)
   print(tokens)
   lemmas = list(lemmatize(tokens))
