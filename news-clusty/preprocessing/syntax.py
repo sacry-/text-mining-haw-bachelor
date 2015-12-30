@@ -9,6 +9,7 @@ from nltk import data
 from nltk import PorterStemmer
 from nltk import WordNetLemmatizer
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet as wn
 
 from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
@@ -69,20 +70,39 @@ def stem(tokens):
              if token and len(token) > 0] 
           if stem and len(stem) > 0]
 
-def stemmatize(tokens):
-  for token in tokens:
+
+def stemmatize(pos_tags):
+  for token, tag in pos_tags:
+    tag = morph(tag)
     if word_is_valid(token):
-      lemma = WN_LEMMATIZER.lemmatize(token)
+      lemma = WN_LEMMATIZER.lemmatize(token, tag)
       
       if not lemma:
         lemma = token
 
       yield PORTER.stem(lemma).lower()
 
-def lemmatize(tokens):
-  for token in tokens:
+
+MORPHY_MAP = {
+  'nn': wn.NOUN,
+  'jj': wn.ADJ,
+  'vb': wn.VERB,
+  'rb': wn.ADV
+}
+
+def morph(key):
+  if not key:
+    return wn.NOUN
+  key = key.lower()
+  if key in MORPHY_MAP:
+    return MORPHY_MAP[key]
+  return wn.NOUN
+
+def lemmatize(pos_tags):
+  for token, tag in pos_tags:
+    tag = morph(tag)
     if word_is_valid(token):
-      yield WN_LEMMATIZER.lemmatize(token).lower()
+      yield WN_LEMMATIZER.lemmatize(token, tag).lower()
 
 
 if __name__ == "__main__":
