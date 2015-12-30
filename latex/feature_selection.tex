@@ -128,10 +128,60 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
   \subsection{WordNet}
   \label{sec:wordnet}
-  \wordnet{} is a lexical database of English. Lexical parts of speech scuh as nouns, verbs or adjectives are grouped into cognitive synonyms (synsets). Each synset is linked by semantical and lexical relations. In parts \wordnet{} resembles a thesaurus, grouping words based on meaning. With its onotologies it deals with \emph{WSD}. Further words are interlinked by semantic relations. For more information see \cite{Wordnet1995, Wordnet1998}.
 
+  \wordnet{} is a lexical database of English. Lexical parts of speech such as nouns, verbs or adjectives are grouped into synonyms (synsets). Each synset is linked by semantical and lexical relations. In parts \wordnet{} resembles a thesaurus, grouping words based on meaning. With its onotologies it deals with \emph{WSD}. Further words are interlinked by semantic relations. For more information see \cite{Wordnet1995, Wordnet1998}. \\
+  \wordnet{} is often used for lemmatization. Lemmatization is the process of removing the inflected forms of a given word to its lemma. A lemma is a dictionary entry or canonical form of a word. The major difference to stemming is that \wordnet{} is able to inflect a canonical form that depends on context sensitive pos tags. 
+
+    \begin{equation}
+    \begin{split}
+      lemmatize("savings", pos="noun") &\to "saving" \\
+      lemmatize("savings", pos="verb") &\to "save" \\
+      stem("savings") &\to "save" \\
+      stem("save") &\to "save"
+    \end{split}
+    \end{equation}
+
+  Inflecting the canonical form with pos tags enhances the precision of the context where the words came from. Often this can result in different inflectional forms that would otherwise be equal. In comparisson we can see that stemming treats ``savings'' and ``save'' entirely the same. This is a basic strategy to inflect a generalized version of a document, to lower the dimensions. Further we can take the hypernyms of a document.
+
+    \begin{equation}
+    \begin{split}
+      \sum_{i=1}^{|d|} hypernyms_{first}(d_i)
+    \end{split}
+    \end{equation}
+
+  We iterate over all words in $d$ and take the first of the hypernyms of the words, projecting it to a higher concept. \wordnet{} sorts the hypernyms from most likely to less likely, taking the first is a good approximation. \cite[Somebody doing stuff with wordnet]{Nothing}
+  Enhancing the above statement we scale this up to the depth $d$ going up the hypernyms of the \wordnet{} ontologies.
+
+    \begin{equation}
+    \begin{split}
+      closure(seq, d=0) &= empty \\
+      closure(seq, d>0) &= \sum_{w \in seq} closure(hypernyms(w), d-1)
+    \end{split}
+    \end{equation}
+
+  At last, we can infer the most common meaning of a sentence by calculating the lowest common hypernyms. 
+
+    \begin{equation}
+      lowest\_common\_hypernyms(w_1, w_2) = hypernyms(w_1) \cap hypernyms(w_2)
+    \end{equation}
+
+  For this we compute for each word in a document the transitive closure with the above statement not restricted by the first hypernym.
+
+    \begin{algorithm}[H]
+    \begin{algorithmic}[1]
+      \caption{\wordnet{} closure with hypernyms}\label{wordnet}
+      \For{$sent \in closure(doc, d)$}
+        \For{$(w_1, w_2) \in sent : w_1 \not = w_2$}
+          \State $result \gets lowest\_common\_hypernyms(w_1, w_2)$
+        \EndFor
+      \EndFor
+      \State \Return $result$
+    \end{algorithmic}
+    \end{algorithm}
+
+  Then we compute the lowest common hypernyms that connect hypernyms of the word closures. We then apply word pruning to get the mid vector words, sorting out extremes. \cite[Do more with lexical chains]{Nothing}
 
   \subsection{Wikipedia}
   \label{sec:wikpedia}
-  
+    
 
