@@ -3,6 +3,7 @@ import csv
 
 from os import listdir
 
+from data_view import BBCDocuments
 from preprocessing import TextNormalizer
 from preprocessing import sentence_tokenize
 from preprocessing import preprocess
@@ -13,6 +14,8 @@ from utils import flatten
 
 from paths import model_path
 from paths import bbc_path
+
+from knowledge import wordnet_lemmatize
 
 
 # Dump
@@ -122,14 +125,15 @@ def stream_bbc_ners(categories):
 
 def stream_wordnet_projection():
   bbc = BBCDocuments()
-  for idx, doc in wordnet_lemmatize( bbc ):
-    stream_to_set("wordnet", doc)
+  for idx, doc in wordnet_lemmatize( bbc.pos() ):
+    stream_to_set("wordnet_lemmas", doc)
     print(idx, bbc.titles()[idx])
-    print(" ", doc)
 
 
 if __name__ == "__main__":
-  categories = ["business", "entertainment", "politics", "sport", "tech"]
-  stream_bbc_ners(categories)
+  # categories = ["business", "entertainment", "politics", "sport", "tech"]
+  # stream_bbc_ners(categories)
+
+  stream_wordnet_projection()
 
 

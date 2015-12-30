@@ -92,14 +92,14 @@ def wordnet_fst_hyper( nouns ):
     yield idx, firsts( noun_list )
 
 
-def wordnet_lemmatize( sents ):
+def wordnet_lemmatize( docs ):
   
-  def convert_sents(sent):
-    s = flatten(map(lambda x: lemmatize(tokenize(x)), sent))
+  def convert_sents(doc):
+    s = flatten(lemmatize(doc))
     return [x for x in s if len(x) > 1]
 
-  for idx, sent in enumerate( sents ):
-    yield idx, convert_sents(sent)
+  for idx, doc in enumerate( docs ):
+    yield idx, convert_sents(doc)
 
 
 if __name__ == "__main__":

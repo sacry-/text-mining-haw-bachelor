@@ -58,42 +58,27 @@ def tokenize(s):
   return words
 
 def word_is_valid(word):
-  return (
-    word and
-    (EN_US_DICT.check(word) and EN_GB_DICT.check(word)) and
-    (len(word) > 0)
-  )
+  return ( word and check(word) )
+
+def check(word):
+  return EN_US_DICT.check(word) and EN_GB_DICT.check(word)
 
 def stem(tokens):
   return [stem for stem in 
             [PORTER.stem(token).lower() for token in tokens 
-             if token and len(token) > 0] 
-          if stem and len(stem) > 0]
-
-
-def stemmatize(pos_tags):
-  for token, tag in pos_tags:
-    tag = morph(tag)
-    if word_is_valid(token):
-      lemma = WN_LEMMATIZER.lemmatize(token, tag)
-      
-      if not lemma:
-        lemma = token
-
-      yield PORTER.stem(lemma).lower()
+             if token] 
+          if stem]
 
 
 MORPHY_MAP = {
-  'nn': wn.NOUN,
-  'jj': wn.ADJ,
-  'vb': wn.VERB,
-  'rb': wn.ADV
+  'n' : wn.NOUN,  # nn
+  'j' : wn.ADJ,   # jj
+  'v' : wn.VERB,  # vb
+  'r' : wn.ADV    # rb
 }
 
 def morph(key):
-  if not key:
-    return wn.NOUN
-  key = key.lower()
+  key = key.lower().strip()[:1]
   if key in MORPHY_MAP:
     return MORPHY_MAP[key]
   return wn.NOUN
@@ -103,6 +88,15 @@ def lemmatize(pos_tags):
     tag = morph(tag)
     if word_is_valid(token):
       yield WN_LEMMATIZER.lemmatize(token, tag).lower()
+
+def stemmatize(pos_tags):
+  for token, tag in pos_tags:
+    tag = morph(tag)
+    if word_is_valid(token):
+      lemma = WN_LEMMATIZER.lemmatize(token, tag)
+      if not lemma:
+        lemma = token
+      yield PORTER.stem(lemma).lower()
 
 
 if __name__ == "__main__":

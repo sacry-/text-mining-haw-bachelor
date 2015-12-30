@@ -67,7 +67,7 @@ class BBCDocuments():
 
   def pos(self):
     if not self._pos:
-      self._pos = self.unfold( get_pos() )
+      self._pos = get_pos()
     return self._pos
 
   def nouns(self):
