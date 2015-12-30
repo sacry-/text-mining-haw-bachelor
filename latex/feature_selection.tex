@@ -13,14 +13,14 @@ The function $f$ transforms a sequence of words $w_1..w_n$ of a document $d$ to 
   \begin{enumerate}
     \item Pruning words of low and high significance.
     \item Using syntactic parsing to retrieve noun phrases, named entity tags or part of speech tags.
-    \item Using ontologies of wordnet to derive a shared meaning of words.
-    \item Mapping documents to wikipedia categories.
+    \item Using ontologies of \wordnet{} to derive a shared meaning of words.
+    \item Mapping documents to \wiki{} categories.
     \item Using kernel methods, preselecting initial clusters in a semi-supervised way.
   \end{enumerate}
 
 In the end, feature selection is probably the most demanding task. Expert knolwedge needs to be applied and can change over time, called time drift. A computer handles documents in vector space, by counting. A human however perceives content differently. For any sufficiently adavanced algorithm that works with a knowledge base it is still: Garbage in, garbage out. More fancy algorithms will lead to better results, but better features will accelerate the accuracy.\\
 
-In the following we will briefly explain what \emph{semantics} mean, especially in the \emph{domain} of newspapers. How \emph{feature selection} generally works and how this can be enhanced by \emph{syntactic parsing}. Strategies using \emph{Wordnet} and \emph{Wikipedia} are explained. In the experimental chapter we will then present how all these mechanisms come together.
+In the following we will briefly explain what \emph{semantics} mean, especially in the \emph{domain} of newspapers. How \emph{feature selection} generally works and how this can be enhanced by \emph{syntactic parsing}. Strategies using \wordwiki{} are explained. In the experimental chapter we will then present how all these mechanisms come together.
 
 
 \section{Semantics}
@@ -47,7 +47,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
         \label{wsd_analysis}
     \end{figure} 
 
-  \emph{Meronyms} are ``part-of'' relations, \emph{hyponyms} have a ``type-of'' relation to a higher concept, called \emph{hypernyms}. In figure \ref{wsd_analysis} we see that from a single concept ``car'' we can infer a semantic field around it. We will see later how this works, a statistical concept around this is \emph{LSI} and \emph{probabilistic topic modelling}. The symbolic way is to use knowledge bases such as Wordnet or Wikipedia.\\
+  \emph{Meronyms} are ``part-of'' relations, \emph{hyponyms} have a ``type-of'' relation to a higher concept, called \emph{hypernyms}. In figure \ref{wsd_analysis} we see that from a single concept ``car'' we can infer a semantic field around it. We will see later how this works, a statistical concept around this is \emph{LSI} and \emph{probabilistic topic modelling}. The symbolic way is to use knowledge bases such as \wordwiki{}.\\
 
   In the text \emph{domain} of newspaper articles a few problems arise. Analyzing a long book, a long speech or journal articles from the scientific community, is easier compared to high varying fragments from different authors on different topics. A long book written by one person will use a specific language that is typical of that author. Speeches for a specific person contain similar concepts and often use the same language as well. In the scientific community rhethorial and anecdotal phrasing is uncommon. Facts, citation and correct formatting is of central importance. The text might be heterogenous but the fact remains that a certain wording / glossary, is shared throughout these examples.\\
 
@@ -107,7 +107,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
   In clustering this is not a huge problem, because the granularity of the task is not that fine tuned. A slightly false parse might still yield good feature results.
 
   \subsubsection{Noun phrases}
-  Noun phrases are often referred to as key phrases. Formally a noun phrase is a phrase with a noun as its head word. A head is a word that determines the syntactic type of a phrase. Generally a noun phrase is a part of a sentence that captures meaning of a sentence. Thusly they are good samples to represent a document. However noun phrases are rather bad samples for clustering. They do not connect well to other documents due to their unique occurences. In the \emph{Wordnet} section we will see how they are great for projecting to their respective hypernyms.
+  Noun phrases are often referred to as key phrases. Formally a noun phrase is a phrase with a noun as its head word. A head is a word that determines the syntactic type of a phrase. Generally a noun phrase is a part of a sentence that captures meaning of a sentence. Thusly they are good samples to represent a document. However noun phrases are rather bad samples for clustering. They do not connect well to other documents due to their unique occurences. In the \wordnet{} section we will see how they are great for projecting to their respective hypernyms.
 
   \subsubsection{Named entities}
   Named entity recognition is the task of information retrieval that extracts and classifies  names of persons, organizations, locations, expressions of times, quantities, monetary values, percentages, etc. \cite[Wikipedia]{Nothing}. 
@@ -123,13 +123,13 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
 \section{External Knowledge}
 \label{sec:semantic_selection}
-  
-  \newcommand\waw{\emph{Wordnet} and \emph{Wikipedia}}
 
-  In order to enhance the syntactical selection models we can add a knowledge base such as \waw{}. The data reresentation is often defined as a typical dictionary. For a definition of a word we can infer semantic fields and additional text describing the words in more detail. Moreover knowledge bases such as \emph{Wikipedia} categorize/classify concepts into ontologies. \waw{} are great in the sense that human authors around the world add missing information and enhance the models frequently. The knowledge bases are enhanced frequently by writing rules and reviewing processes.
+  In order to enhance the syntactical selection models we can add a knowledge base such as \wordwiki{}. The data reresentation is often defined as a typical dictionary. For a definition of a word we can infer semantic fields and additional text describing the words in more detail. Moreover knowledge bases such as \wiki{} categorize/classify concepts into ontologies. \wordwiki{} are great in the sense that human authors around the world add missing information and enhance the models frequently. The knowledge bases are enhanced frequently by writing rules and reviewing processes.
 
-  \subsection{Wordnet}
+  \subsection{WordNet}
   \label{sec:wordnet}
+  \wordnet{} is a lexical database of English. Lexical parts of speech scuh as nouns, verbs or adjectives are grouped into cognitive synonyms (synsets). Each synset is linked by semantical and lexical relations. In parts \wordnet{} resembles a thesaurus, grouping words based on meaning. With its onotologies it deals with \emph{WSD}. Further words are interlinked by semantic relations. For more information see \cite{Wordnet1995, Wordnet1998}.
+
 
   \subsection{Wikipedia}
   \label{sec:wikpedia}

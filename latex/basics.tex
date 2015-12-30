@@ -4,7 +4,7 @@
 
 The goal of this section is to give some intuition and the necessary theoretical background for the following chapters. The areas where clustering problems arise are huge. It provides solutions to problems like market segmentation, classification, document organization or indexing.\\
 Firstly we will have a look at the definition of clustering and summarization. How they are related and the variety of possibilities this imposes.\\
-Secondly the vector space model (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by singular value decomposition (SVD).\\
+Secondly the \emph{vector space model} (VSM) is introduced. It contains all information about how to represent documents in a vectorized form. Of special interest are enhanced models which reduce the dimensionality of documents by \svdfull{}.\\
 Thirdly traditional clustering algorithms from the hierarchical (Ward, Birch) and partitional (K-Means, Expectation Maximization) family will be presented. Closely related are the generative models. These methods can be used as a kind of clustering algorithm and are highly useful in several steps of traditional clustering. They can be used as dimensionality reduction techniques as well.\\
 At last we will have a glance at, how to measure the quality of clusters based on internal measures (without ground truth labels) and external measures (with explicit labelling of the ground truth).\\
 The reader is assumed to have prior knowledge on linear algebra, statistics and linguistics. This is by no means a complete reference but should cover the topics fairly well.\\
@@ -34,7 +34,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \item[Fourth] Removing \emph{outliers} that will not highly contribute to textual summaries
   \end{description}
 
-  Clustering itself can be seen as a summarization as well. \cite{Carrot2Search2003} defined a well versed graphical user interface called Carrot Search boosted by their Lingo3G clustering algorithms. One can see that the proposed clustering techniques can form well defined topical browsers. The user can easily interact with the underlying data in a connected and semantic way.
+  Clustering itself can be seen as a summarization as well. \cite{Carrot2Search2003} defined a well versed graphical user interface called Carrot Search boosted by their Lingo3G clustering algorithms \footnote{See http://search.carrotsearch.com/carrot2-webapp/search}. One can see that the proposed clustering techniques can form well defined topical browsers. The user can easily interact with the underlying data in a connected and semantic way.
 
   \paragraph{Supervision}
     As opposed to unsupervised learning strategies such as clustering, supervised learning classifies some input based on a provided ground truth. That is, for an input \emph{x} there are labels \emph{y} that describe the class they are in. Supervision can be done by explicitly classifying the documents before the clustering. The input is then split into \emph{n} classes. Then each class can be individually clustered. Often however this is no option. We need to manually label all documents. This can be time consuming and error prone. Often several labellers are needed to crossvalidate human bias.
@@ -156,7 +156,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
   \subsection{Similarity and Distances}
   \label{sec:similarity}
 
-    \emph{Partitional clustering} algorithms commonly work through some objective distance or similarity function between two objects. After lifting the documents into vector space, we are faced with the problem of distance between two documents. Several measures were proprosed that can be easily interpreted by geometry or linear algebra. Our goal is to have an \emph{m x m} matrix for \emph{document x document} distances. A \emph{document x terms} matrix on the other hand is highly relevant when clustering under the assumption of topical classification. That is, compare documents not to each other but to all the occuring words as topics. \emph{Latent semantic analysis (LSA)} is a method where words are projected to lower dimensions by singular value decomposition. This resembles partial categorization to topics of a document by the most distinct words. Then a clustering can be done by documents that highly correlate to the same topics. See \ref{sec:lsa} for more information.
+    \emph{Partitional clustering} algorithms commonly work through some objective distance or similarity function between two objects. After lifting the documents into vector space, we are faced with the problem of distance between two documents. Several measures were proprosed that can be easily interpreted by geometry or linear algebra. Our goal is to have an \emph{m x m} matrix for \emph{document x document} distances. A \emph{document x terms} matrix on the other hand is highly relevant when clustering under the assumption of topical classification. That is, compare documents not to each other but to all the occuring words as topics. \lsafull{} is a method where words are projected to lower dimensions by singular value decomposition. This resembles partial categorization to topics of a document by the most distinct words. Then a clustering can be done by documents that highly correlate to the same topics. See \ref{sec:lsa} for more information.
 
     \paragraph{The Cosine similarity} is a measure of orientation, not the magnitude. The angles between documents are compared and thus if the angle is $0°$ both documents are equal in size and word occurences. Given two documents $d_1$ and $d_2$ the classical cosine similarity is defined by
 
@@ -187,17 +187,17 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
   \subsection{Enhancing the Vector Space Model}
   \label{sec:evsm}
 
-    The vector space model comes with a variety of problems. First we have extremely high dimensions. As we see later this is particularly true for newspapers. Unlike Twitter the content of a newspaper article can be substantial and range over a variety of topics. This can lead to extremely poor clustering results. Several methods have been proposed to tackle this high dimensionality problem. One of the most strickening comes from linear algebra and was initially proposed in \cite{DeerwesterLSI1990} called Latent Semantic Analysis (LSA). It is based on Singular Value Decomposition (SVD). The Principal Component Analysis (PCA) on the other hand uses SVD in a different manner. Apart from these there are also much more elaborate techniques in the domain of topic modelling which will be reviewed later.
+    The vector space model comes with a variety of problems. First we have extremely high dimensions. As we see later this is particularly true for newspapers. Unlike Twitter the content of a newspaper article can be substantial and range over a variety of topics. This can lead to extremely poor clustering results. Several methods have been proposed to tackle this high dimensionality problem. One of the most strickening comes from linear algebra and was initially proposed in \cite{DeerwesterLSI1990} called \lsafull{}. It is based on \svdfull{}. The \pcafull{} on the other hand uses \svd{} in a different manner. Apart from these there are also much more elaborate techniques in the domain of topic modelling which will be reviewed later.
 
     \subsubsection{Latent Semantic Analysis}
     \label{sec:lsa}
-      Latent Semantic Analysis is a progress to reduce as much noise as possible from a given term x document matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is used for dealing with large sparse data to find the underlying connecting relations. \emph{LSA} is a truncated singular value decomposition \emph{(SVD)} on a term x document matrix. \emph{SVD} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into three matrices $U$, $\Sigma$ and $V^{T}$. \emph{LSA} is constrained by the number of dimensions \emph{k}:
+      \lsalong{} is a progress to reduce as much noise as possible from a given term x document matrix to expose the so called latent variables. It is connected to topic modelling but seems to be more relevant in the context of dimensionality reduction. Dimensionality reduction is used for dealing with large sparse data to find the underlying connecting relations. \lsa{} is a truncated \svdfull{} on a term x document matrix. \svd{} is a matrix decomposition where an n x m matrix \emph{A} is decomposed into three matrices $U$, $\Sigma$ and $V^{T}$. \lsa{} is constrained by the number of dimensions \emph{k}:
 
       \begin{equation}
         svd(A) = U_{mxm}\Sigma_{mxn} V^{T}_{nxn} \to lsa(A, k) = U_{mxk}\Sigma_{kxk} V^{T}_{kxn}
       \end{equation}
 
-      While in the original \emph{SVD} we keep all components decomposing their respective singular values, \emph{LSA} only keeps \emph{k} components reducing the dimensions from \emph{n} words to \emph{k}. $\Sigma$ holds the k best singular values in sorted order. $V^{T}$ is a k x document matrix, where k are the reduced topics from the words. While we can do \emph{LSA} over documents, we can also use it for summarizations of single documents.
+      While in the original \svd{} we keep all components decomposing their respective singular values, \lsa{} only keeps \emph{k} components reducing the dimensions from \emph{n} words to \emph{k}. $\Sigma$ holds the k best singular values in sorted order. $V^{T}$ is a k x document matrix, where k are the reduced topics from the words. While we can do \lsa{} over documents, we can also use it for summarizations of single documents.
 
       \begin{figure}[h!]
         \centering
@@ -206,14 +206,14 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
           \label{svd_lsa}
       \end{figure}
 
-      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \emph{LSA} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}
-      The intuition behind \emph{SVD} is to expose as much variance as possible at the same time reducing noise from the data. \emph{SVD} then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. This corresponce to a notion of topic overlap between different documents.
-      Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning. Effectively \emph{LSA} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
+      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \lsa{} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}
+      The intuition behind \svd{} is to expose as much variance as possible at the same time reducing noise from the data. \svd{} then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. This corresponce to a notion of topic overlap between different documents.
+      Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning. Effectively \lsa{} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
 
     \subsubsection{Principal Component Analysis (PCA)}
     \label{sec:pca}
 
-    The \emph{Principal Component Analysis (PCA)} is a multivariate technique separating out correlating variables into principal components. \emph{PCA} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. The difference between \emph{PCA} and \emph{LSA} is the input. \emph{PCA} takes a covariance matrix $A*A^{T}$ which means that either only word x word or document x document matrices are taken as input. This makes it perfect for reducing dimensions after creating a cosine similarity matrix from the documents to visualize results.
+    The \pcafull{} is a multivariate technique separating out correlating variables into principal components. \pca{} in general is a dimensionality reduction technique reducing the number of features to a lesser set of features. The difference between \pca{} and \lsa{} is the input. \pca{} takes a covariance matrix $A*A^{T}$ which means that either only word x word or document x document matrices are taken as input. This makes it perfect for reducing dimensions after creating a cosine similarity matrix from the documents to visualize results.
 
     \begin{figure}[h!]
       \centering
@@ -222,7 +222,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
         \label{pca}
     \end{figure}
 
-    In figure \ref{pca} we find the \emph{n} most likely components of a document by decomposing an original document matrix $X$ by factoring out $P$ principal components. The input is no $n\:x\:m$ matrix but rather a covariance matrix $n\:x\:n$ or $m\:x\:m$ . These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. In practice \emph{PCA} is conversion of a document by term matrix into a covariance matrix followed by \emph{SVD} where principal components resemble the highest singular values up to $k$. Primarily \emph{PCA} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.
+    In figure \ref{pca} we find the \emph{n} most likely components of a document by decomposing an original document matrix $X$ by factoring out $P$ principal components. The input is no $n\:x\:m$ matrix but rather a covariance matrix $n\:x\:n$ or $m\:x\:m$ . These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. In practice \pca{} is conversion of a document by term matrix into a covariance matrix followed by \svd{} where principal components resemble the highest singular values up to $k$. Primarily \pca{} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.
 
 \section{Clustering algorithms}
 \label{sec:clustering}
@@ -317,7 +317,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
     \begin{figure}[h!]
       \centering
-        \includegraphics[width=0.7\textwidth]{dendogram.png}
+        \includegraphics[width=0.9\textwidth]{dendogram.png}
         \caption{"Ward linkage dendogram"}
         \label{hac_dendogram}
     \end{figure}
@@ -394,7 +394,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \subsection{Generative Models}   
     \label{sec:generative}
 
-      According to \cite[Wikipedia]{Nothing} a generative model is a model for randomly generating observable data values, typically given some hidden parameters. It specifies a joint probability distribution over observations and label sequences. In the area of document clustering and text summarization they play a role in modelling documents by word distributions assigned to topics. The \emph{EM} algorithm is a typical scheme of a generative model, found in the partitional clustering section. In the text domain, topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By \emph{bayesian inference} we can draw conditional probabilities from word to document to topic proportions. Making sense of these quantities is part of probabilistic topic modelling. As with the \emph{EM} algorithm we draw partial probabilities that a document was generated by a mixture of topics. Several widely used methods namely \emph{Latent Dirichlet Allocation (LDA)}, \emph{Hierarchical Dirichlet Process (HDP)} as well as the beforementioned \emph{Latent semantic analysis (LSA)} are found in the generative realm. Usually, generative models are too expensive for large datasets. That is why most of the algorithms use variational inference resulting in the possibility to use online algorithms.
+      According to \cite[Wikipedia]{Nothing} a generative model is a model for randomly generating observable data values, typically given some hidden parameters. It specifies a joint probability distribution over observations and label sequences. In the area of document clustering and text summarization they play a role in modelling documents by word distributions assigned to topics. The \emph{EM} algorithm is a typical scheme of a generative model, found in the partitional clustering section. In the text domain, topic modelling plays an increasing role for identifying latent topics from a distribution of documents and words. By \emph{bayesian inference} we can draw conditional probabilities from word to document to topic proportions. Making sense of these quantities is part of probabilistic topic modelling. As with the \emph{EM} algorithm we draw partial probabilities that a document was generated by a mixture of topics. Several widely used methods namely \ldafull{}, \hdpfull{} as well as the beforementioned \lsafull{} are found in the generative realm. Usually, generative models are too expensive for large datasets. That is why most of the algorithms use variational inference resulting in the possibility to use online algorithms.
 
       \subsubsection{Topic modelling}
       \label{sec:topic_modelling}
@@ -419,17 +419,17 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
         The definition of a prior or prior distribution is important. A prior is a raw distribution over the outcomes of some event $A$, \emph{without} any evidence $B$. It is knowledge that needs to be observed. If no observations took place, we have to assume, beforehand, that the prior is randomly distributed. The generative process then weights in the words of each document and approximates the prior distributions. In the context of topic modelling, priors are topic distributions over words or documents.\\ 
         
       \subsubsection{Probabilistic latent semantic indexing (PLSI)}
-      Advancing on the above statement, \cite{PLSA2001} created the \emph{probabilistic latent semantic indexing (PLSI)}.
+      Advancing on the above statement, \cite{PLSA2001} created the \plsifull{}.
 
         \begin{equation}
           p(d, w_n) = p(d)\sum_{Z} p(w_n|z)\:p(z|d)
         \end{equation} 
 
-      \emph{PLSI} takes into account that words contribute to a topic. Documents are sequences of words, so a document can contain several topics as well. The assumption: A topic generated a specific word, so a document was generated by several topics. This is done by drawing $p(d)$ as before with the additional probability $p(w_n|z)$ that a word $w_n$ of a document $d$, evidenced by $z$ and $p(z|d)$ the most likely probability that a topic is drawn evidenced by $d$. Informally for each word $w_n$ in a document $d$ how likely was it generated by a topic $z$ given a document $d$.
+      \plsi{} takes into account that words contribute to a topic. Documents are sequences of words, so a document can contain several topics as well. The assumption: A topic generated a specific word, so a document was generated by several topics. This is done by drawing $p(d)$ as before with the additional probability $p(w_n|z)$ that a word $w_n$ of a document $d$, evidenced by $z$ and $p(z|d)$ the most likely probability that a topic is drawn evidenced by $d$. Informally for each word $w_n$ in a document $d$ how likely was it generated by a topic $z$ given a document $d$.
 
       \begin{algorithm}[H]
       \begin{algorithmic}[1]
-        \caption{probabilistic latent semantic indexing}\label{PLSI}
+        \caption{probabilistic Latent Semantic Indexing}\label{PLSI}
         \State $Choose\:a\:document\:d_m\:with\:p(d)$
           \For{$w_n \in d_m$}
             \State $z_n \gets multinominal\:from\:d_m\:p(z|d_m)$
@@ -438,17 +438,17 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \end{algorithmic}
       \end{algorithm}
 
-      As seen in algorithm \ref{PLSI} the underlying problem is that topic distributions must be estimated for each document $d_m$ and for each topic $z_n$. This can be mitigated by using priors for topics instead of parameter estimations by \emph{EM}. For this reason \emph{Latent Dirichlet Allocation (LDA)} was proposed by \cite{LDA2003} where a Dirichlet prior is assumed before hand. For completeness the two models are briefly described.
+      As seen in algorithm \ref{PLSI} the underlying problem is that topic distributions must be estimated for each document $d_m$ and for each topic $z_n$. This can be mitigated by using priors for topics instead of parameter estimations by \emph{EM}. For this reason \ldafull{} was proposed by \cite{LDA2003} where a Dirichlet prior is assumed before hand. For completeness the two models are briefly described.
 
       \subsubsection{Latent Dirichlet Allocation (LDA)}
       \label{sec:lda}
 
-        Latent Dirichlet Allocation created by \cite{LDA2003} is \emph{PLSI} assuming a Dirichlet prior. Dirichlet distributions are often used as prior distributions in Bayesian statistics. The Dirichlet distribution is the conjugate prior of the categorical distribution and multinomial distribution. Its probability density function returns the belief that the probabilities of $k$ rival events are $x_i$ given that each event has been observed $\alpha_i-1$ times. \cite[Wikipedia quote for Dirichlet processes]{Nothing}\\
-        This fact comes in handy especially when assuming that \emph{LDA} should generate $k$ distinct topic distributions over words that can be mapped to a topic distribution over documents. \cite{TopicModelsBlei2012}
+        \ldalong{} created by \cite{LDA2003} is \plsi{} assuming a Dirichlet prior. Dirichlet distributions are often used as prior distributions in Bayesian statistics. The Dirichlet distribution is the conjugate prior of the categorical distribution and multinomial distribution. Its probability density function returns the belief that the probabilities of $k$ rival events are $x_i$ given that each event has been observed $\alpha_i-1$ times. \cite[Wikipedia quote for Dirichlet processes]{Nothing}\\
+        This fact comes in handy especially when assuming that \lda{} should generate $k$ distinct topic distributions over words that can be mapped to a topic distribution over documents. \cite{TopicModelsBlei2012}
 
         \cite[TODO: formulas and explanation]{Nothing}
 
-        Alternatives to this are more complicated models like the \emph{Hierarchical Dirichlet Process (HDP)} by \cite{HDP2006} that can automatically infer the size of the topics or the \emph{Pachinko allocation} creating a hierarchy with directed acyclic graphs (DAGs). \cite{NonParametricBayes2007}
+        Alternatives to this are more complicated models like the \hdpfull{} by \cite{HDP2006} that can automatically infer the size of the topics or the \emph{Pachinko allocation} creating a hierarchy with directed acyclic graphs (DAGs). \cite{NonParametricBayes2007}
         
       \cite[Sum it up in a few words]{Nothing}
 
@@ -473,7 +473,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
   \subsection{Internal measures}
   \label{sec:internal_measures}
 
-    Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters and by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. Internal measures on the other hand have better scores if the dimensions are lower. Using \emph{LSA} reducing the dimensions down to 1 will lead to extra ordinary high scores. The results of internal measures can thusly only be compared to other clusterings of the same dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
+    Internal measures describe how well a clustering result represents the original data. By mathematically evaluating the final intra cluster distances between the documents and their respective clusters and by calculating the dissimilarity between documents and other clusters. What we will find is that internal measures are often not suitable in asking about the quality of clusterings. Higher dimensionalities might lead to much better clustering results in a few cases, because the original data has a high variance. Internal measures on the other hand have better scores if the dimensions are lower. Using \lsa{} reducing the dimensions down to 1 will lead to extra ordinary high scores. The results of internal measures can thusly only be compared to other clusterings of the same dimensions. As there are several measures that can be employed for internal clustering evaluation we will briefly look more closely at the silouhette coefficient. There are other measures as well, for completeness they are shortly reviewed.
 
     \paragraph{The silhouette coefficient} is a measure for how dissimilar a document $d$ is to its own cluster $C_d$ and how dissimilar a document $d$ is to the closest neighbouring cluster in $C_{d \not \in C}$. Often denoted as $a(d)$ it is the average dissimilarity from $d$ to all other documents in $C_d$ and $b(d)$ picks the minimum dissimilarity of $d$ to all clusters $C_{d \not \in C}$. Then the silhouette of a document $d$ for a clustering $C$ is defined as
 
