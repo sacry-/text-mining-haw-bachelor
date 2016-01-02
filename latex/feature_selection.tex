@@ -37,7 +37,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
       pos\-tag(d=[w_1,w_2,..w_n]) = [(w_1, tag_1), (w_2, tag_2),.. (w_n, tag_n)]
     \end{equation}
 
-  Part of speech tagging works by parsing a document sentence by sentence. Tagging each word by identifying its position relative to other words and predicting what their tags might look like. See \cite{Nothing} for an extensive study.
+  Part of speech tagging works by parsing a document sentence by sentence. Tagging each word by identifying its position relative to other words and predicting what their tags might look like. See \cite[chp. 5]{NLPBookJurafsky2000} for an extensive study.
   For clustering we want to identify these \emph{semantic fields}, a set of words grouped by meaning. We then often analyze \emph{WSD} through \emph{synonymy, polysemy, hyponymy, hypernymy and meronymy}. All of those concepts are important to taxonomies and ontologies. A \emph{taxonomy} is refered to as a simple hierarchical structure of parent-child relationships, that change in granularity per hierarchy level. An \emph{ontology} is much broader and can have complex relations other than parent-child. In that sense both taxonomies and ontologies are structures, showing how to classify words in context to each other. Traversing through these hierarchical structures is typically done by hyponyms and hypernyms. 
 
     \begin{figure}[h!]
@@ -93,24 +93,24 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
   \subsection{Syntactic parsing}
   \label{sec:syntactic_parsing}
 
-  Parsing reduces symbols, to a parsed tree of following expressions. In English parsing, probabilistic shift reduce parsers in combination with trained neural networks is state of the art. \cite[Stanford, Spacy]{Nothing} Valid words and characters are defined within the rules of the English alphabet. In figure \ref{syntactic_parsing} we can see a parse tree for an English sentence parser. The parsing is syntactical based on English grammar. When it comes to parsing expressions from English language to a meaningful representation for the computer, the problem statement gets a lot more difficult. Too many words, too many forms of sentences - statistics in combination with structural parsers come to the rescue. Solely syntactic parsers that work on symbols work well in a specific domain up to a certain parsing accuracy. Statistical models remove these barriers by likelikhoods and predictions, finding answers accross domains. The most inherent problem is overfitting. Overfitting describes that a probabilistic parser works well on a specific problem domain or data source, because it learned the domain well. Unseen domains and datasets perform poorly due to the missing knowledge. The problem becomes more clear, in the domain of newspaper articles where different language styles and domains are frequent. Statistical parsers like the \emph{Stanford} parser are very accurate in identifying valid syntactic English expressions. In the following we will look more closely at noun phrase extraction and named entity recognition. They can be used as initial seeds for the feature space of a corpus.
+  Parsing reduces symbols, to a parsed tree of following expressions. In English parsing, probabilistic shift reduce parsers in combination with trained neural networks is state of the art. \cite{ShiftReduceParsingStanford} Valid words and characters are defined within the rules of the English alphabet. In figure \ref{syntactic_parsing} we can see a parse tree for an English sentence parser. The parsing is syntactical based on English grammar. When it comes to parsing expressions from English language to a meaningful representation for the computer, the problem statement gets a lot more difficult. Too many words, too many forms of sentences - statistics in combination with structural parsers come to the rescue. Solely syntactic parsers that work on symbols work well in a specific domain up to a certain parsing accuracy. Statistical models remove these barriers by likelikhoods and predictions, finding answers accross domains. The most inherent problem is overfitting. Overfitting describes that a probabilistic parser works well on a specific problem domain or data source, because it learned the domain well. Unseen domains and datasets perform poorly due to the missing knowledge. The problem becomes more clear, in the domain of newspaper articles where different language styles and domains are frequent. Statistical parsers like the \emph{Stanford} parser are very accurate in identifying valid syntactic English expressions. In the following we will look more closely at noun phrase extraction and named entity recognition. They can be used as initial seeds for the feature space of a corpus.
 
     \begin{figure}[h!]
       \centering
         \includegraphics[width=0.9\textwidth]{sentence_structure.png}
-        \caption{"Syntactic parsing \cite[Spacy]{Nothing}"}
+        \caption{"Syntactic parsing"}
         \label{syntactic_parsing}
     \end{figure} 
 
-  Figure \ref{syntactic_parsing} is displayed as a projective tree, where each word has exactly one (or none) incoming and outgoing edge. The outgoing edge is refered to as head. Edges contain information about the relation between both words. Each word has a part of speech tag described by many corpuses. \cite[Wordnet, Penn-treebank, Google-ngrams]{Nothing}
-  The parsing of English grammatical structures is entirely dependant upon specification of the rules. What part of speech tagging system is used? How is the grammar defined? These are all linguistic questions resulting in type-1 Chomsky grammars. \cite[Chomsky]{Nothing}
+  Figure \ref{syntactic_parsing} is displayed as a projective tree, where each word has exactly one (or none) incoming and outgoing edge. The outgoing edge is refered to as head. Edges contain information about the relation between both words. Each word has a part of speech tag described by many corpuses. Current research projects use Googles ngrams over time, with a 3 billion ngram corpus to infer the most likely structures. \cite{SyntacticNgramsOverTime2013}
+  The parsing of English grammatical structures is entirely dependant upon specification of the rules. What part of speech tagging system is used? How is the grammar defined? With the help of the Chomsky hierarchy it was proven that not all natural languages have context-sensitive (type-1) nor turing complete (type-0) grammars. See \cite[chp. 16]{NLPBookJurafsky2000} for a great introduction.
   In clustering this is not a huge problem, because the granularity of the task is not that fine tuned. A slightly false parse might still yield good feature results.
 
   \subsubsection{Noun phrases}
-  Noun phrases are often referred to as key phrases. Formally a noun phrase is a phrase with a noun as its head word. A head is a word that determines the syntactic type of a phrase. Generally a noun phrase is a part of a sentence that captures meaning of a sentence. Thusly they are good samples to represent a document. However noun phrases are rather bad samples for clustering. They do not connect well to other documents due to their unique occurences. In the \wordnet{} section we will see how they are great for projecting to their respective hypernyms.
+  Noun phrases are often referred to as key phrases. Formally a noun phrase is a phrase with a noun as its head word. A head is a word that determines the syntactic type of a phrase. Generally a noun phrase is a part of a sentence that captures meaning of a sentence. Thusly they are good samples to represent a document. However noun phrases are rather bad samples for clustering. They do not connect well to other documents due to their unique occurences. In the \wordnet{} section we will see how they are great for projecting to their respective hypernyms. Noun phrase extraction is highly connected with part of speech tagging where certain tag patterns are used to filter nouns or noun phrases. For further information see \cite[chp. 5, 12]{NLPBookJurafsky2000}.
 
   \subsubsection{Named entities}
-  Named entity recognition is the task of information retrieval that extracts and classifies  names of persons, organizations, locations, expressions of times, quantities, monetary values, percentages, etc. \cite[Wikipedia]{Nothing}. 
+  Named entity recognition is the task of information retrieval that extracts and classifies  names of persons, organizations, locations, expressions of times, quantities, monetary values, percentages, etc. \cite[chp. 22]{NLPBookJurafsky2000}. 
 
     \begin{figure}[h!]
       \centering
@@ -119,7 +119,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
         \label{ner_tags}
     \end{figure} 
 
-  As seen in figure \ref{ner_tags} we are interested in informative terms. Often occuring named entities tend to give a direction what a document is about. If Google occurs in one document, it most likely will have to do with a lot of other documents that are about Google. We would like to favor documents that are connected by their respective named entities and weight them in more than others. Named entities like noun phrases are very discriminative. In systems like the Columbia Newsblaster system, named entities would be used to determine if a document is rather biographical or has todo with an event of the past. \cite[Columbia stuff]{Nothing}
+  As seen in figure \ref{ner_tags} we are interested in informative terms. Often occuring named entities tend to give a direction what a document is about. If Google occurs in one document, it most likely will have to do with a lot of other documents that are about Google. We would like to favor documents that are connected by their respective named entities and weight them in more than others. Named entities like noun phrases are very discriminative. In systems like the Columbia Newsblaster system, named entities would be used to determine if a document is rather biographical or has todo with an event of the past. \cite{ColumbiaMultiDoc2001}
 
 \section{External Knowledge}
 \label{sec:semantic_selection}
@@ -149,7 +149,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
     \end{split}
     \end{equation}
 
-  We iterate over all words in $d$ and take the first of the hypernyms of the words, projecting it to a higher concept. \wordnet{} sorts the hypernyms from most likely to less likely, taking the first is a good approximation. \cite[Somebody doing stuff with wordnet]{Nothing}
+  We iterate over all words in $d$ and take the first of the hypernyms of the words, projecting it to a higher concept. \wordnet{} sorts the hypernyms from most likely to less likely, taking the first is a good approximation.
   Enhancing the above statement we scale this up to the depth $d$ going up the hypernyms of the \wordnet{} ontologies.
 
     \begin{equation}
@@ -179,7 +179,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
     \end{algorithmic}
     \end{algorithm}
 
-  Then we compute the lowest common hypernyms that connect hypernyms of the word closures. We then apply word pruning to get the mid vector words, sorting out extremes. \cite[Do more with lexical chains]{Nothing}
+  Then we compute the lowest common hypernyms that connect hypernyms of the word closures. We then apply word pruning to get the mid vector words, sorting out extremes. It is also possible to greatly enhance the above models with lexical chains, see \cite{SemanticClusteringWithWordnet} for more.
 
   \subsection{Wikipedia}
   \label{sec:wikpedia}
