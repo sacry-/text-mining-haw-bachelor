@@ -115,10 +115,9 @@ If you have anything setup and your environment configured you can setup the com
   news-clusty --help
   news-clusty scrape
   news-clusty preprocess
-  news-clusty cluster strategy
 ```
 
-Note that this tool is not a generalized abstraction. It is great to scrape and preprocess your data, the clustering only happens if you provide scripts that are used from the shell (not done).
+Note that this tool is not a generalized abstraction. It is great to scrape and preprocess your data, the clustering only happens if you provide scripts that are used from the shell (not done). I would love to provide a general clustering tool with several strategies. THis is on hold now.
 
 ### TODOS ###
 Too many to count. So don't bother starting. This is no release. Lots of things need to be done. More options implemented. Design choices rethought.
