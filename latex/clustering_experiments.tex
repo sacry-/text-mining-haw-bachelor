@@ -3,15 +3,51 @@
 }}{ Donald Knuth }
 
 In this section we evaluate some strategies for single day clustering and multiple day clustering. First we will cluster documents by their day. Multiple days clustering then connects overlapping clusters. Due to time constraints it was not possible to elaborately test multiple days clustering. Instead we will focus on the single day and present strategies that can be tried in the multiple days clustering.\\
-For testing and showing results we used the BBC dataset by \cite{BBCData2006}. The documents are not sorted by date. The original project works with real world data consisting of scraped newspaper articles collected over the course of several months as described in section 3. The BBC dataset had a few limitations in the sense that named entities would not work, dates were not provided, meta data were not given by the authors. Apart from this, the categorical labelling is much more elaborate.\\
+For testing and showing results we used the BBC dataset by \cite{BBCData2006}. The documents are not sorted by date. The original project works with real world data consisting of scraped newspaper articles collected over the course of several months as described in section 3. The BBC dataset had a few limitations in the sense that dates were not provided and meta data were not given by the authors. Additonally the articles were published over a course of two years, whereas news summarization is much more plausible on consecutive days. It is more likely to cluster events that are constrained by time. Apart from this, the categorical labelling is much more elaborate. The Columbia Newsblaster System uses a hierarchical clustering model as well to cluster events into two segments. First by clustering events into categories and then clustering categories into events.\\
 For the source code see the \href{https://github.com/sacry-/text-mining-haw-bachelor/}{News-Clusty Github repository}.
 
 \section{Single day clustering}
+
+Single day clustering is done by focussing on one specific date. The hypothesis is, as long as there are no major news headlines, documents will have a high variance in vector space. Thusly there will be more clusters. First we want to classify news events by classes such as politics, economics or entertainment. For this it is possible to use algorithms with a hard number of final clusters. Alternatively one could use a supervised classifier, which in practice, is much more accurate. Second the resulting clusters, now assigned by news category are clustered again. This time the clustering algorithm has the constraint of automatically detecting the cluster numbers. For this a hierarchical algorithm with soft thresholds was chosen like the BIRCH algorithm. The resulting clusters resemble news events dealing with a similar topic. From here it is possible to gradually increase the quality of resulting news clusters by deleting outliers and merging single document clusters.
+
   \subsection{Implementation}
+  The implementation of a single day clustering algorithm look like this:
+
+    \begin{algorithm}[H]
+    \begin{algorithmic}[1]
+      \caption{Single day clustering}\label{single_day_clustering}
+      \Function{Cluster}{$X_{train},y_{train},\kappa,\alpha,d$}
+        \State $X_{norm},y_{norm} = normalize_{text}(X_{train},y_{train})$
+        \State $X_{project},y_{project} = project(X_{norm},y_{norm})$
+        \State $X_{trans},y_{trans} = transform(X_{project},y_{project})$
+
+        \State $X_{lsi} = lsa(X_{trans}, topics=\alpha)$
+        \State $X_{dim} = reduce\_dimensions(X_{lsi}, dimensions=d)$
+        \State $X_{sim} = similarity(X_{dim})$
+        \State $X_{scaled} = scale(X_{sim})$
+        \State $model,centroids,labels,k = cluster(X_{scaled}, clusters=\kappa)$
+
+        \State \Return $model,centroids,labels,k$
+      \EndFunction
+    \end{algorithmic}
+    \end{algorithm}
+
+  The general implementation \ref{single_day_clustering} is separated into several steps. As input the function gets a training set $X_{train}$ and a label set $y_{train}$. $\kappa$ is an optional parameter for the total amount of cluster centers. $\alpha$ a parameter that sets a desired size of topics for models like \lsa{}. And a dimension $d$ to reduce $X$ to for visualization by e.g. \pca{}.
+
+    \begin{enumerate}
+      \item \emph{normalize} takes $X_{train}$ and $y_{train}$ to remove special characters, stopwords, numbers. Lower casing any words and removing non english characters or sentences. 
+      \item \emph{project} is any kind of projection strategy via \wordnet{}, noun phrases or named entities, lowering word sense disambiguation and dimensions.
+      \item \emph{transform} takes in the projected data and transforms it via TF-IDF, word pruning, as well as ngram enhancement.
+      \item \emph{lsa} is an optional step that transforms the resulting data to dense low dimensional matrices, keeping as much variance as possible while reducing noise
+      \item \emph{reduce\_dimensions} is an alternative step that reduces the dimension of the data normally to 2d or 3d to plot clusterings. This is typically done by \pca{}.
+      \item \emph{similarity} transforms document x term vectors to document to document similarity by cosine or euclidean distance measures.
+      \item \emph{scale} is a second normalization step, scaling the data by variance and average.
+      \item \emph{cluster} finally takes the matrix $X_{scaled}$ and clusters by a hard constrained clustering number. If not supplied the clustering algorithm needs to predict a cluster number automatically. This results in the actual cluster amount $k$. The resulting trained clustering $model$. The $centroids$ in case they are actively calculated e.g. by $K-Means$. And finally the $labels$, the assignment from a document to a corresponding cluster.
+    \end{enumerate}
+
   \subsection{Evaluation}
   \subsection{Interpretation}
 
 \section{Multiple days clustering}
-  \subsection{Time data}
-  \subsection{Time data}
+
 
