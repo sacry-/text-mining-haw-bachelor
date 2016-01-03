@@ -7,10 +7,10 @@
   - fix typos
   - find a red line
 
-- Introduction:
++ Introduction:
   + write introduction
 
-- Basics:
++ Basics:
   + LSA, SVD explanation, check dimensions
   + PCA, overhaul, check dimensions
   + EM, read again, overhaul
@@ -25,11 +25,17 @@
   + Wikipedia reference
 
 - Features selection and semantics
-  - concept
+  + concept
+  - wikipedia
 
 - Experiments
   + start
-  - concept
+  + concept
+  - clustering schemes
+  - description
+  - define strategies
+  - evaluate strategies
+  - multiple days clustering, how to
 
 - Results
   - concept
