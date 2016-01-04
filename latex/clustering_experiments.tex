@@ -85,13 +85,42 @@ In the following the two steps are refined. First we want to classify news event
       \item \emph{clustering algorithm} constrains, such as density thresholds and maximum \emph{HAC} depths. Classification is constrained by $k=5$ for the categories of the BBC dataset.
     \end{enumerate}
 
-  Comparing the different strategies with \lsa{} enabled for the classification task comes down to 
+  Comparing the different strategies with \lsa{} enabled for the classification task is shown in table \ref{comparison_single_with_lsa}. Note that the \emph{purity}, \emph{v-measure} and \emph{silhouette score} is averaged over 5 consecutive runs.
 
-    Image comparison
+    \begin{center}\label{comparison_single_with_lsa}
+      \begin{tabular}{ c | c | c | c }
+      Strategy    & purity  & v-measure & silhouette \\ \hline
+      Word tokens & 0.931   & 0.820     & 0.264 \\
+      Syntactic   & 0.841   & 0.669     & 0.191 \\
+      Word + noun tokens & 0.933   & 0.818     & 0.182 \\
+      \wordnet{} $hypernyms_{first}$ & 0.805   & 0.61     & 0.175 \\
+      \wordnet{} lemmatization   & 0.888   & 0.758     & 0.241 \\
+      \end{tabular}
+    \end{center}
 
-  without topic models
+  Concluding from this, pure word tokens lead to the highest v-measure. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. Word tokens ex or including noun phrases. With \wordnet{} lemmatization we have a highly effective approach which reduces the dimensions dramastically and still performs well.\\
+  We can see in table \ref{comparison_single_without_lsa} the same measurement without \lsa{}. Note that \lda{} was explicitly excluded from the possible topic modelling techniques as it promotes a poor pre clustering step, because it achieves a several topics for one document model. Instead it is much more reasonable to use \lda{} or \hdp{} in the second clustering run.
 
-    Image comparison
+    \begin{center}\label{comparison_single_without_lsa}
+      \begin{tabular}{ c | c | c | c }
+      Strategy    & purity  & v-measure & silhouette \\ \hline
+      Word tokens & 0.931   & 0.820     & 0.264 \\
+      Syntactic   & 0.841   & 0.669     & 0.191 \\
+      Word + noun tokens & 0.933   & 0.818     & 0.182 \\
+      \wordnet{} $hypernyms_{first}$ & 0.805   & 0.61     & 0.175 \\
+      \wordnet{} lemmatization   & 0.758   & 0.888     & 0.241 \\
+      \end{tabular}
+    \end{center}
+
+  hyper
+  averaged v-measure 0.609544796967
+  averaged purity 78.64788732394366
+  averaged s_silhouette 0.0478697423961
+
+  lemmas
+  averaged v-measure 0.556078309346
+  averaged purity 75.94366197183099
+  averaged s_silhouette 0.0974105216355
 
   Resulting in..
 
