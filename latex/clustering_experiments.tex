@@ -2,21 +2,25 @@
   ``An algorithm must be seen to be believed.''
 }}{ Donald Knuth }
 
-In this section we evaluate some strategies for single day clustering and multiple day clustering. First we will cluster documents by their day. Multiple days clustering then connects overlapping clusters. Due to time constraints it was not possible to elaborately test multiple days clustering. Instead we will focus on the single day and present strategies that can be tried in the multiple days clustering.\\
-For testing and showing results we used the BBC dataset by \cite{BBCData2006}. The documents are not sorted by date. The original project works with real world data consisting of scraped newspaper articles collected over the course of several months as described in section 3. The BBC dataset had a few limitations in the sense that dates were not provided and meta data were not given by the authors. Additonally the articles were published over a course of two years, whereas news summarization is much more plausible on consecutive days. It is more likely to cluster events that are constrained by time. Apart from this, the categorical labelling is much more elaborate. The Columbia Newsblaster System uses a hierarchical clustering model as well to cluster events into two segments. First by clustering events into categories and then clustering categories into events.\\
-For the source code see the \href{https://github.com/sacry-/text-mining-haw-bachelor/}{News-Clusty Github repository}.
+In this section we evaluate some strategies for clustering. At first we will show how a single day of news events are clustered. Then clustering news events over several days. Due to time constraints it was not possible to elaborately test multiple days clustering. It is a notoriously difficult topic that greatly relies on the data and time. Originally it was intended to use a scraped dataset over several month, categorized by date, with as much meta data as possible. As this is at the barrier of legallity, a smaller standardized dataset namely the BBC dataset by \cite{BBCData2006} was used. In the original dataset it was possible to assume that the data was ordered and sorted by day. Several thousand articles could then be easily clustered on a daily basis and enhanced over the course of several months. Instead we are focusing on how the BBC dataset can be clustered and evaluated. Multiple day clustering will be depicted, but not in any form evaluated.\\
+
+The BBC dataset had a few limitations in the sense that dates were not provided and meta data not provided by the authors. As such we treat the data as a a bulk of events occuring in the timeframe of 2004-2005. Fortunately unlike real world data the articles are tagged with precise categorical labels, so external evaluation measures were an option. There were limitations in time to find a more adequate set of articles that were consecutively sorted by day in a broader category such as ``world news''.\\
+
+The clustering was done in several steps, similar to the Columbia Newsblaster system.\cite[Columbia stuff]{Nothing} A hierarchical clustering approach by first clustering events into categories like politics, business or entertainment and second clustering the categories into distinct events. The classification in the first step garantuees some broader topical cohesion. In the BBC dataset a purity of up to 94\% could be achieved on the test set. This is unusually high, but is probably due to the normalized dataset that represents the classes exceptionally well. The real world dataset could go as high as 45\% purity and less. \cite[some other evaluation here]{Nothing} The purity on the BBC dataset varies broadly between 79\% and 94\%. This variability results in overlapping topics where the majority of documents in a cluster are in the same class. Each of the resulting clusters resembling the underlying classes are reclustered. A clustering algorithm that optionally does not take any constraints on the amount of clusters is used. In this second step clusters represent news events on several topics per cluster.\\
+
+Some final words on the measurement of the two steps. In the first step it is easy to evaluate how well documents were assigned to their respective classes. In the second step however evaluation is not that simple. At this point, we are interested in document similarity based on content and not class labels. The results of the second clustering are informal and not measured.
 
 \section{Single day clustering}
 
-Single day clustering is done by focussing on one specific date. The hypothesis is, as long as there are no major news headlines, documents will have a high variance in vector space. Thusly there will be more clusters. First we want to classify news events by classes such as politics, economics or entertainment. For this it is possible to use algorithms with a hard number of final clusters. Alternatively one could use a supervised classifier, which in practice, is much more accurate. Second the resulting clusters, now assigned by news category are clustered again. This time the clustering algorithm has the constraint of automatically detecting the cluster numbers. For this a hierarchical algorithm with soft thresholds was chosen like the BIRCH algorithm. The resulting clusters resemble news events dealing with a similar topic. From here it is possible to gradually increase the quality of resulting news clusters by deleting outliers and merging single document clusters.
+Single day clustering is done by focussing on one specific date. The hypothesis is, as long as there are no major news headlines, documents will have a high variance in vector space. Thusly there will be more clusters. First we want to classify news events by classes, in case of the BBC dataset: politics, business, entertainment, tech and sports. For this it is possible to use algorithms with a hard number of final clusters to classify documents into the classes. Alternatively one could use a supervised classifier, which in practice, is much more accurate. Second the resulting clusters, now assigned by news category are clustered again. This time the clustering algorithm has the constraint of automatically detecting the cluster numbers. For this a hierarchical algorithm with soft thresholds was chosen like BIRCH or Ward linkage. The resulting clusters resemble news events dealing with a similar topic.
 
   \subsection{Implementation}
-  The implementation of a single day clustering algorithm look like this:
+  The implementation of a more general clustering algorithm in the text domain can vary drastically. A general scheme is given by algorithm \ref{single_day_clustering}.
 
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
       \caption{Single day clustering}\label{single_day_clustering}
-      \Function{Cluster}{$X_{train},y_{train},\kappa,\alpha,d$}
+      \Function{SingleCluster}{$X_{train},y_{train},\kappa,\alpha,d$}
         \State $X_{norm},y_{norm} = normalize_{text}(X_{train},y_{train})$
         \State $X_{project},y_{project} = project(X_{norm},y_{norm})$
         \State $X_{trans},y_{trans} = transform(X_{project},y_{project})$
@@ -32,19 +36,21 @@ Single day clustering is done by focussing on one specific date. The hypothesis 
     \end{algorithmic}
     \end{algorithm}
 
-  The general implementation \ref{single_day_clustering} is separated into several steps. As input the function gets a training set $X_{train}$ and a label set $y_{train}$. $\kappa$ is an optional parameter for the total amount of cluster centers. $\alpha$ a parameter that sets a desired size of topics for models like \lsa{}. And a dimension $d$ to reduce $X$ to for visualization by e.g. \pca{}.
+  The general implementation \ref{single_day_clustering} is separated into several steps. As input the function gets a training set $X_{train}$ and a label set $y_{train}$. $\kappa$ is an optional parameter for the total amount of cluster centers. $\alpha$ a parameter that sets a desired size of topics for models like \lsa{}. And a dimension $d$ to reduce $X$ to for visualization purposes by e.g. \pca{}.
 
     \begin{enumerate}
       \item \emph{normalize} takes $X_{train}$ and $y_{train}$ to remove special characters, stopwords, numbers. Lower casing any words and removing non english characters or sentences. 
-      \item \emph{project} is any kind of projection strategy via \wordnet{}, noun phrases or named entities, lowering word sense disambiguation and dimensions.
+      \item \emph{project} is any kind of projection strategy via \wordnet{}, noun phrases or named entities, lowering word sense disambiguation and dimensions. This step deals with the initial seed of knowledge that is used throughout the algorithm.
       \item \emph{transform} takes in the projected data and transforms it via TF-IDF, word pruning, as well as ngram enhancement.
-      \item \emph{lsa} is an optional step that transforms the resulting data to dense low dimensional matrices, keeping as much variance as possible while reducing noise
-      \item \emph{reduce\_dimensions} is an alternative step that reduces the dimension of the data normally to 2d or 3d to plot clusterings. This is typically done by \pca{}.
+      \item \emph{lsa} is an optional step that transforms the resulting data to dense low dimensional matrices, keeping as much variance as possible while reducing noise.
+      \item \emph{reduce\_dimensions} is an alternative step that reduces the dimension of the data to 2d or 3d plotting clusters. This is typically done by \pca{}.
       \item \emph{similarity} transforms document x term vectors to document to document similarity by cosine or euclidean distance measures.
       \item \emph{scale} is a second normalization step, scaling the data by variance and average.
-      \item \emph{cluster} finally takes the matrix $X_{scaled}$ and clusters by a hard constrained clustering number. If not supplied the clustering algorithm needs to predict a cluster number automatically. This results in the actual cluster amount $k$. The resulting trained clustering $model$. The $centroids$ in case they are actively calculated e.g. by $K-Means$. And finally the $labels$, the assignment from a document to a corresponding cluster.
+      \item \emph{cluster} finally takes the matrix $X_{scaled}$ and clusters based on a hard constrained clustering number. If not supplied the clustering algorithm needs to predict a cluster number automatically. This results in the actual cluster amount $k$. The resulting trained clustering $model$. The $centroids$ in case they are actively calculated e.g. by $K-Means$. And finally the $labels$, the assignment from a document to a corresponding cluster.
     \end{enumerate}
 
+  The implementation is a rough scetch of a real clustering scheme. In reality most of the beforementioned steps can be parameterized or constrained by addtional arguments. Either a configuration object is specified or each clustering strategy is subject to its own script.
+  
   \subsection{Evaluation}
   Strategies with concret functions, e.g. wordnet vs. sents vs. nouns and ners vs. lsi vs lda in categorization
 
