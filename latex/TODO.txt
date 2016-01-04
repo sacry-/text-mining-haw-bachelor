@@ -1,11 +1,9 @@
 
 - Global:
-  - diversify english
-  - make explanations as easy as possible
   - make sentences short and concise
   - fix language errors
   - fix typos
-  - find a red line
+  - normalize variables, consistent notation etc.
 
 + Introduction:
   + write introduction
@@ -31,9 +29,9 @@
 - Experiments
   + start
   + concept
-  - clustering schemes
-  - description
-  - define strategies
+  + clustering schemes
+  + description
+  + define strategies
   - evaluate strategies
   - multiple days clustering, how to
 
