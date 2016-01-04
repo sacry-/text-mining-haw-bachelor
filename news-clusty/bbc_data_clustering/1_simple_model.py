@@ -28,17 +28,13 @@ def setup_data(bbc_data):
   return X, y
 
 def configuration():
-  for idx, topics in enumerate([5, 10, 20, 25, 225]):
+  for idx, topics in enumerate([50, 50, 50, 50, 50]):
     yield (idx, 5, topics)
 
 
 if __name__ == "__main__":
   bbc = BBCDocuments()
-  knowledge = bbc.concat(
-    bbc.title_tokens(),
-    bbc.nouns(),
-    bbc.sents()
-  )
+  knowledge = bbc.wordnet("lemmas")
   
   bbc_data = BBCData( 
     bbc, 
@@ -53,7 +49,7 @@ if __name__ == "__main__":
   runs, reports = [], []
   report_name = "1_simple_model.txt"
   algo_name = "Ward Linkage"
-  should_create_report = True
+  should_create_report = False
 
   for index, n_clusters, n_topics in configuration():
     print(index, "-"*20, (n_clusters, n_topics), "-"*20)
@@ -61,7 +57,7 @@ if __name__ == "__main__":
     run = Run( 
       clusterer=ward_linkage,
       cluster_config=(n_clusters,),
-      topic_model=lsa,
+      topic_model=None,
       similarity=cosine_similarity,
       normalization=normalize,
       labels=labels, 
@@ -85,3 +81,8 @@ if __name__ == "__main__":
 
     if should_create_report: 
       report_for_run(run, reports).dump( report_name )
+
+  from cluster_report import averaged_runs, partial_purity_average
+  averaged_runs( runs )
+  partial_purity_average( runs )
+
