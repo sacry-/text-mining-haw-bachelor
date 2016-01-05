@@ -1,3 +1,5 @@
+from __future__ import division
+
 import logging
 import numpy as np
 
@@ -56,10 +58,18 @@ Sources:
   - Online Learning for Latent Dirichlet Allocation, M. Hoffman, D. Blei, F. Bach, 2010
   - Stochastic Variational Inference, M. Hoffman, D. Blei, C. Wang, J. Paisley, 2013
 '''
-def lda(x, n_topics=20, max_iter=5):
+def lda(x, n_topics=20, max_iter=5, doc_topic_prior=None, topic_word_prior=None):
+  if not doc_topic_prior:
+    doc_topic_prior = 1 / n_topics
+
+  if not topic_word_prior:
+    topic_word_prior = 1 / n_topics
+    
   print("LDA sklearn: topics={}".format(n_topics))
   ldam = LatentDirichletAllocation(
-    n_topics=n_topics, 
+    n_topics=n_topics,
+    doc_topic_prior=doc_topic_prior, 
+    topic_word_prior=topic_word_prior,
     max_iter=max_iter,
     learning_method='online',
     learning_offset=50.,

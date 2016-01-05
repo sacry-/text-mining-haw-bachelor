@@ -141,8 +141,8 @@ class BBCData():
 
   def _labels(self, data):    
     for category, point in data.items():
-      category_id = self.bbc.cat_to_id()[category]
-      yield from map(lambda x: category_id, point)
+      category_ids = self.bbc.cat_to_id()[category]
+      yield from map(lambda x: category_ids, point)
 
   def _data(self, data):
     yield from flatmap(lambda x: " ".join(x), data.values())

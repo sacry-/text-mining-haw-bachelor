@@ -1,11 +1,13 @@
 from data_view import BBCDocuments
 from data_view import BBCData
 
+from io_utils import print_clusters
+
 from cluster_eval import ClusterEval
 from cluster_report import Report
 from cluster_report import CompositeStats
 
-from features import tfidf_vector
+from features import tfidf_vector, count_vector
 from features import lsa
 from features import pca
 from features import lda
@@ -21,6 +23,8 @@ from clustering import ward_linkage
 from clustering import kmeans
 from clustering import birch
 
+from collections import defaultdict
+from collections import Counter
 
 
 def setup_data(bbc, knowledge):
@@ -44,7 +48,7 @@ def setup_data(bbc, knowledge):
   return x, y, labels, named_labels
 
 
-def knowledge_profiles(bbc):
+def knowledge_profiles(bbc, scope=None):
   knowledges = {
     "word_tokens" : bbc.concat(
       bbc.sents(), 
@@ -59,21 +63,25 @@ def knowledge_profiles(bbc):
       bbc.sents()
     ),
     "wordnet_fst_hyper" : bbc.wordnet("fst_hyper"),
+    "wordnet_hyper_1" : bbc.wordnet("hyper_1"),
     "wordnet_lemmas" : bbc.wordnet("lemmas")
   }
+
+  if scope:
+    return [(scope, knowledges[scope])]
 
   return knowledges.items()
 
 
 
-def main( bbc ):
+def classify_cluster( bbc ):
   report_name = "1_simple_model.txt"
   algo_name = "Ward Linkage"
   should_create_report = False
 
   n_clusters = 5
   n_topics = 150
-  topic_model = None
+  topic_model = pca
   similarity = cosine_similarity
   normalization = normalize
 
@@ -106,22 +114,25 @@ def main( bbc ):
     if should_create_report: 
       report.dump( report_name )
 
-  for evaluation in sorted(evals, key=lambda x: -x.v_measure):
-    print( evaluation )
+  return evals
 
-  return CompositeStats( evals )
-
-  
-if __name__ == "__main__":
-  bbc = BBCDocuments()
-
+def evaluate_classification(bbc):
   composites = []
   for knowledge_name, knowledge in knowledge_profiles( bbc ):
-    composite = main( bbc )
-    print( composite )
+    evals = classify_cluster( bbc, knowledge )
+
+    for evaluation in sorted(evals, key=lambda x: -x.v_measure):
+      print( evaluation )
+    print( CompositeStats( evals ) )
     composites.append( (knowledge_name, composite) )
     
   for (knowledge_name, composite) in composites:
     print(knowledge_name)
     print(composite)
+
+
+
+if __name__ == "__main__":
+  bbc = BBCDocuments()
+  evaluate_classification( bbc )
 
