@@ -13,11 +13,21 @@ from sklearn.metrics.cluster import v_measure_score
 
 class ClusterEval():
 
-  def __init__(self, x, c, labels, named_labels):
+  def __init__( self, algo_name, x, c, 
+                labels, named_labels,
+                n_clusters=None, 
+                n_topics=None 
+              ):
+    self.algo_name = algo_name
     self.x = x
     self.c = c
     self.labels = labels
     self.named_labels = named_labels
+
+    self.n_clusters = n_clusters
+    self.n_topics = n_topics
+
+    self.calculate_scores()
 
   def calculate_scores(self):
     x, c, labels = self.x, self.c, self.labels
@@ -53,6 +63,16 @@ class ClusterEval():
     purity = (true / (true + false)) * 100
 
     return purity, partial_pure
+
+  def __repr__(self):
+    return "config: ({}, {}) purity: {}% v_measure: {} adjusted_rand: {} silhouette: {}".format(
+      self.n_clusters,
+      self.n_topics,
+      self.purity, 
+      self.v_measure, 
+      self.adjusted_rand, 
+      self.silhouette
+    )
 
 
 

@@ -147,13 +147,13 @@ class BBCData():
   def _data(self, data):
     yield from flatmap(lambda x: " ".join(x), data.values())
   
-  def X(self):
+  def x(self):
     return list( self._data(self.train) )
 
   def y(self):
     return list( self._labels(self.train) )
 
-  def X_test(self):
+  def x_test(self):
     return list( self._data(self.test) )
 
   def y_test(self):
