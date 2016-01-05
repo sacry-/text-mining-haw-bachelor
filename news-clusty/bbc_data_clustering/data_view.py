@@ -145,7 +145,7 @@ class BBCData():
       yield from map(lambda x: category_ids, point)
 
   def _data(self, data):
-    yield from flatmap(lambda x: " ".join(x), data.values())
+    yield from flatmap(lambda x: self.post_process(" ".join(x)), data.values())
   
   def x(self):
     return list( self._data(self.train) )
@@ -166,6 +166,11 @@ class BBCData():
   def category_ids_train(self):
     return [self.bbc.cat_to_id()[self.bbc.categories()[_id]] 
             for _id in self.index_train]
+
+  def post_process(self, s):
+    for replacer in ["mr", "said"]:
+      s = s.replace(replacer, "").strip()
+    return s
 
 
 

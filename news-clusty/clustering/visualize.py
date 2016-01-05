@@ -24,12 +24,13 @@ def cluster_plot_3d(x, centroids, c, k, name):
   fig = plt.figure()
   fig.canvas.set_window_title(name)
   ax = fig.add_subplot(111, projection='3d')
+  ax.grid(b=False)
   fig.suptitle("n clusters = {}".format(k), fontsize=12)
   point_colors = get_colors(k)
 
   cluster_size = {cidx: np.where(c == cidx)[0].shape[0] for cidx in range(0,k)}
   for i, cidx in enumerate(c):
-    if cluster_size[cidx] <= 3:  
+    if cluster_size[cidx] <= 1:  
       ax.scatter(x[i,0], x[i,1], x[i,2],
         c="black", marker='x', zorder=-1
       )

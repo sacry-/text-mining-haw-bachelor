@@ -2,6 +2,8 @@ from data_view import BBCDocuments
 from data_view import BBCData
 
 from io_utils import print_clusters
+from io_utils import print_top_words
+from io_utils import plot
 
 from cluster_eval import ClusterEval
 from cluster_report import Report
@@ -48,9 +50,7 @@ def setup_data(bbc, knowledge):
   return x, y, labels, named_labels, x_orig
 
 
-def cluster(c, x_orig, bbc):
-  print(len(c), len(x_orig))
-
+def flattened_mapping(c, x_orig, bbc):
   cluster_to_docs = defaultdict(list)
   for doc_id, c_id in enumerate(c):
     cluster_to_docs[c_id].append( doc_id )
@@ -61,30 +61,52 @@ def cluster(c, x_orig, bbc):
       docs.append( x_orig[doc_id] )
       fids.append( bbc.titles()[doc_id] )
 
-    z, _ = tfidf_vector( docs, ngram=(1,1), max_df=0.8, min_df=3 )
-    z, _ = lsa( z, 100 )
-    z = cosine_similarity(z)
-    z = normalize(z)
-    _, (centroids, c_sub, k) = birch(z, n_clusters=100, threshold=0.5, branching_factor=10)
+    yield (c_id, docs, fids)
 
-    d = defaultdict(list)
-    for sub_doc_id, sub_cluster_id in enumerate(c_sub):
-      d[sub_cluster_id].append( fids[sub_doc_id] )
 
-    for cluster_id, document_titles in d.items():
-      '''
-      if len(document_titles) > 2:
-        print(cluster_id, len(document_titles))
-        for document_title in document_titles:
-          print(" ", document_title)
-      '''
-      pass
-    print("total:", k)
+def cluster(c, x_orig, bbc):
+  switch = 2
+
+  for c_id, docs, fids in flattened_mapping(c, x_orig, bbc):
+    n_events = int(len(docs) / 2)
+
+    if switch == 0:
+      z, _ = tfidf_vector( docs, ngram=(1,1), max_df=0.8, min_df=3 )
+      z, _ = lsa( z, n_events )
+      z = cosine_similarity(z)
+      z = normalize(z)
+      _, (centroids, c_sub, k) = ward_linkage(z, n_clusters=n_events )
+
+      d = defaultdict(list)
+      for sub_doc_id, sub_cluster_id in enumerate(c_sub):
+        d[sub_cluster_id].append( fids[sub_doc_id] )
+
+      for cluster_id, document_titles in d.items():
+        if len(document_titles) > 1:
+          print(cluster_id, len(document_titles))
+          for document_title in document_titles:
+            print(" ", document_title)
+
+    elif switch == 1:
+      z, vsmodel = count_vector( docs, ngram=(1,1), max_df=0.9, min_df=2 )
+      z, model = lda( z, n_topics=int(n_events / 4), max_iter=50 )
+      print_top_words(
+        model, vsmodel.get_feature_names(), 
+        n_top_words=7, n_topics=10
+      )
+
+    elif switch == 2:
+      z, _ = tfidf_vector( docs, ngram=(1,1), max_df=0.8, min_df=3 )
+      z, _ = lsa( z, n_events )
+      z, _ = pca( z, 2 )
+      _, (centroids, c_sub, k) = kmeans(z, n_clusters=int(n_events/2.5))
+      plot(z, centroids, c_sub, k, "KMeans", 2)
 
 def single_day(bbc):
   knowledge = list(bbc.concat(
-    bbc.nouns(),
-    bbc.sents()
+    bbc.sents(),
+    bbc.title_tokens(),
+    bbc.nouns()
   ))
 
   x, y, labels, named_labels, x_orig = setup_data( bbc, knowledge )

@@ -17,8 +17,8 @@ def plot(x_red, centroids, c, k, cluster_algo_name, dim):
   else:
     cluster_plot_3d(x_red, centroids, c, k, cluster_algo_name)
 
-def print_top_words(model, feature_names, n_top_words):
-  for topic_idx, topic in enumerate(model.components_):
+def print_top_words(model, feature_names, n_top_words, n_topics):
+  for topic_idx, topic in enumerate(model.components_[:n_topics]):
     print("Topic #%d:" % topic_idx)
     print(" ".join([feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]))
   print()
