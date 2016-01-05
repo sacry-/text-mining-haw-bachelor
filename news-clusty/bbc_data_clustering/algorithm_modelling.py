@@ -22,6 +22,7 @@ from clustering import kmeans
 from clustering import birch
 
 
+
 def setup_data(bbc, knowledge):
   bbc_data = BBCData( 
     bbc, 
@@ -65,63 +66,62 @@ def knowledge_profiles(bbc):
 
 
 
-
-
-if __name__ == "__main__":
+def main( bbc ):
   report_name = "1_simple_model.txt"
   algo_name = "Ward Linkage"
   should_create_report = False
 
-  bbc = BBCDocuments()
-
   n_clusters = 5
   n_topics = 150
-  topic_model = lsa
+  topic_model = None
   similarity = cosine_similarity
   normalization = normalize
 
+  evals = []
+  for _ in range(0, 5):
+    x, y, labels, named_labels = setup_data( bbc, knowledge )
+
+    if topic_model:
+      x, _ = topic_model( x, n_topics )
+
+    if similarity:
+      x = similarity(x)
+
+    if normalization:
+      x = normalization(x)
+    
+    print( x.shape )
+
+    _, (centroids, c, k) = ward_linkage( x, n_clusters )
+
+    evaluation = ClusterEval(algo_name, x, c, 
+      labels, named_labels,
+      n_clusters=n_clusters, 
+      n_topics=n_topics
+    )
+    evals.append( evaluation )
+
+    report = Report( evaluation )
+    print( report )
+    if should_create_report: 
+      report.dump( report_name )
+
+  for evaluation in sorted(evals, key=lambda x: -x.v_measure):
+    print( evaluation )
+
+  return CompositeStats( evals )
+
+  
+if __name__ == "__main__":
+  bbc = BBCDocuments()
+
   composites = []
-  for knowledge_name, knowledge in knowledge_profiles(bbc):
-
-    evals = []
-    for _ in range(0, 5):
-      
-      x, y, labels, named_labels = setup_data( bbc, knowledge )
-
-      if topic_model:
-        x, _ = topic_model( x, n_topics )
-
-      if similarity:
-        x = similarity(x)
-
-      if normalization:
-        x = normalization(x)
-      
-      print( x.shape )
-
-      _, (centroids, c, k) = ward_linkage( x, n_clusters )
-
-      evaluation = ClusterEval(algo_name, x, c, 
-        labels, named_labels,
-        n_clusters=n_clusters, 
-        n_topics=n_topics
-      )
-      evals.append( evaluation )
-
-      report = Report( evaluation )
-      print( report )
-      if should_create_report: 
-        report.dump( report_name )
-
-    for evaluation in sorted(evals, key=lambda x: -x.v_measure):
-      print( evaluation )
-    composite = CompositeStats( evals )
+  for knowledge_name, knowledge in knowledge_profiles( bbc ):
+    composite = main( bbc )
     print( composite )
-
     composites.append( (knowledge_name, composite) )
-
+    
   for (knowledge_name, composite) in composites:
     print(knowledge_name)
     print(composite)
-    print("-"*40)
 
