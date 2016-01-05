@@ -99,8 +99,8 @@ def cluster(c, x_orig, bbc):
       z, _ = tfidf_vector( docs, ngram=(1,1), max_df=0.8, min_df=3 )
       z, _ = lsa( z, n_events )
       z, _ = pca( z, 2 )
-      _, (centroids, c_sub, k) = kmeans(z, n_clusters=int(n_events/2.5))
-      plot(z, centroids, c_sub, k, "KMeans", 2)
+      _, (centroids, c_sub, k) = birch(z, threshold=0.19, branching_factor=10)
+      plot(z, centroids, c_sub, k, "BIRCH", 2)
 
 def single_day(bbc):
   knowledge = list(bbc.concat(
