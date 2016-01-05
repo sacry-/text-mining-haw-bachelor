@@ -71,10 +71,10 @@ In the following the two steps are refined. First we want to classify news event
   The implementation \ref{single_day_clustering} is a rough scetch of what the \emph{News-Clusty} system does. First get the data by a timestamp e.g. ``20150701'', cluster the data by a fixed $\kappa$ and then use the resulting cluster assignments $X_{assigned}$ to group news events. Note that $general\_cluster$ in the second run has a $nil$ argument, because we do not want to constrain by cluster amount. The clustering now depends entirely on the variation of the intermediate procedures of $general\_cluster$ and is now an optimization problem. 
 
   \subsection{Evaluation}
-  Running several different strategies against each other we can find that several ways lead to a good result in the categorial clustering. The second clustering is not of utmost importance in the evaluation approach but is depicted later on. We can vary several parameters. To narrow down the combinatoric explosion in parameter estimation some assumptions can be made. During the time of the experiments, several parameters were optimized resulting in the following variations.
+  In the evaluation section the beforementioned measuring strategies are used. Several different strategies are weighted against each other. It was found, that there are several different ways with a good performance in the categorial clustering approach. The second clustering is not of utmost importance in the evaluation but is depicted later on. A major problem is, that several parts of the proposed algorithm has parameters that need to be estimated. To narrow down this combinatoric explosion of parameters, several assumptions can be made.
 
     \begin{enumerate}
-      \item Limiting the strategies to simple word tokens, noun phrases and \wordnet{} first hypernym as well as lemmatization.
+      \item Limiting the strategies to simple word tokens and their document titles except stopwords, noun phrases and ner tags as well as \wordnet{} first hypernym and \wordnet{}lemmatization.
 
       \item \emph{Transforming} by \emph{TF-IDF} with a 80\% maximum threshold and a hard count $3$ for minimum threshold, excluding ngrams.
 
@@ -85,49 +85,84 @@ In the following the two steps are refined. First we want to classify news event
       \item \emph{clustering algorithm} constrains, such as density thresholds and maximum \emph{HAC} depths. Classification is constrained by $k=5$ for the categories of the BBC dataset.
     \end{enumerate}
 
-  Comparing the different strategies with \lsa{} enabled for the classification task is shown in table \ref{comparison_single_with_lsa}. Note that the \emph{purity}, \emph{v-measure} and \emph{silhouette score} is averaged over 5 consecutive runs.
+  A comparisson of the different strategies with \lsa{} enabled, for the classification task, is shown in table \ref{comparison_single_with_lsa}. Note that the \emph{purity}, \emph{v-measure} and \emph{silhouette score} is averaged over 5 consecutive runs.
 
     \begin{center}\label{comparison_single_with_lsa}
       \begin{tabular}{ c | c | c | c }
-      Strategy    & purity  & v-measure & silhouette \\ \hline
-      Word tokens & 0.931   & 0.820     & 0.264 \\
-      Syntactic   & 0.841   & 0.669     & 0.191 \\
-      Word + noun tokens & 0.933   & 0.818     & 0.182 \\
-      \wordnet{} $hypernyms_{first}$ & 0.805   & 0.61     & 0.175 \\
-      \wordnet{} lemmatization   & 0.888   & 0.758     & 0.241 \\
+      Strategy    & v-measure & purity  & silhouette \\ \hline
+      Word tokens & 0.812     & 0.926   & 0.118      \\
+      Syntactic   & 0.795     & 0.916     & 0.109 \\
+      Word + noun tokens & 0.826   & 0.934     & 0.118 \\
+      \wordnet{} $hypernyms_{first}$ & 0.710   & 0.884     & 0.068 \\
+      \wordnet{} lemmatization   & 0.726   & 0.895     & 0.069 \\
       \end{tabular}
     \end{center}
 
-  Concluding from this, pure word tokens lead to the highest v-measure. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. Word tokens ex or including noun phrases. With \wordnet{} lemmatization we have a highly effective approach which reduces the dimensions dramastically and still performs well.\\
-  We can see in table \ref{comparison_single_without_lsa} the same measurement without \lsa{}. Note that \lda{} was explicitly excluded from the possible topic modelling techniques as it promotes a poor pre clustering step, because it achieves a several topics for one document model. Instead it is much more reasonable to use \lda{} or \hdp{} in the second clustering run.
+  Concluding from this, word tokens in combination with noun phrases lead to the highest v-measure. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. word tokens and noun phrases. With \wordnet{} lemmatization we have a highly effective approach. That is, from the original 12000 feature dimensions we projected to 6000. Except for lemmatization, \wordnet{} approaches performed worse than the mentioned strategies.\\
+  We can see in table \ref{comparison_single_without_lsa}, that the same measurement without \lsa{} performs in almost all instances worse. Note that \lda{} was explicitly excluded from the possible topic modelling techniques as it promotes a poor pre clustering step. This is due to the fact that \lda{} maps several topics to documents, resulting in documents having assignments to many topics. This is a desired property for the second clustering run.
 
     \begin{center}\label{comparison_single_without_lsa}
       \begin{tabular}{ c | c | c | c }
-      Strategy    & purity  & v-measure & silhouette \\ \hline
-      Word tokens & 0.931   & 0.820     & 0.264 \\
-      Syntactic   & 0.841   & 0.669     & 0.191 \\
-      Word + noun tokens & 0.933   & 0.818     & 0.182 \\
-      \wordnet{} $hypernyms_{first}$ & 0.805   & 0.61     & 0.175 \\
-      \wordnet{} lemmatization   & 0.758   & 0.888     & 0.241 \\
+      Strategy    & v-measure & purity  & silhouette \\ \hline
+      Word tokens & 0.667     & 0.831   & 0.073      \\
+      Syntactic   & 0.634     & 0.794     & 0.067 \\
+      Word + noun tokens & 0.666   & 0.831     & 0.074 \\
+      \wordnet{} $hypernyms_{first}$ & 0.585   & 0.784     & 0.048 \\
+      \wordnet{} lemmatization   & 0.585   & 0.784     & 0.048 \\
       \end{tabular}
     \end{center}
 
-  hyper
-  averaged v-measure 0.609544796967
-  averaged purity 78.64788732394366
-  averaged s_silhouette 0.0478697423961
+  The discrepancy between v-measure, purity and silouhette is expected. v-measure takes into account that several clusters contain an amount of labels that are not dominant. The higher the variance of spreading labels, even if their occurence count is low, leads to a penalty in v-measure. Purity on the other hand compares how many dominant labels are in one cluster and penalizes for each non dominant label. It does not account for the variety of falsely assigned labels. The silhouette score is extraordinary low due to the high dimensionality. It can not be taken in absolutes but rather in relative terms between different strategies. The higher the score the higher the cohesion between topic segments. In total, the silouhette score is better when the purity and v-measure is relatively higher.
 
-  lemmas
-  averaged v-measure 0.556078309346
-  averaged purity 75.94366197183099
-  averaged s_silhouette 0.0974105216355
 
-  Resulting in..
+  \subsection{Experimental}
+  While clustering for classification is a very good first step to preselect documents into isolated clusters, the requirements change in the second run. The results do not need to be constrained by cluster amount. Selection of similar news events return smaller topical clusters. It is difficult to show that a connection between different documents can be made when no information about time are present. If a document about ``taxes in the us'' occured at a specific day and a second document about ``Obama raises taxes'' at the next day occured, we could conclude that it is a current topic in the news that are related. Without knowing when a document was published, it is not possible to assume that two documents about taxes, are about the same event or piece of information. The second event could have happened 9 months later or earlier. The content might be connected but the events are not. There is no sense in trying to show how two consecutive days would relate to each other. That is why visual representations of topic and word proportions in clusters will be shown, instead of timeline data that relates. Two additional clusterings with BIRCH and \lda{} are proposed.\\
 
-  Second clustering...
+  First let us demonstrate the generative model. In this instance \lda{} has shown promising informal results. \hdp{} would be an optimal choice due to the automatic topic amount detection, but was left out as it was too complex to adapt. In figure \ref{business_topics} we see a clustering by \lda{} over the business cluster.
 
-    Notable clusters figure
-    visualization of another clustering
+    \begin{figure}[h!]\label{business_topics}
+      \[
+        \kbordermatrix{%
+          topics\textbackslash{}words & w_1  & w_2  & w_3    & w_4  & w_5   \\
+          t_1 & strong  & growth     & manufacturing & bank      & economy  \\
+          t_2 & city    & boeing     & year          & company   & industry \\
+          t_3 & year    & india      & germany       & market    & growth   \\
+          t_4 & tobacco & government & court         & bn        & case     \\
+          t_5 & sales   & car        & gm            & bmw       & year     \\
+          t_6 & economy & spending   & growth        & recession & japan    \\
+        }
+      \]
+      \caption{"Business topic proportions"}
+    \end{figure}
+
+  Typical words such as ``growth'', ``manufacturing'' or ``bank'' resemble this. A second example of a word to topic proportion can be seen in figure \ref{political_topics} for political topics.
+
+    \begin{figure}[h!]\label{politic_topics}
+      \[
+        \kbordermatrix{%
+          topics\textbackslash{}words & w_1  & w_2  & w_3    & w_4  & w_5   \\
+          t_1 & election    & new     & blair     &  minister   & tax       \\
+          t_2 & government  & home    & law       & people      & police    \\
+          t_3 & government  & defence & uk        & guantanamo  & evidence  \\
+          t_4 & million     & year    & education & party       & marketing \\
+          t_5 & uk          & card    & community & troops      & fraud     \\
+          t_6 & access      & child   & parents   & years       & care      \\
+        }
+      \]
+      \caption{"Political topic proportions"}
+    \end{figure}
+
+  As these word clouds have little value by measurement, they are easy to interpret. In reality both the political and business cluster had roughly 50 subclusters, only showing the first 6 and their respective top 5 words. Note that a topic from \lda{} is not exactly the same as centroids of a \emph{K-Means} algorithm. \lda{} topics relate to centroids as the \emph{EM} algorithm to \emph{K-Means}.\\
+
+  The scond approach with the BIRCH algorithm yielded some interesting results as well.
+
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.9\textwidth]{birch_sub_clustering.png}
+        \caption{"BIRCH sub clustering of business"}
+        \label{birch_sub_clustering}
+    \end{figure}
+
 
 \section{Multiple days clustering}
   
