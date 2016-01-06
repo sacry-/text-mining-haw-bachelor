@@ -154,19 +154,58 @@ In the following the two steps are refined. First we want to classify news event
 
   As these word clouds have little value by measurement, they are easy to interpret. In reality both the political and business cluster had roughly 50 subclusters, only showing the first 6 and their respective top 5 words. Note that a topic from \lda{} is not exactly the same as centroids of a \emph{K-Means} algorithm. \lda{} topics relate to centroids as the \emph{EM} algorithm to \emph{K-Means}.\\
 
-  The scond approach with the BIRCH algorithm yielded some interesting results as well.
+  The second approach with the BIRCH algorithm yielded some interesting results as well. We can see in figure \ref{birch_clustering} that there are a lot of clusters of different sizes. There are much bigger clusters and smaller clusters. In news events we mainly want smaller coherent clusters. 
 
     \begin{figure}[h!]
       \centering
-        \includegraphics[width=0.9\textwidth]{birch_sub_clustering.png}
-        \caption{"BIRCH sub clustering of business"}
-        \label{birch_sub_clustering}
+        \includegraphics[width=0.9\textwidth]{birch_clustering.png}
+        \caption{"BIRCH clustering of a single day"}
+        \label{birch_clustering}
     \end{figure}
 
+  The data at hand does not stem from the BBC dataset but from daily scraped newspapers. It is reasonable to believe that even less important events have multiple cluster points from different news sources. One can see that the resulting clusters are small and well formed. Some cluster centers are bigger than others. In those cases we can recluster them to further enhance the variance of clusters. The structures resemble that there are news that are covered several times a day and some that are not. Singleton clusters that are presented as x for one time events. Those outliers can be reclustered in a different run and would cover news like ``other''. The last figure \ref{mean_shift_clustering} is a clustering with the \emph{Mean Shift} algorithm. It is a partitonal algorithm working with density distributions, automatically infering the size of clusters by a density threshold.
+
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.9\textwidth]{mean_shift_clustering.png}
+        \caption{"Mean Shift clustering of a single day"}
+        \label{mean_shift_clustering}
+    \end{figure} 
+
+  The clusters of the \emph{Mean Shift} are even smaller. The density threshold was carefully fine tuned over several runs. All visualizations were made of data containing roughly 350 documents from the category \emph{world} by two newspapers. Expecting at least 100 events covering different news. The final clusters visualizations are a result of several parameter estimations of the algorithms. All visualizations were done with the help of a Python API called \emph{matplotlib} by \cite{MatPlotHunter2007}.
 
 \section{Multiple days clustering}
-  
-  multiple days, bulk in,
-  continuous on predefined clusters
-  event based model picture
+  Multiple days clustering was of the greatest interest while starting this thesis. It came to an understanding that it is inherently difficult to cluster and track documents over the course of several weeks. The time ran out to actually cluster multiple days in a row. Also, due to the problem of legallity the BBC dataset came to the rescue. Multiple days clustering is an advancement on the single day clustering. Two typical models come to mind.\\ 
+
+  The first model, seen in figure \ref{time_cluster_1}, is by clustering consecutive days without any overlap. After this, all cluster centers are consecutively merged and reassigned. The merging is based on similarity thresholds. If the similarity is high enough or we find hard evidence, like a named entity, cluster centers can be merged. Otherwise the clusters are kept separate. Going further we can set hard thresholds, how old a cluster should be, before it is not being considered anymore. Deciding when a merge, a reassignment or a new cluster emerges is the goal.
+
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{time_cluster_1.png}
+        \caption{"Multiple days clustering consecutive"}
+        \label{time_cluster_1}
+    \end{figure} 
+
+  The second model, seen in figure \ref{time_cluster_2}, is to cluster several consecutive days at once. What we lose is the ability to infer whether a document is about an event before or after another document. By keepig the published dates, this can be mitigated by mathematical formulations. This would be a good start for semi-supervised kernel methods where we provide extra constrains among the document similarity.
+    
+    \begin{figure}[h!]
+      \centering
+        \includegraphics[width=0.7\textwidth]{time_cluster_2.png}
+        \caption{"Multiple days clustering in bulk"}
+        \label{time_cluster_2}
+    \end{figure} 
+
+  Several important enhancements must be made to either of the models to work. 
+
+  \begin{description}
+    \item[First] we need timestamps for each document
+    \item[Second] we need to track documents over the course of several days. As the document size grows, algorithms need to be rethought for online or batch variations.
+    \item[Third] solutions to overfitting must be found. That is, assigning too many documents to an existing cluster center.
+    \item[Fourth] biasing must be avoided by inflating clusters that are of the same topics.
+    \item[Fifth] measures have to be rethought. The silhouette coefficient will grow small with more documents in vector space. Different results are not comparable.
+  \end{description}
+
+  The content of this section is open for future work. 
+
+
 

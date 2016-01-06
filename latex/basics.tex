@@ -243,12 +243,12 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
     \begin{figure}[h!]
       \centering
-        \includegraphics[width=0.7\textwidth]{kmeans_clustering.png}
+        \includegraphics[width=0.9\textwidth]{kmeans_clustering.png}
         \caption{"K-means visualisation with applied dimensionality reduction"}
         \label{kmeans_clustering}
     \end{figure}
 
-    Figure \ref{kmeans_clustering} is a typical clustering result. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. \\
+    Figure \ref{kmeans_clustering} is a typical clustering result. The crosses denote unassigned single clusters. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. \\
 
     \emph{Partitional clustering} algorithms typically have linear running times and thus are often used in practical real world applications. We will see later that this comes with a price mostly in accuracy and by providing the number of clusters. Most of the time we do not know how many clusters will be in the final result so we need algorithms that can find an approximately optimal clustering. In particular partitional algorithms can be globally approximated given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(d_i) \geq f(d_j), \forall d \in D$  or minimizes $f(d_i) \leq f(d_j), \forall d \in D$. Often they are much easier to implement because constraints are kept low and requirements are kept to a minimum. $d_i,d_j$ are all pairs of documents in a collection of documents $D$. There are also online versions available which make it possible to scale algorithms such as K-means with \emph{map reduce} on several processors. This is not true for hierarchical algorithms that build up a hierarchy bottom-up or top-down. The difference is that partitonal algorithms assign to cluster centers, while hierarichal algorithms build up pairs of merges, resembling a merge tree. This makes it difficult to scale hierarchical algorithms as they need a global picture of distances to be generated.
 
