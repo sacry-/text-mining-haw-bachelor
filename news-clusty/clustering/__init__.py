@@ -11,6 +11,7 @@ from clustering.spectral import spectral
 from clustering.spectral import affinity_propagation
 
 
+from clustering.visualize import plot
 from clustering.visualize import cluster_plot_2d
 from clustering.visualize import cluster_plot_3d
 from clustering.visualize import create_sample

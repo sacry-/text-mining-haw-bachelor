@@ -14,8 +14,8 @@ from features import pca
 from io_utils import print_clusters
 from io_utils import print_measure
 from io_utils import append_to_file
-from io_utils import plot
 
+from clustering import plot
 from clustering import silhouette
 
 from collections import Counter
@@ -44,10 +44,10 @@ def get_algo(algorithm_id=0):
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
-  (algo_name, algorithm) = get_algo(algorithm_id=0)
+  (algo_name, algorithm) = get_algo(algorithm_id=4)
 
   # Data
-  model_name = "20150701"
+  model_name = "20150713"
   x_train, ids = get_sents_training( model_name )
 
   x_train = [" ".join(s) for s in x_train]
@@ -58,20 +58,17 @@ if __name__ == "__main__":
     min_df=1
   )
   x_train = cosine_similarity(x_train)
-  n_clusters = 10
+  n_clusters = 100
 
   print(x_train.shape)
   x_train, _ = lsa(x_train, n_clusters)
   x_train, _ = pca(x_train, 2)
   alg, (centroids, c, k) = algorithm(
     x_train, 
-    n_clusters=n_clusters
+    quantile=0.011
   )
 
-  plot(x_train, centroids, c, k, algo_name, 2)
-
-  if ids: 
-    print_clusters(c, ids)
-
-  print_measure(algo_name, "silhouette", silhouette(x_train, c))
+  plot(x_train, centroids, c, k, algo_name, 2,
+    path_to_pic="mean_shift_clustering_5.png"
+  )
 

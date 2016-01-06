@@ -11,11 +11,6 @@ from clustering import cluster_plot_3d
 def print_measure(cluster_algo_name, measure_name, measure):
   print( "-"*40, "\n", cluster_algo_name, "-", measure_name, "-", measure, "\n","-"*40 )
 
-def plot(x_red, centroids, c, k, cluster_algo_name, dim):
-  if dim == 2:
-    cluster_plot_2d(x_red, centroids, c, k, cluster_algo_name)
-  else:
-    cluster_plot_3d(x_red, centroids, c, k, cluster_algo_name)
 
 def print_top_words(model, feature_names, n_top_words, n_topics):
   for topic_idx, topic in enumerate(model.components_[:n_topics]):

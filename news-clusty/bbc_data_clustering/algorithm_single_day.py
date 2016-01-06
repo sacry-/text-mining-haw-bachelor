@@ -24,6 +24,7 @@ from sklearn.preprocessing import normalize
 from clustering import ward_linkage 
 from clustering import kmeans
 from clustering import birch
+from clustering import plot
 
 from collections import defaultdict
 from collections import Counter
@@ -100,7 +101,12 @@ def cluster(c, x_orig, bbc):
       z, _ = lsa( z, n_events )
       z, _ = pca( z, 2 )
       _, (centroids, c_sub, k) = birch(z, threshold=0.19, branching_factor=10)
-      plot(z, centroids, c_sub, k, "BIRCH", 2)
+      plot(z, centroids, c_sub, k, "BIRCH", 2, 
+        path_to_pic="birch_clustering.png"
+      )
+
+    break
+
 
 def single_day(bbc):
   knowledge = list(bbc.concat(

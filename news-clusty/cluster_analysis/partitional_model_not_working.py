@@ -40,10 +40,10 @@ from_date = "20151113"
 to_date = "20151113"
 
 algorithm_id = 0
-n_clusters = 10
+n_clusters = 60
 
 decomposer = [lsa, lda, nmf, None][0]
-n_topics = 300
+n_topics = 225
 
 dim_reduction_method = [pca, None][0]
 plot_dimension = 2
@@ -52,6 +52,8 @@ plot_dimension = 2
 ffeatures, fids = flattened_features( 
   from_date, to_date
 )
+
+print(ffeatures)
 
 (cluster_algo_name, clusterer, has_args) = {
   0 : ("K-Means", kmeans, 1),
@@ -98,7 +100,9 @@ for idx, centroid in enumerate(centroids):
   print(idx, centroid)
 
 if dim_reduction_method:
-  plot(x, centroids, c, k, cluster_algo_name, plot_dimension)
+  plot(x, centroids, c, k, cluster_algo_name, plot_dimension,
+    path_to_pic="kmeans_clustering.png"
+  )
 
 if not fids: 
   print_clusters(c, fids)
