@@ -11,7 +11,7 @@ function copy_resources_to_out {
   cp ../*.sty .
   cp ../thesis.bib .
   cp -r ../logo .
-  cp -r ../*.png .
+  cp -r ../images/*.png .
   cp ../*.tex .
 }
 
