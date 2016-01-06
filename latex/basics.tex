@@ -353,7 +353,14 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \label{sec:linkages}
 
     In the following we will explore some of these different linkage clustering strategies.
-    The refered to distance function will be one of the conventional distances such as \emph{cosine} or \emph{euclidean}.
+    The refered to distance function will be one of the conventional distances such as \emph{cosine} or \emph{euclidean}. In figure \ref{linkage_strategy} we can see 3 basic strategies. These strategies can be combined into more complex ones like the \emph{Ward linkage}.
+
+      \begin{figure}[h!]
+        \centering
+          \includegraphics[width=0.6\textwidth]{linkage_strategy.png}
+          \caption{"Single, complete and average linkage"}
+          \label{linkage_strategy}
+      \end{figure}
 
     \paragraph{Single linkage} takes two documents of the corresponding clusters $c_1,c_2$ that minimizes the distance between these two. The objective function corresponds to:
       
@@ -379,16 +386,10 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
     In figure \ref{linkage_strategy} we can see that average linkage takes the average of all documents in a cluster and calculates the distance between both averages.
 
-    \begin{figure}[h!]
-      \centering
-        \includegraphics[width=0.7\textwidth]{linkage_strategy.png}
-        \caption{"Single, complete and average linkage"}
-        \label{linkage_strategy}
-    \end{figure}
-
     There are other strategies such as centroid based, Wards method and minimum energy based.
     All strategies have different purposes and have their place. Single linkage might be best suited for problems where the data points are dense and not scattered throughout the vector space. Complete linkage might work well if data is scattered widely in high maximas so to approximate an ideal solution. Average linkage would overestimate these cases by too many outliers. On the other hand average linkage is the best choice if documents are assumed to  participate equally. 
-    \paragraph{Birch} is a specialized version of \emph{HACs}. It scales well to large datasets and is an incremental algorithm. It operates in different phases and can be constrained by an optional cluster size \emph{k}. One can provide parameters for maximum nodes per cluster and minimum density threshold as to when a document should be assigned to a cluster. See 
+
+    \paragraph{BIRCH} (balanced iterative reducing and clustering using hierarchies) is a specialized version of \emph{HACs}. It scales well to large datasets and is an incremental algorithm. It operates in different phases and can be constrained by an optional cluster size \emph{k}. One can provide parameters for maximum nodes per cluster and minimum density threshold as to when a document should be assigned to a cluster. See 
     \cite{BIRCH1996} for more information. As with the partitional algorithms this was studied extensively by \cite{ClusteringBooAggarwalk2013, ClusterAlgoSurveyIBM, IRBook2008}. Top down approaches are not of special interest here. They are primarily suitable for large scale topic browsers where linear time constraints play a role.
 
     \subsection{Generative Models}   
