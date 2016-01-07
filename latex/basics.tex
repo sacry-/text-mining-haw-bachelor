@@ -70,6 +70,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     Before moving on we have to denote some notations and definitions. 
     A corpus $C = \{d_1, d_2 \: .. \: d_m\}$ is defined as a collection of \emph{documents} where $m = |C|$. A document $d = (w_1, w_2 \: .. \: w_i)$ contains words \emph{w} where $i = |d|$. Note that each document is not a text but a sequence of words. Often special stopwords are filtered out of these documents as well. A dictionary $D = \{w_1, w_2 \: .. \: w_n\}$ contains all the distinct words from each document where $n = |D|$. A cooccurence matrix $M$ is
 
+    \begin{table}[h!]
       \[
         M=\kbordermatrix{%
               & w_1     & w_2     &  .. & w_n     \\
@@ -79,9 +80,12 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
           d_m & c_{m1}  & c_{m2}  &  .. &  c_{mn}
         }
       \]
+      \caption{"Document-term (m x n) matrix"}
+    \end{table}
 
     where rows are the documents $d_1..d_m$ of a \emph{corpus} and columns are the cooccurence counts $w_1,w_2..,w_n$ of the corpus's dictionary. The next section \ref{sec:bag_of_words} explains this in more detail. Often the transpose $M^{T}$ is taken into account as well, setting rows to columns and columns to rows. Often the words are selected based on different feature selection strategies as well, see section \ref{sec:selection}. A distance matrix $Dis$ is defined as
 
+    \begin{table}[h!]
       \[
         Dis=\kbordermatrix{%
               & d_1     & d_2      & ..  & d_m    \\
@@ -91,6 +95,8 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
           d_m & ..      & ..       & ..  & v_{mm}
         }
       \]
+      \caption{"Document-document (m x m) matrix"}
+    \end{table}
 
     where each document is compared to another document by some similarity measure. See section \ref{sec:similarity} for more information. $v$ is any value that the distance function can incorporate.
 
@@ -112,7 +118,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
         document2 &    1 (4)   &     0 (0)    &   1 (2)  \\
         document3 &    1 (1)   &     1 (6)    &   0 (0)  \\
       \end{tabular}\\
-      \caption{"Document term (m x n) matrix"}
+      \caption{"Document-term (m x n) matrix"}
     \end{table}
 
     Normally we have a lower \emph{m} and a much higher \emph{n} resulting in highly sparse vectors with a lot of zeros, typically 99\%. As stated before we state that words are indepedant from each other. That means highly correlating words like \emph{New} and \emph{York} are not accounted for. In this case they can actually refer to the verb \emph{new} and \emph{York} as a city in \emph{Great Britain}. A bigram e.g. \emph{(New, York)} would capture the concept \emph{New York}. Bigrams, trigrams or generally ngrams are not taken into account. Ngrams transform a sequence of words by \emph{n} such that 
@@ -202,11 +208,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \begin{figure}[h!]
         \centering
           \includegraphics[width=0.7\textwidth]{svd_lsa.png}
-          \caption{"Singular Value Decomposition by \cite{SumLSASteinberger2004}"}
+          \caption{"Singular Value Decomposition"}
           \label{svd_lsa}
       \end{figure}
 
-      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \lsa{} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. \cite{SumLSASteinberger2004}
+      The $\sigma_1 \geq \sigma_2..\sigma_k$ stands for \emph{k} preceeding singular values sorted by magnitude. \lsa{} gives us a mapping from the top k topics of the document to the most important sentences of the document. In descending order the document presents less information per sentence. Thusly taking the top k sentences to create summarization can lead to significat results in a summarization processor. See figure \ref{svd_lsa} by \cite{SumLSASteinberger2004}.
       The intuition behind \svd{} is to expose as much variance as possible at the same time reducing noise from the data. \svd{} then is a natural progress to reduce highly sparse data projecting it to a lower dimensional space. This corresponce to a notion of topic overlap between different documents.
       Documents that share a particular topic are more similar. This results in connections between documents even if a lot of the words share no common meaning. Effectively \lsa{} tackles problems of synonymy and polysemy. Synonymy means that several words often share the same meaning such as ``big'' and ``large''. While polysemy refers to the fact that one word can have several meanings such as ``bank'' as a fincancial institution and ``bank'' as an object to sit on.
 
@@ -218,11 +224,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \begin{figure}[h!]
       \centering
         \includegraphics[width=0.7\textwidth]{PCA.png}
-        \caption{"Principal Component Analysis by \cite{PCA2009}"}
+        \caption{"Principal Component Analysis"}
         \label{pca}
     \end{figure}
 
-    In figure \ref{pca} we find the \emph{n} most likely components of a document by decomposing an original document matrix $X$ by factoring out $P$ principal components. The input is no $n\:x\:m$ matrix but rather a covariance matrix $n\:x\:n$ or $m\:x\:m$ . These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. In practice \pca{} is conversion of a document by term matrix into a covariance matrix followed by \svd{} where principal components resemble the highest singular values up to $k$. Primarily \pca{} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.
+    In figure \ref{pca}, by \cite{PCA2009}, we find the \emph{n} most likely components of a document by decomposing an original document matrix $X$ by factoring out $P$ principal components. The input is no $n\:x\:m$ matrix but rather a covariance matrix $n\:x\:n$ or $m\:x\:m$ . These components capture the variance throughout each document individually and reduce the dimensions down to a specified \emph{k}. The factorization then tries to solve for a principal component that bestly resembles the original data. In practice \pca{} is conversion of a document by term matrix into a covariance matrix followed by \svd{} where principal components resemble the highest singular values up to $k$. Primarily \pca{} can be described as a dimensionality reduction technique that resembles the original structure well. It can be used for visualization, reducing down $n + 3$ dimensions to 2D or 3D. See more in \cite{PCA2009}.
 
 \section{Clustering algorithms}
 \label{sec:clustering}

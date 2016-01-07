@@ -87,30 +87,32 @@ In the following the two steps are refined. First we want to classify news event
 
   A comparisson of the different strategies with \lsa{} enabled, for the classification task, is shown in table \ref{comparison_single_with_lsa}. Note that the \emph{purity}, \emph{v-measure} and \emph{silhouette score} is averaged over 5 consecutive runs.
 
-    \begin{center}\label{comparison_single_with_lsa}
+    \begin{table}\label{comparison_single_with_lsa}
       \begin{tabular}{ c | c | c | c }
-      Strategy    & v-measure & purity  & silhouette \\ \hline
-      Word tokens & 0.812     & 0.926   & 0.118      \\
-      Syntactic   & 0.795     & 0.916     & 0.109 \\
-      Word + noun tokens & 0.826   & 0.934     & 0.118 \\
-      \wordnet{} $hypernyms_{first}$ & 0.710   & 0.884     & 0.068 \\
-      \wordnet{} lemmatization   & 0.726   & 0.895     & 0.069 \\
+        Strategy    & v-measure & purity  & silhouette \\ \hline
+        Word tokens & 0.812     & 0.926   & 0.118      \\
+        Syntactic   & 0.795     & 0.916     & 0.109 \\
+        Word + noun tokens & 0.826   & 0.934     & 0.118 \\
+        \wordnet{} $hypernyms_{first}$ & 0.710   & 0.884     & 0.068 \\
+        \wordnet{} lemmatization   & 0.726   & 0.895     & 0.069 \\
       \end{tabular}
-    \end{center}
+      \caption{Comparison of feature selection with \lsa{}}
+    \end{table}
 
   Concluding from this, word tokens in combination with noun phrases lead to the highest v-measure. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. word tokens and noun phrases. With \wordnet{} lemmatization we have a highly effective approach. That is, from the original 12000 feature dimensions we projected to 6000. Except for lemmatization, \wordnet{} approaches performed worse than the mentioned strategies. This is not generally the case as can be seen in \cite{TopicClassificationReuters2002} for an example on the Reuters Corpus with \wordnet{} using a multinominal Naive-Bayes classifier.\\
   We can see in table \ref{comparison_single_without_lsa}, that the same measurement without \lsa{} performs in almost all instances worse. Note that \lda{} was explicitly excluded from the possible topic modelling techniques as it promotes a poor pre clustering step. This is due to the fact that \lda{} maps several topics to documents, resulting in documents having assignments to many topics. This is a desired property for the second clustering run.
 
-    \begin{center}\label{comparison_single_without_lsa}
+    \begin{table}\label{comparison_single_without_lsa}
       \begin{tabular}{ c | c | c | c }
-      Strategy    & v-measure & purity  & silhouette \\ \hline
-      Word tokens & 0.667     & 0.831   & 0.073      \\
-      Syntactic   & 0.634     & 0.794     & 0.067 \\
-      Word + noun tokens & 0.666   & 0.831     & 0.074 \\
-      \wordnet{} $hypernyms_{first}$ & 0.585   & 0.784     & 0.048 \\
-      \wordnet{} lemmatization   & 0.585   & 0.784     & 0.048 \\
+        Strategy    & v-measure & purity  & silhouette \\ \hline
+        Word tokens & 0.667     & 0.831   & 0.073      \\
+        Syntactic   & 0.634     & 0.794     & 0.067 \\
+        Word + noun tokens & 0.666   & 0.831     & 0.074 \\
+        \wordnet{} $hypernyms_{first}$ & 0.585   & 0.784     & 0.048 \\
+        \wordnet{} lemmatization   & 0.585   & 0.784     & 0.048 \\
       \end{tabular}
-    \end{center}
+      \caption{Comparison of feature selection without \lsa{}}
+    \end{table}
 
   The discrepancy between v-measure, purity and silouhette is expected. v-measure takes into account that several clusters contain an amount of labels that are not dominant. The higher the variance of spreading labels, even if their occurence count is low, leads to a penalty in v-measure. Purity on the other hand compares how many dominant labels are in one cluster and penalizes for each non dominant label. It does not account for the variety of falsely assigned labels. The silhouette score is extraordinary low due to the high dimensionality. It can not be taken in absolutes but rather in relative terms between different strategies. The higher the score the higher the cohesion between topic segments. In total, the silouhette score is better when the purity and v-measure is relatively higher.
 
@@ -119,7 +121,7 @@ In the following the two steps are refined. First we want to classify news event
 
   First let us demonstrate the generative model. In this instance \lda{} has shown promising informal results. \hdp{} would be an optimal choice due to the automatic topic amount detection, but was left out as it was too complex to adapt. In figure \ref{business_topics} we see a clustering by \lda{} over the business cluster.
 
-    \begin{figure}[h!]\label{business_topics}
+    \begin{table}[h!]\label{business_topics}
       \[
         \kbordermatrix{%
           topics\textbackslash{}words & w_1  & w_2  & w_3    & w_4  & w_5   \\
@@ -132,11 +134,11 @@ In the following the two steps are refined. First we want to classify news event
         }
       \]
       \caption{"Business topic proportions"}
-    \end{figure}
+    \end{table}
 
   Typical words such as ``growth'', ``manufacturing'' or ``bank'' resemble this. A second example of a word to topic proportion can be seen in figure \ref{political_topics} for political topics.
 
-    \begin{figure}[h!]\label{politic_topics}
+    \begin{table}[h!]\label{politic_topics}
       \[
         \kbordermatrix{%
           topics\textbackslash{}words & w_1  & w_2  & w_3    & w_4  & w_5   \\
@@ -149,7 +151,7 @@ In the following the two steps are refined. First we want to classify news event
         }
       \]
       \caption{"Political topic proportions"}
-    \end{figure}
+    \end{table}
 
   As these word clouds have little value by measurement, they are easy to interpret. In reality both the political and business cluster had roughly 50 subclusters, only showing the first 6 and their respective top 5 words. Note that a topic from \lda{} is not exactly the same as centroids of a \emph{K-Means} algorithm. \lda{} topics relate to centroids as the \emph{EM} algorithm to \emph{K-Means}.\\
 
