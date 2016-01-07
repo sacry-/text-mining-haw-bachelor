@@ -6,7 +6,7 @@ In this section we evaluate some strategies for clustering. At first we will sho
 
 The BBC dataset had a few limitations in the sense that dates were not provided and meta data not provided by the authors. As such we treat the data as a a bulk of events occuring in the timeframe of 2004-2005. Fortunately unlike real world data the articles are tagged with precise categorical labels, so external evaluation measures were an option. There were limitations in time to find a more adequate set of articles that were consecutively sorted by day in a broader category such as ``world news''.\\
 
-The clustering was done in several steps, similar to the Columbia Newsblaster system.\cite[Columbia stuff]{Nothing} A hierarchical clustering approach by first clustering events into categories like politics, business or entertainment and second clustering the categories into distinct events. The classification in the first step garantuees some broader topical cohesion. In the BBC dataset a purity of up to 94\% could be achieved on the test set. This is unusually high, but is probably due to the normalized dataset that represents the classes exceptionally well. The real world dataset could go as high as 45\% purity and less. \cite[some other evaluation here]{Nothing} The purity on the BBC dataset varies broadly between 79\% and 94\%. This variability results in overlapping topics where the majority of documents in a cluster are in the same class. Each of the resulting clusters resembling the underlying classes are reclustered. A clustering algorithm that optionally does not take any constraints on the amount of clusters is used. In this second step clusters represent news events on several topics per cluster.\\
+The clustering was done in several steps, similar to the Columbia Newsblaster system.\cite{NewsBlaster2002} A hierarchical clustering approach by first clustering events into categories like politics, business or entertainment and second clustering the categories into distinct events. The classification in the first step garantuees some broader topical cohesion. In the BBC dataset a purity of up to 94\% could be achieved on the test set. This is unusually high, but is probably due to the normalized dataset that represents the classes exceptionally well. The real world dataset could go as high as 45\% purity and less. The purity on the BBC dataset varies broadly between 79\% and 94\%. This variability results in overlapping topics where the majority of documents in a cluster are in the same class. Each of the resulting clusters resembling the underlying classes are reclustered. A clustering algorithm that optionally does not take any constraints on the amount of clusters is used. In this second step clusters represent news events on several topics per cluster.\\
 
 Some final words on the measurement of the two steps. In the first step it is easy to evaluate how well documents were assigned to their respective classes. In the second step however evaluation is not that simple. At this point, we are interested in document similarity based on content and not class labels. The results of the second clustering are informal and not measured.
 
@@ -14,7 +14,7 @@ Some final words on the measurement of the two steps. In the first step it is ea
 
 Single day clustering is done by focussing on one specific date. The hypothesis is, as long as there are no major news headlines, documents will have a high variance in vector space. Thusly there will be more clusters. The major news headlines is important, because, during the original dataset scraping there were ground breaking events, that literally absored almost all articles into single clusters. That was expected because roughly 90\% of the articles were about the same news event. The angle of the different articles covering the event varied greatly enough that topics that had no underlying connection to the event were clustered into as well.\\
 
-In the following the two steps are refined. First we want to classify news events by classes, in case of the BBC dataset: politics, business, entertainment, tech and sports. For this it is possible to use algorithms with a hard number of final clusters to classify documents into the classes. Alternatively one could use a supervised classifier, which in practice, is much more accurate. Second the resulting clusters, now assigned by news category are clustered again. This time the clustering algorithm has the constraint of automatically detecting the cluster numbers. For this a hierarchical algorithm with soft thresholds was chosen like BIRCH or Ward linkage. The resulting clusters resemble news events dealing with a similar topic.
+In the following the two steps are refined. First we want to classify news events by classes, in case of the BBC dataset: politics, business, entertainment, tech and sports. For this it is possible to use algorithms with a hard number of final clusters to classify documents into the classes. Alternatively one could use a supervised classifier, which in practice, is much more accurate. See \cite{LearningMultiLabelKmeans2013} for a real world example learning labels in comparison of \emph{K-Means} and a \emph{supervised classifier}. Second the resulting clusters, now assigned by news category are clustered again. This time the clustering algorithm has the constraint of automatically detecting the cluster numbers. For this a hierarchical algorithm with soft thresholds was chosen like BIRCH or Ward linkage. The resulting clusters resemble news events dealing with a similar topic. 
 
   \subsection{Implementation}
   The implementation of a more general clustering algorithm in the text domain can vary drastically. A general scheme is given by algorithm \ref{general_clustering}.
@@ -98,7 +98,7 @@ In the following the two steps are refined. First we want to classify news event
       \end{tabular}
     \end{center}
 
-  Concluding from this, word tokens in combination with noun phrases lead to the highest v-measure. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. word tokens and noun phrases. With \wordnet{} lemmatization we have a highly effective approach. That is, from the original 12000 feature dimensions we projected to 6000. Except for lemmatization, \wordnet{} approaches performed worse than the mentioned strategies.\\
+  Concluding from this, word tokens in combination with noun phrases lead to the highest v-measure. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. word tokens and noun phrases. With \wordnet{} lemmatization we have a highly effective approach. That is, from the original 12000 feature dimensions we projected to 6000. Except for lemmatization, \wordnet{} approaches performed worse than the mentioned strategies. This is not generally the case as can be seen in \cite{TopicClassificationReuters2002} for an example on the Reuters Corpus with \wordnet{} using a multinominal Naive-Bayes classifier.\\
   We can see in table \ref{comparison_single_without_lsa}, that the same measurement without \lsa{} performs in almost all instances worse. Note that \lda{} was explicitly excluded from the possible topic modelling techniques as it promotes a poor pre clustering step. This is due to the fact that \lda{} maps several topics to documents, resulting in documents having assignments to many topics. This is a desired property for the second clustering run.
 
     \begin{center}\label{comparison_single_without_lsa}
@@ -113,7 +113,6 @@ In the following the two steps are refined. First we want to classify news event
     \end{center}
 
   The discrepancy between v-measure, purity and silouhette is expected. v-measure takes into account that several clusters contain an amount of labels that are not dominant. The higher the variance of spreading labels, even if their occurence count is low, leads to a penalty in v-measure. Purity on the other hand compares how many dominant labels are in one cluster and penalizes for each non dominant label. It does not account for the variety of falsely assigned labels. The silhouette score is extraordinary low due to the high dimensionality. It can not be taken in absolutes but rather in relative terms between different strategies. The higher the score the higher the cohesion between topic segments. In total, the silouhette score is better when the purity and v-measure is relatively higher.
-
 
   \subsection{Experimental}
   While clustering for classification is a very good first step to preselect documents into isolated clusters, the requirements change in the second run. The results do not need to be constrained by cluster amount. Selection of similar news events return smaller topical clusters. It is difficult to show that a connection between different documents can be made when no information about time are present. If a document about ``taxes in the us'' occured at a specific day and a second document about ``Obama raises taxes'' at the next day occured, we could conclude that it is a current topic in the news that are related. Without knowing when a document was published, it is not possible to assume that two documents about taxes, are about the same event or piece of information. The second event could have happened 9 months later or earlier. The content might be connected but the events are not. There is no sense in trying to show how two consecutive days would relate to each other. That is why visual representations of topic and word proportions in clusters will be shown, instead of timeline data that relates. Two additional clusterings with BIRCH and \lda{} are proposed.\\
@@ -175,37 +174,28 @@ In the following the two steps are refined. First we want to classify news event
   The clusters of the \emph{Mean Shift} are even smaller. The density threshold was carefully fine tuned over several runs. All visualizations were made of data containing roughly 350 documents from the category \emph{world} by two newspapers. Expecting at least 100 events covering different news. The final clusters visualizations are a result of several parameter estimations of the algorithms. All visualizations were done with the help of a Python API called \emph{matplotlib} by \cite{MatPlotHunter2007}.
 
 \section{Multiple days clustering}
-  Multiple days clustering was of the greatest interest while starting this thesis. It came to an understanding that it is inherently difficult to cluster and track documents over the course of several weeks. The time ran out to actually cluster multiple days in a row. Also, due to the problem of legallity the BBC dataset came to the rescue. Multiple days clustering is an advancement on the single day clustering. Two typical models come to mind.\\ 
+  Multiple days clustering was of the greatest interest while starting this thesis. It came to an understanding that it is inherently difficult to cluster and track documents over the course of several weeks. The time ran out to actually cluster multiple days in a row. Also, due to the problem of legallity the BBC dataset came to the rescue. Multiple days clustering is an advancement on the single day clustering.\\ 
 
-  The first model, seen in figure \ref{time_cluster_1}, is by clustering consecutive days without any overlap. After this, all cluster centers are consecutively merged and reassigned. The merging is based on similarity thresholds. If the similarity is high enough or we find hard evidence, like a named entity, cluster centers can be merged. Otherwise the clusters are kept separate. Going further we can set hard thresholds, how old a cluster should be, before it is not being considered anymore. Deciding when a merge, a reassignment or a new cluster emerges is the goal.
+  The proposed model, seen in figure \ref{time_clustering}, is by clustering consecutive days without any overlap. After this, all cluster centers are consecutively merged and reassigned. The merging is based on similarity thresholds. If the similarity is high enough or we find hard evidence, like a named entity, cluster centers can be merged. Otherwise the clusters are kept separate. Going further we can set hard thresholds, how old a cluster should be, before it is not being considered anymore. Deciding when a merge, a reassignment or a new cluster emerges is the goal.
 
     \begin{figure}[h!]
       \centering
-        \includegraphics[width=0.7\textwidth]{time_cluster_1.png}
+        \includegraphics[width=0.7\textwidth]{time_clustering.png}
         \caption{"Multiple days clustering consecutive"}
-        \label{time_cluster_1}
+        \label{time_clustering}
     \end{figure} 
 
-  The second model, seen in figure \ref{time_cluster_2}, is to cluster several consecutive days at once. What we lose is the ability to infer whether a document is about an event before or after another document. By keepig the published dates, this can be mitigated by mathematical formulations. This would be a good start for semi-supervised kernel methods where we provide extra constrains among the document similarity.
-    
-    \begin{figure}[h!]
-      \centering
-        \includegraphics[width=0.7\textwidth]{time_cluster_2.png}
-        \caption{"Multiple days clustering in bulk"}
-        \label{time_cluster_2}
-    \end{figure} 
-
-  Several important enhancements must be made to either of the models to work. 
+  Several important enhancements to single day clustering must be made.
 
   \begin{description}
     \item[First] we need timestamps for each document
-    \item[Second] we need to track documents over the course of several days. As the document size grows, algorithms need to be rethought for online or batch variations.
+    \item[Second] we need to track documents over the course of several days. As the document size grows, algorithms need to be rethought for online or batch variations. In \cite{BlogTopicLDA2013} is a comprehensive analysis of blogs over time using \lda{}.
     \item[Third] solutions to overfitting must be found. That is, assigning too many documents to an existing cluster center.
     \item[Fourth] biasing must be avoided by inflating clusters that are of the same topics.
     \item[Fifth] measures have to be rethought. The silhouette coefficient will grow small with more documents in vector space. Different results are not comparable.
   \end{description}
 
-  The content of this section is open for future work. 
+  The content of this section is open for future work. A good evaluation can be found in \cite{RecentTechniquesClusteringSurvey2012} and \cite{ClusteringTimesSeriesSurves2005} or \cite{IncrementalClustering2012}.
 
 
 
