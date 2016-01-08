@@ -7,11 +7,37 @@ Summing up all the pieces, this thesis provided a starting point of building a r
 
 \section{Further Reading / Related Work}
 
-blabla
+In this section it is important to distinguish between the data pipeline and the quality of the algorithmic procedures. A generally well composed article about the different current approaches to clustering large and small documents is \cite{NextFrontierClustering2013}.\\
+
+Several models of topic models were examined. There is more room to study the effects of \lda{} and cerntainly trying \hdp{}. For multi document summarization \lda{} can be used as a main approach, see \cite{MultiDocSumLDA2008}. The concepts of \hdpfull{} can be found in \cite{NonParametricBayes2007, HDP2006}. Further we could use Non-negative matrix factorization (NMF) as a matrix decomposition technique. See \cite{NMF1999} for a proper introduction.\\
+
+While completely using unsupersived learning we could use artifical neural networks as well. A promising approach is the shallow neural network word2vec, that learns a feature representation using skip-gram models. See \cite{Word2Vec2014} for a good introduction.\\
+
+Enhancing feature selection methods and more semantic relations promising work was done by \cite{NounPhraseSemanticClustering@2009@Zheng} using noun phrases for semantic clustering and 
+\cite{WordNetAndFuzzyAssociation@2010@Chen} with \wordnet{} and soft assignment clustering.\\
+
+Time series clustering could not be tackled in this thesis. Beginning with basic introductions see \cite{ClusteringTimesSeriesSurves2005, RecentTechniquesClusteringSurvey2012, IncrementalClustering2012}. A good starting point for understanding topic models over time is \cite{BlogTopicLDA2013} analyzing blog posts.\\
+
+The data pipeline is analogous to the Columbia Newsblaster System by \cite{NewsBlaster2002}. The whole literature evolving on the system is a vatange point for further reading. Also everything around the Google News aggregation system examplified by \cite{GoogleNews2007}.\\
+
+At last we have to mention the scalability issues. Working with algorithms across several server nodes needs different techniques. Algorithms need to be parallelized by techniques like map reduce, see \cite{MapReduce2008}. See parallel clustering approaches by \cite{ParallelClustering2009}.
 
 \section{Future Work}
 
-blabla
+Future work needs to be done on several things in the data pipeline.
+
+\begin{description}
+  \item[First] scaling and enhancement for datasets. This includes adding more newspaper data. In reality the classification system for news categories needs to be normalized accross all newspapers. Finding ways of detecting the label of a document when downloading an article.
+  \item[Second] adding a multi-document summarization system that works with the clustering.
+  \item[Third] a routing system that detects the kind of event by biographical, single and multi events.
+  \item[Fourth] scaling the clustering algorithms to several days by strategies mentioned in the experimental multiple days section.
+  \item[Fifth] adding more feature selection strategies with \wordnet{}, \wiki{} and word2vec.
+  \item[Sixth] using more advanced algorithms, especially topic modelling and semi supervised kernel methods.
+  \item[Seventh] including external knowledge sources that work during the clustering methods as well.
+  \item[Eigth] using state of the art distributed file systems to ease the task of feature selection and clustering
+\end{description}
+
+None of the above tasks is trivial. Each would greatly enhance the systems performance and usability. In theory the accuracy can be enhanced by incorporating more reliable and complex models to the clustering task.
 
 \section{Final Words}
 
