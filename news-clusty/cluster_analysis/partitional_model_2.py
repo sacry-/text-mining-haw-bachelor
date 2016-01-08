@@ -1,5 +1,7 @@
 from __future__ import division
 
+from collections import defaultdict
+
 import logging
 import numpy as np
 from pickle_utils import get_sents_training
@@ -63,12 +65,21 @@ if __name__ == "__main__":
   print(x_train.shape)
   x_train, _ = lsa(x_train, n_clusters)
   x_train, _ = pca(x_train, 2)
-  alg, (centroids, c, k) = algorithm(
+  alg, (centroids, c, k) = birch(
     x_train, 
-    quantile=0.011
+    n_clusters=n_clusters,
+    threshold=0.2,
+    branching_factor=10
   )
 
-  plot(x_train, centroids, c, k, algo_name, 2,
-    path_to_pic="mean_shift_clustering_5.png"
-  )
+  plot(x_train, centroids, c, k, algo_name, 2)
+
+  d = defaultdict(list)
+  for idx, cid in enumerate(c):
+    d[cid].append(idx)
+
+  s = sorted(d.items(), key=lambda t: -len(t[1]))
+  c = sorted(Counter([len(v) for k,v in s]).items(), key=lambda t: -t[0])
+  for k,v in c:
+    print(k,v)
 
