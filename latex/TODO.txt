@@ -22,23 +22,23 @@
   + say something about CRaw, Raw etc.
   + Wikipedia reference
 
-- Features selection and semantics
++ Features selection and semantics
   + concept
-  - wikipedia
+  + wikipedia
 
-- Experiments
++ Experiments
   + start
   + concept
   + clustering schemes
   + description
   + define strategies
-  - evaluate strategies
-  - multiple days clustering, how to
+  + evaluate strategies
+  + multiple days clustering, how to
 
-- Results
-  - concept
++ Results
+  + concept
 
-Outlook
-  - concept
-  - Quotation
++ Outlook
+  + concept
+  + Quotation
 
