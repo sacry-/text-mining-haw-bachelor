@@ -183,5 +183,14 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
   \subsection{Wikipedia}
   \label{sec:wikpedia}
-    
+
+  Using \wiki{} in the feature selection process works analogous to the \wordnet{} approach. We use conceptual words that represent a document well, like noun phrases and named entities querying the \wiki{} knowledge base. \wiki{} has a lot of different knowledge kinds, like ontologies between definitions, that connect their relations similar to \wordnet{} ontologies. Each definition is categorized into distinct subgroups of relatedness by broader categories, like politics or economics. Additionally all links referencing external definitions can be found in the documents of a \wiki{} concept.\\
+
+  The basic concept is to use a noun phrase and find outlinks and categories from \wiki{}. Categories of \wiki{} vary widely and are not normalized in any way. For classification purposes a scheme has to be found to classify documents. However using clustering to group documents into similar events, a scheme was proposed by \cite{WikipediaClustering2010} and \cite{WikipediaClusteringSim2009}. In these approaches a document vector is mapped to categories and outlinks. However using noun phrases, one can find a good representation of a document while at the same time lowering the dimensionality of the  data.\\
+
+  In another study by \cite{WikipediaClusteringSim2009} concepts and categories are mapped by relatedness. The two approaches are exact-match and relatednessmatch, where both take documents and map their respective words to the \wiki{} onotologies. The exact-match is based on the fact that \wiki{} contains concepts, describing a word, the relatednessmatch is based on the article content. For each concept a mapping to categories is build in order to represent documents as a sum of \wiki{} categories. Through this dimensions are greatly decreased. The hypothesis is, that a document composed of unique frequencies of categories can represent a document better.\\
+
+  Advancing on this concept, a solution to the semantic problem of a document is proposed by \cite{WikipediaClustering2010} using outlinks and categories of \wiki{}. The process is that each document gets a set of concepts by \wiki{} based on the document words. A set of outlink concepts and a set of category labels. Each set is then weighted into an accumulated cosine similarity, where parameters control the impact of each set.\\
+
+  In this thesis, no evidence was found, that mapping to category concepts, could greatly enhance feature selection. This it not due to a missing effect but rather due to time constraints. In chapter \ref{chapter:outlook} we will briefly reference the beforementioned steps. The strategies should be investigated further.
 
