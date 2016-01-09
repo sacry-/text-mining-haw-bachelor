@@ -67,7 +67,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
     Either way we need to create a cooccurence matrix $M = count(C, D)$ where $C$ is a corpus and $D$ is the dictionary of the corpus. Then we transform by $M = tfidf(M)$ or leave it with the \emph{term frequency}.\\
 
-    Pruning $M$ is done by cutting off the documents with a very low ratio of counts with respect to all documents. This can be done by threshold in proportion to all terms, a percentage, removing $j$ terms. It can also be achieved by a hard count, cutting of all terms that have no counts higher than that. This means, we remove insignificant terms or terms that do not contribute to any connection. Semantically this means, we cut off words that have a high meaning in a single document and a very low in others. Those words are redundant, or in other words they have no discriminant value to the clustering process.
+    Pruning $M$ is done by cutting off the documents with a very low ratio of counts with respect to all documents. The procedures work in the single day clustering case. For multiple days, a caching on the pruned words, need to be implemented. This can be done by threshold in proportion to all terms, a percentage, removing $j$ terms. It can also be achieved by a hard count, cutting of all terms that have no counts higher than that. This means, we remove insignificant terms or terms that do not contribute to any connection. Semantically this means, we cut off words that have a high meaning in a single document and a very low in others. Those words are redundant, or in other words they have no discriminant value to the clustering process.
 
       \begin{equation}
       \begin{split}
@@ -179,12 +179,39 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
     \end{algorithmic}
     \end{algorithm}
 
-  Then we compute the lowest common hypernyms that connect hypernyms of the word closures. We then apply word pruning to get the mid vector words, sorting out extremes. It is also possible to greatly enhance the above models with lexical chains, see \cite{SemanticClusteringWithWordnet}.
+  In the following we give an example to understand the notion of a lexical closure. Given a document with one sentence, \emph{the dog and the cat}. The transformation of this sentence stripped by stopwords results in
+
+    \begin{equation}
+    \begin{split}
+      sents &= [("dog", "cat")] \\
+      dog &= synset("dog") \\
+      cat &= synset("cat")
+    \end{split}
+    \end{equation}
+
+  The closures by hypernyms for each word results in
+
+    \begin{equation}
+    \begin{split}
+      clos1 &= closure(hypernyms(dog), depth=2)\\
+            &= ("canine", "domestic\_animal", "carnivore", "animal")\\
+      clos2 &= closure(hypernyms(cat), depth=2)\\
+            &= ("feline", "carnivore")
+    \end{split}
+    \end{equation}
+
+  Then we compute the lowest common hypernyms that connect hypernyms of the word closures.
+
+    \begin{equation}
+      lowest\_common\_hypernyms(clos1, clos2) \to "carnivore"
+    \end{equation}
+
+  We then apply word pruning to get the mid vector words, sorting out extremes. It is also possible to greatly enhance the above models with lexical chains, see \cite{SemanticClusteringWithWordnet}.
 
   \subsection{Wikipedia}
   \label{sec:wikpedia}
 
-  Using \wiki{} in the feature selection process works analogous to the \wordnet{} approach. We use conceptual words that represent a document well, like noun phrases and named entities querying the \wiki{} knowledge base. \wiki{} has a lot of different knowledge kinds, like ontologies between definitions, that connect their relations similar to \wordnet{} ontologies. Each definition is categorized into distinct subgroups of relatedness by broader categories, like politics or economics. Additionally all links referencing external definitions can be found in the documents of a \wiki{} concept.\\
+  Using \wiki{} in the feature selection process works analogous to the \wordnet{} approach. \wiki{} will be used as a holder for metadata and not for the content of the articles alone. We use conceptual words that represent a document well, like noun phrases and named entities querying the \wiki{} knowledge base. \wiki{} has a lot of different knowledge kinds, like ontologies between definitions, that connect their relations similar to \wordnet{} ontologies. Each definition is categorized into distinct subgroups of relatedness by broader categories, like politics or economics. Additionally all links referencing external definitions can be found in the documents of a \wiki{} concept.\\
 
   The basic concept is to use a noun phrase and find outlinks and categories from \wiki{}. Categories of \wiki{} vary widely and are not normalized in any way. For classification purposes a scheme has to be found to classify documents. However using clustering to group documents into similar events, a scheme was proposed by \cite{WikipediaClustering2010} and \cite{WikipediaClusteringSim2009}. In these approaches a document vector is mapped to categories and outlinks. However using noun phrases, one can find a good representation of a document while at the same time lowering the dimensionality of the  data.\\
 

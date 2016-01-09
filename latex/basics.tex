@@ -64,7 +64,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
   \end{figure}
 
   \paragraph{}
-    The vector space model in the text domain has the meaning that each word is a component of a vector resembling documents. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independant of the first document, both vectors are now in 150th dimensional space. That is, every new word will be concatenated to the existing document sets. This is the ``bag of words'' model which is detailed in the next section.
+    The vector space model in the text domain has the meaning that each word is a component of a vector resembling documents. If a document has 100 distinct words, the resulting document vector is in 100th dimensional space. If a second document has 50 distinct words, independent of the first document, both vectors are now in 150th dimensional space. That is, every new word will be concatenated to the existing document sets. This is the ``bag of words'' model which is detailed in the next section.
 
   \subsection{Notation}
     Before moving on we have to denote some notations and definitions. 
@@ -83,11 +83,11 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
       \caption{"Document-term (m x n) matrix"}
     \end{table}
 
-    where rows are the documents $d_1..d_m$ of a \emph{corpus} and columns are the cooccurence counts $w_1,w_2..,w_n$ of the corpus's dictionary. The next section \ref{sec:bag_of_words} explains this in more detail. Often the transpose $M^{T}$ is taken into account as well, setting rows to columns and columns to rows. Often the words are selected based on different feature selection strategies as well, see section \ref{sec:selection}. A distance matrix $Dis$ is defined as
+    where rows are the documents $d_1..d_m$ of a \emph{corpus} and columns are the cooccurence counts $w_1,w_2..,w_n$ of the corpus's dictionary. The next section \ref{sec:bag_of_words} explains this in more detail. Often the transpose $M^{T}$ is taken into account as well, setting rows to columns and columns to rows. Often the words are selected based on different feature selection strategies as well, see section \ref{sec:selection}. A distance matrix $M_{dist}$ is defined as
 
     \begin{table}[h!]
       \[
-        Dis=\kbordermatrix{%
+        M_{dist}=\kbordermatrix{%
               & d_1     & d_2      & ..  & d_m    \\
           d_1 & v_{11}  & v_{12}   & ..  & v_{1m} \\
           d_2 & ..      & v_{22}   & ..  & v_{2m} \\
@@ -156,7 +156,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
     The tf-idf has a high score, if a term occurs often in a single document and less often in other documents. This translates to the notion that a term represents the current document better than other terms and are therefore highly discriminative words. There are other models such as graph based or tree based approaches. For the porpuse of this thesis these models are left out. \cite[chp. 6]{IRBook2008}\\
 
-    One of the big problems with the vector space model is that feature inflation or feature explosion arises quickly. If documents have a high variance between other documents and the connections between two documents are small the sparsity can go up to 100\%. That means that no document has overlapping words and each document only accounts for the words that were originally in the document. Think of it another way, suppose one has 3 documents in 3 dimensional space with each axis set to zero but one (1,0,0), (0,1,0), (0,0,1) we have an independant basis. This means that all documents are orthogonal to each other, meeting at no point except at the null point (0,0,0). It is therefore not really possible to derive any connections between those 3 points. Thus each document represents its own topic.
+    One of the big problems with the vector space model is that feature inflation or feature explosion arises quickly. If documents have a high variance between other documents and the connections between two documents are small the sparsity can go up to 100\%. That means that no document has overlapping words and each document only accounts for the words that were originally in the document. Think of it another way, suppose one has 3 documents in 3 dimensional space with each axis set to zero but one (1,0,0), (0,1,0), (0,0,1) we have an independent basis. This means that all documents are orthogonal to each other, meeting at no point except at the null point (0,0,0). It is therefore not really possible to derive any connections between those 3 points. Thus each document represents its own topic.
     These kind of problems need a well thought out solution which is presented later in this section.
 
   \subsection{Similarity and Distances}
@@ -175,7 +175,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \paragraph{The Euclidean distance ($l^2\:norm$)} is the geometrical distance between two vectors in $\mathbf{R}^n$. Again given two documents $d_1$ and $d_2$ it is defined by
 
     \begin{equation}
-      euclidean(d_1, d_2) = \sqrt{\sum_{i=1}^{M}(d_1^i * d_2^i)^2}
+      euclidean(d_1, d_2) = \sqrt{\sum_{i=1}^{M}(d_{1,i} - d_{i, 2}})
     \end{equation}
 
     This results in the fact that documents running into different directions, e.g. have different angles might as well be very close. It is a geometric measure and accounts for magnitude rather than direction.
@@ -183,7 +183,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \paragraph{The Manhattan distance ($l^1\:norm$)} is commonly known under the city block distance measure. The system is divided up in equally squared brackets comparing dimensions in sequential order and taking the absolute squared difference between two documents. Given two documents $d_1$ and $d_2$ it is defined by
 
     \begin{equation}
-      manhattan(d_1, d_2) = \sum_{i=1}^{M}|d_1^i - d_2^i|
+      manhattan(d_1, d_2) = \sum_{i=1}^{M}|d_{1,i} - d_{2,i}|
     \end{equation}
 
     There are more distance functions such as the \emph{Jaccard coefficient} that works on intersections of sets and the \emph{Chebyshev distance} which is a maximizing greedy strategy of the manhattan distance. The underlying concepts of similarity should be clear though. Each coefficient works good on a particular set, however cosine and euclidean distances are the commonly used choices.
@@ -239,7 +239,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
     \item \emph{Hard and Soft clustering} - A clustering algorithm is \emph{hard} if documents can only be assigned to one distinct cluster. On the contrary they are \emph{soft} (often called \emph{fuzzy/overlapping}) if a document can have multiple assignments that resemble topical proportions of the document.
     \item \emph{Exhaustive and non-exhaustive} - A clustering is exhaustive if every document has an assignment after the run whereas it is non-exhaustive if documents might not have any assignments at all (assigned to a null cluster).
     \item \emph{Cost functions} - Most clustering algorithms incorporate some sort of cost function that needs to be minimized or maximized after the algorithm completed. The clustering can be rerun several times finding a maximum between different runs by varying the parameters. This should not be confused with the similarity measure between objects during a clustering run.
-    \item \emph{Local minima/global optimum} - A local minimum is when the objective cost functions between objects do not yield better results after several iterations. This does not mean that the best state is found. Similarity metrics between objects are inherently heuristic and have no view of a global optimum. A global optimum can be approximated by objective cost functions rerunning the algorithm several times. There is currently no known algorithm that can solve clustering in a deterministic globally optimized way.
+    \item \emph{Local minima/global optimum} - A local minimum is when the objective cost functions between objects do not yield better results after several iterations. This does not mean that the best state is found. Similarity metrics between objects are inherently heuristic and have no view of a global optimum. A global optimum can be approximated by objective cost functions rerunning the algorithm several times. There is currently no known algorithm that can solve clustering in a deterministic globally optimized way. However it is possible to use approximative approaches, that near the global optimum quite well.
   \end{itemize}
 
   \subsection{Partitional clustering}
@@ -254,7 +254,7 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
         \label{kmeans_clustering}
     \end{figure}
 
-    Figure \ref{kmeans_clustering} is a typical clustering result. The crosses denote unassigned single clusters. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. \\
+    Figure \ref{kmeans_clustering} is a typical clustering result. The crosses denote unassigned single clusters. Note: to display 2D models one has to use dimensionality reduction techniques reducing the feature size. The original dataset consisted of over 100k words so this is a rather unfair approximation of the original dataset. The larger points correspond to cluster centers while the smaller points correspond to individual documents adhering to the cluster centers colors. The axis of the plots do not play any significant role, as they are scaled by the mean of the data. The axis represent term frequencies of the documents and reduction by \pca{}.\\
 
     \emph{Partitional clustering} algorithms typically have linear running times and thus are often used in practical real world applications. We will see later that this comes with a price mostly in accuracy and by providing the number of clusters. Most of the time we do not know how many clusters will be in the final result so we need algorithms that can find an approximately optimal clustering. In particular partitional algorithms can be globally approximated given a numerical cost function $f:D \to \mathbf{R}$ such that it maximizes $f(d_i) \geq f(d_j), \forall d \in D$  or minimizes $f(d_i) \leq f(d_j), \forall d \in D$. Often they are much easier to implement because constraints are kept low and requirements are kept to a minimum. $d_i,d_j$ are all pairs of documents in a collection of documents $D$. There are also online versions available which make it possible to scale algorithms such as K-means with \emph{map reduce} on several processors. This is not true for hierarchical algorithms that build up a hierarchy bottom-up or top-down. The difference is that partitonal algorithms assign to cluster centers, while hierarichal algorithms build up pairs of merges, resembling a merge tree. This makes it difficult to scale hierarchical algorithms as they need a global picture of distances to be generated.
 

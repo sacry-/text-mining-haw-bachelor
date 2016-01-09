@@ -24,6 +24,7 @@
 \usepackage[ngerman,colorlinks=true]{hyperref}
 \usepackage{soul}
 \usepackage{epigraph}
+\usepackage[nottoc,notlot,notlof]{tocbibind}
 
 % Custom packages 
 \usepackage{hawstyle}
@@ -123,12 +124,6 @@
     \typeout{===== Section: literature}
     \bibliographystyle{apalike}
     \bibliography{thesis}
-
-    \addcontentsline{toc}{chapter}{Glossary}
-    \renewcommand{\nomname}{Glossary}
-    \markboth{\nomname}{\nomname}
-    \printnomenclature
-    \clearpage
 
     \typeout{===== Section: index}
     \printindex
