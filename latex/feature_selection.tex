@@ -2,13 +2,13 @@
   ``Coming up with features is difficult, time-consuming, requires expert knowledge. "Applied machine learning" is basically feature engineering.''
 }}{ Andrew Ng }
 
-Considering the ``right'' features for clustering is a demanding and error prone process. Currently there is really just one way of describing documents: The vector space model. It breaks down to counting occurrences and cooccurrences of words and measuring distance by mathematical functions. We could just take all the words of a document, removing stop words, and put them into a feature vector. This results in dimensionality explosion and extreme noise. Contrary to a document vector $d = \{w_1,w_2..w_n\}$, the feature vector represents a document by concepts $\{c_1,c_2,..c_j\}$. It is a projection of the original document $d = \{w_1,w_2..w_n\}$ to more general concepts resulting in fewer dimensions. This lifting is best described as combining several words of a document, often occurring in the same sentence, extracting a shared meaning. We hope to find fewer words that share enough information with the original word, that the following holds:
+Considering the ``right'' features for clustering is a demanding and error prone process. Currently there is really just one way of describing documents: The vector space model. It breaks down to counting occurrences and cooccurrences of words and measuring distance by mathematical functions. We could just take all the words of a document, removing stop words, and put them into a feature vector. This results in dimensionality explosion and extreme noise. Contrary to a document vector $d = (w_1,w_2..w_n)$, the feature vector represents a document by concepts $\{c_1,c_2,..c_j\}$. It is a projection of the original document $d = (w_1,w_2..w_n)$ to more general concepts resulting in fewer dimensions. This lifting is best described as combining several words of a document, often occurring in the same sentence, extracting a shared meaning. We hope to find fewer words that share enough information with the original word, that the following holds:
   
   \begin{equation}
-    f : d=\{w_1,w_2,..w_n\} \to \{c_1,c_2,..c_j\}
+    f : d=(w_1,w_2,..w_n) \to \{c_1,c_2,..c_j\}
   \end{equation}
 
-The function $f$ transforms a sequence of words $w_1..w_n$ of a document $d$ to a sequence of concepts $c_1..c_j$. The concepts can be derived in a lot of ways.
+The function $f$ transforms a sequence of words $w_1..w_n$ of a document $d$ to a set of concepts $c_1..c_j$. The concepts can be derived in a lot of ways.
 
   \begin{enumerate}
     \item Pruning words of low and high significance.
@@ -69,16 +69,16 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
 
     Pruning $M$ is done by cutting off the documents with a very low ratio of counts with respect to all documents. The procedures work in the single day clustering case. For multiple days, a caching on the pruned words, need to be implemented. This can be done by threshold in proportion to all terms, a percentage, removing $j$ terms. It can also be achieved by a hard count, cutting of all terms that have no counts higher than that. This means, we remove insignificant terms or terms that do not contribute to any connection. Semantically this means, we cut off words that have a high meaning in a single document and a very low in others. Those words are redundant, or in other words they have no discriminant value to the clustering process.
 
-      \begin{equation}
+      \begin{equation}\label{min_cut}
       \begin{split}
-        m &= [0, 1, 5, 0, 4, 0, 1, 1, 2, 3] \\
-        m_s &= sort( [0, 0, 0, 1, 1, 1, 2, 3, 4, 5] ) \\
+        d &= [0, 1, 5, 0, 4, 0, 1, 1, 2, 3] \\
+        d_s &= sort( [0, 0, 0, 1, 1, 1, 2, 3, 4, 5] ) \\
         percentcut(m_s, 0.2) &= [0, 1, 1, 1, 2, 3, 4, 5] \\
         totalcut(m_s, 1) &= [2, 3, 4, 5]
       \end{split}
       \end{equation}
 
-    The min cut on percentage $0.2 = 20\%$ cuts the first 2 samples or removes the first 6 in case of a total count. The parameter has to be varied, depending on the outcome of a cost function. Further we can take off the top $j$ words as well by the same principle. The problem with the top words is, that they highly correlate with a lot of different documents, meaning a high correlation between a term and the corpus. Leaving them out erases a lot of connections, resulting in more discriminant features. This is what we want to achieve, finding the middle words, that are common in certain documents and uncommon in others. During clustering this will result in much more coherent clusters.
+    Equation \ref{min_cut} exemplifies a single document $d$ of a coincidence matrix with its words as a count. The first word occurs 0 times in document $d$. The min cut on percentage $0.2 = 20\%$ cuts the first 2 samples or removes the first 6 in case of a total count. The parameter has to be varied, depending on the outcome of a cost function. Further we can take off the top $j$ words as well by the same principle. The problem with the top words is, that they highly correlate with a lot of different documents, meaning a high correlation between a term and the corpus. Leaving them out erases a lot of connections, resulting in more discriminant features. This is what we want to achieve, finding the middle words, that are common in certain documents and uncommon in others. During clustering this will result in much more coherent clusters.
 
       \begin{equation}
       \begin{split}
@@ -103,7 +103,7 @@ In the following we will briefly explain what \emph{semantics} mean, especially 
     \end{figure} 
 
   Figure \ref{syntactic_parsing} is displayed as a projective tree, where each word has exactly one (or none) incoming and outgoing edge. The outgoing edge is referred to as head. Edges contain information about the relation between both words. Each word has a part of speech tag described by many corpuses. Current research projects use Google's ngrams over time, with a 3 billion ngram corpus to infer the most likely structures. \cite{SyntacticNgramsOverTime2013}
-  The parsing of English grammatical structures is entirely dependent upon specification of the rules. What part of speech tagging system is used? How is the grammar defined? With the help of the Chomsky hierarchy it was proven that not all natural languages have context-sensitive (type-1) nor Turing complete (type-0) grammars. See \cite[chp. 16]{NLPBookJurafsky2000} for a great introduction.
+  The parsing of English grammatical structures is entirely dependent upon specification of the rules. What part of speech tagging system is used? How is the grammar defined? With the help of the Chomsky hierarchy it was proven that most natural languages have context-sensitive (type-1) grammars, though it is arguable that regular grammars will not be sufficient. Again, we are looking at syntactical constructs, not semantics. See \cite[chp. 16]{NLPBookJurafsky2000, FormalLanguageTheory2012} for great introductions.
   In clustering this is not a huge problem, because the granularity of the task is not that fine tuned. A slightly false parse might still yield good feature results.
 
   \subsubsection*{Noun phrases}
