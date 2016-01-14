@@ -1,5 +1,0 @@
-- Global:
-  - make sentences short and concise
-  - fix language errors
-  - fix typos
-  - normalize variables, consistent notation etc.
