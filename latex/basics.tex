@@ -27,12 +27,12 @@ The reader is assumed to have prior knowledge on linear algebra, statistics and 
 
   \textbf{Automatic text summarization} is the process of reducing textual content to the most important concepts, in a readable, formatted form, to the user. \cite{SumEvaluation2001} We have to differentiate between summarization of single documents and a collection of documents. In multi-summarization the problem lies in identifying topics across documents, finding the most relevant sentences, reducing and removing redundant/duplicate information. Moreover syntactically it is often inappropriate to merge sentences of different documents. The Columbia Newsblaster and Google News are prime examples of summarization engines. Both continuously scrape news, cluster them and summarize the content into cohesive summaries. This is by no means an easy task and involves several components. These topics will be evaluated later and will take a major part of this thesis. See \cite{NewsBlaster2002, ColumbiaExperimentsSum2002}.\\
 
-  The text summarization and clustering task is closely related. How can clustering be used to improve and create textual summaries over documents or single articles? The following 
+  The text summarization and clustering task is closely related. Clustering groups documents that are closely related. These groups are used to do multi-document summarizations. The following steps are applied to group documents into coherent groups. \cite{NewsBlaster2002}
   
   \begin{description}
     \item[First] Cluster documents that contain a \emph{high density of information}, so summarizers can work on groups of documents, instead of all documents or single ones.
-    \item[Second] Detect the \emph{latent topics} across and within documents to create a meta concept of closely related documents, helping to improve summarizations.
-    \item[Third] Classify documents into \emph{categories} in a semi supervised way to construct hierarchies of relationships
+    \item[Second] Classify documents into \emph{categories} in a semi supervised way to construct hierarchies of relationships
+    \item[Third] Detect the \emph{latent topics} across and within documents to create a meta concept of closely related documents, helping to improve summarizations.
     \item[Fourth] Removing \emph{outliers} that will not highly contribute to textual summaries
   \end{description}
 
