@@ -2,12 +2,12 @@
   ``Everything should be built top-down, except the first time.''
 }}{ Alan J. Perlis }
  
-This section explains a general data flow and the necessary steps to get data from an external source into a vectorized form. It will be held short, giving intuition about a general setup, necessary preprocessing steps and as a point of reference, what the Columbia Newsblaster system did. For the source code, used throughout this thesis, see the \href{https://github.com/sacry-/text-mining-haw-bachelor/}{News-Clusty Github repository}.
+This section explains a general data flow and the necessary steps to get data from an external source into a vectorized form. It will be held short, giving intuition about a general setup and necessary preprocessing steps. The general point of reference will be the Columbia Newsblaster system. For the source code, used throughout this thesis, see the \href{https://github.com/sacry-/text-mining-haw-bachelor/}{News-Clusty Github repository}.
 
 \section{Pipeline}
 \label{sec:pipeline}
   
-  A data pipeline for text data has various modules of interest. Where do we get the textual content from? How is it stored? How is it preprocessed? What intermediate representations are useful? How do we handle the ongoing stream of input?
+  A data pipeline for text data has various modules of interest. Where do we get the textual content from? How is it stored? How is it preprocessed? What intermediate representations are useful? How do we handle the ongoing stream of input? In \ref{news_clusty} we see a general overview of the system.
 
   \begin{figure}[h!]
     \centering
@@ -18,7 +18,7 @@ This section explains a general data flow and the necessary steps to get data fr
 
   The system that was developed for this thesis, which is an early version, is currently called ``News-Clusty''. Scraping, preprocessing and clustering are in place. There is a command line interface to interact with scraping and preprocessing. Currently it is an open question how to incorporate clustering schemes by a command line. The summarization and output generation is yet another topic. The Columbia Newsblaster System by \cite{ColumbiaMultiDoc2001} is a very good point of reference. The core components of the Columbia Newsblaster are scraping, preprocessing, routing, clustering, summarizing and output generation. News-Clusty uses most of these components. They are briefly described in the following.
 
-  \paragraph{Scraping and Filtering} is the process of retrieving documents of interest in its raw form from websites, achieves and other sources. In the news domain, we talk about online newspapers such as ``The Guardian'' or news feeds like Google news. The inherent goal is, to persist the found pages. It is crucial to identify correct pages by several heuristics:
+  \paragraph{Scraping and Filtering} is the process of retrieving documents of interest in its raw form from websites, achieves and other sources. In the news domain, we talk about online newspapers such as ``The Guardian'' or news feeds like Google news. The inherent goal is to persist and preprocess found pages. It is crucial to identify correct pages by several heuristics:
 
   \begin{enumerate}
     \item \emph{encoding} to UTF-8 if working in English.
@@ -27,7 +27,7 @@ This section explains a general data flow and the necessary steps to get data fr
     \item \emph{irrelevant content} like advertisement, not found pages, subscriptions etc.
   \end{enumerate}
 
-  The more information one can collect about the article the better. Meta information like authors, meta keywords, keywords, categories, publishing dates, tags and links can be used later for more semantic strategies. Often, meta keywords can completely contain what articles are about. These keywords can be reasonably used by looking up definitions on \wiki{} or \emph{Google}, enhancing the content of an article. Publishing dates can be used to capture freshness, by penalizing articles that are several days old.
+  The more information one can collect about the article, the better. Meta information like authors, meta keywords, keywords, categories, publishing dates, tags and links can be used later for more semantic strategies. Often, meta keywords can completely contain what articles are about. These keywords can be reasonably used by looking up definitions on \wiki{} or \emph{Google}, enhancing the content of an article. Publishing dates can be used to capture freshness, by penalizing articles that are several days old.
 
   \paragraph{Preprocessing} is the step, where raw content is send into a pipeline of filters, until all noise and unnecessary information is stripped. In News-Clusty everything is on the internet in form of HTML pages. So a major task is to extract raw content from HTML to representative forms. An alternative would be, to use the extensive APIs of most newspapers, often for a subscription price each month.\\
   In figure \ref{preprocessing}, we work on two Elasticsearch indices. The preprocessing module reads articles from the ``articles'' index, a continuous stream of documents and posts on the ``prep'' index. In the preprocessing we take all the actions listed and save the intermediate result as its own field. This is helpful later, when computing expensive operations, such as named-entity tags, noun-phrases or pos-tags. After processing the HTML, we take a second filter step to make sure that the conditions of the scraping steps still hold true. If not, the article is removed. Stripping HTML is not the only necessary step. We need to clean documents from bad characters and unuseful information we cannot work with e.g. images. If the need arises, spelling correction can be applied as well, that is, if there is sufficient evidence that articles have a lot gross misspellings or slang. Due to the central limit theorem, misspellings diminish, in light of a greater population sample.
