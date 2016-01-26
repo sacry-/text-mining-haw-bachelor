@@ -88,6 +88,7 @@ In the evaluation section, the before mentioned measuring strategies are used. S
 A comparison of the different strategies with \lsa{} enabled, for the classification task, is shown in table \ref{comparison_single_with_lsa}. Note that the \emph{purity}, \vmeasure{} and \silco{} is averaged over 5 consecutive runs. Concluding from this, word tokens in combination with noun phrases lead to the highest \vmeasure{}. While other strategies perform still well enough, the chance for the best classification by clustering stems from purely syntactic means, e.g. word tokens and noun phrases. With \wordnet{} lemmatization we have a highly effective approach. That is, from the original 12000 feature dimensions we projected to 6000. Except for lemmatization, \wordnet{} approaches performed worse than the mentioned strategies. This is not generally the case as can be seen in \cite{TopicClassificationReuters2002} for an example on the Reuters Corpus with \wordnet{}, using a multinomial Naive-Bayes classifier.
 
   \begin{table}[h!]\label{comparison_single_with_lsa}
+    \centering
     \begin{tabular}{ c | c | c | c }
       Strategy    & v-measure & purity  & silhouette \\ \hline
       Word tokens & 0.812     & 0.926   & 0.118      \\
@@ -102,6 +103,7 @@ A comparison of the different strategies with \lsa{} enabled, for the classifica
 We can see in table \ref{comparison_single_without_lsa}, that the same measurement without \lsa{} performs in almost all instances, worse. Note, that \lda{} was explicitly excluded from the possible topic modeling techniques as it promotes a poor pre clustering step. This is due to the fact that \lda{} maps several topics to documents, resulting in documents having assignments to many topics. This is a desired property for the second clustering run.
 
   \begin{table}[h!]\label{comparison_single_without_lsa}
+    \centering
     \begin{tabular}{ c | c | c | c }
       Strategy    & v-measure & purity  & silhouette \\ \hline
       Word tokens & 0.667     & 0.831   & 0.073      \\
