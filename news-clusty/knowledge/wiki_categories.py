@@ -320,11 +320,14 @@ def partition(titles):
   return concrete, categories
 
 
-def retrieve_categories():
+def retrieve_categories(max_depth=None):
+  if not max_depth:
+    max_depth = 3
+
   for main_cat, sub_cats in CATEGORIES.items():
     print(main_cat)
 
-    depth = 3
+    depth = max_depth
     while depth:
 
       for sub_cat in sub_cats:

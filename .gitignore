@@ -1,13 +1,9 @@
 # My Stuff
 latex/out/
 literature/todo/
-*/knowledge/wiki/*.txt
-*/knowledge/wiki/cat_id_topics.json
-*/knowledge/wiki/*.npy
-*/knowledge/wiki/*.pkl
+*/knowledge/wiki/
 */migrations/*.p
 */cluster_analysis/es_pickles/*.p
-*/knowledge/wiki/enwiki-latest-pages-articles.xml.bz2
 */config/app_config.json
 backups/
 
