@@ -7,8 +7,8 @@
 
 Bachelor thesis project. Not even alpha.
 
-- The source code can be found under [news-clusty/](news-clusty/).
+- The source code can be found under [news-clusty/](news-clusty/)
 
-- Literature can be found under [literature/](literature/).
+- Literature can be found under [literature/](literature/)
 
-- Latex compilation of the Bachelor thesis can be found under [latex/](latex/).
+- Latex compilation of the Bachelor thesis can be found under [latex/](latex/)
