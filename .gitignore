@@ -6,7 +6,7 @@ literature/outlook/
 */cluster_analysis/es_pickles/*.p
 */config/app_config.json
 backups/
-
+playground/
 
 # PYTHON
 # Byte-compiled / optimized / DLL files
