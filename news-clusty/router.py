@@ -15,15 +15,28 @@ MODULE = os.path.dirname(os.path.abspath(__file__))
 CONFIG = os.path.join(MODULE, 'config')
 APP_CONFIG = "{}/{}".format(CONFIG, "app_config.json")
 
+
 variables = read_json(APP_CONFIG)
+def set_env_var(var, config_var):
+  global variables
 
-os.environ["LOG_PATH"] = variables["logpath"]
-os.environ["CLUSTY_BACKUPS"] = variables["backups_path"]
+  if config_var in variables:
+    var_value = variables[config_var]
+    if var_value:
+      os.environ[var] = var_value
 
-os.environ["STANFORD_NER_JAR"] = variables["stanford_ner_jar"]
-os.environ["STANFORD_NER_CLASSIFIER"] = variables["stanford_classifier"]
+  if not var in os.environ:
+    raise Exception(
+      "Please provide a valid argument for {} via ENV or in app_config.json via {}".format(var, config_var)
+    )
 
-os.environ["ELASTIC_HOST"] = variables["elastic_host"]
-os.environ["ELASTIC_PORT"] = variables["elastic_port"]
-os.environ["REDIS_HOST"] = variables["redis_host"]
-os.environ["REDIS_PORT"] = variables["redis_port"]
+set_env_var("LOG_PATH", "logpath")
+set_env_var("CLUSTY_BACKUPS", "backups_path")
+
+set_env_var("STANFORD_NER_JAR", "stanford_ner_jar")
+set_env_var("STANFORD_NER_CLASSIFIER", "stanford_classifier")
+
+set_env_var("ELASTIC_HOST", "elastic_host")
+set_env_var("ELASTIC_PORT", "elastic_port")
+set_env_var("REDIS_HOST", "redis_host")
+set_env_var("REDIS_PORT", "redis_port")
