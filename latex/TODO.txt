@@ -1,11 +1,13 @@
 
 (n) 2x gebundene Prüfungsexemplare
-  (n) Deckblatt (240 g/m²) - Ausgehändigt bei Prüfungsanmeldung - „Deckblatt“ (grüner Streifen)
+  (y) Deckblatt (240 g/m²) - Ausgehändigt bei Prüfungsanmeldung - „Deckblatt“ (grüner Streifen)
   (y) Erste Seite - mit den Angaben zur Arbeit
   (y) Zweite Seite - Zusammenfassung in deutscher und englischer Sprache, max. eine DIN A4 Seite
   (y) Inhaltsverzeichnis
   (y) Arbeit - gemäß der Richtlinien des jeweiligen Departments, falls vorhanden
   (y) Letzte Seite - Erklärung zur selbständigen Bearbeitung - PDF-Download oder siehe Vorlage i. d. Richtlinie
+    (n) Unterschrieben
+
   (n) Leimbindung - Deckblatt muss sichtbar sein
   (n) jedes Exemplar hat 1x CD ins inlay geklebt
 
@@ -20,5 +22,3 @@
 CD:
   - thesis.pdf
   - clone of news-clusty
-  - literatur?
-  - README.txt?
