@@ -2,6 +2,7 @@
   "stanford_ner_jar" : "path/to/your/stanford-ner/stanford-ner.jar",
   "stanford_classifier" : "path/to/your/stanford-ner/classifiers/english.muc.7class.distsim.crf.ser.gz",
   "logpath" : "/path/to/your/news-clusty/logs",
+  "backups_path" : "/path/to/your/news-clusty/backups",
   "redis_host" : "localhost",
   "redis_port" : "6379",
   "elastic_host" : "localhost",

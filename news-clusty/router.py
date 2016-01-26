@@ -15,12 +15,10 @@ MODULE = os.path.dirname(os.path.abspath(__file__))
 CONFIG = os.path.join(MODULE, 'config')
 APP_CONFIG = "{}/{}".format(CONFIG, "app_config.json")
 
-
-os.environ["CLUSTY_BACKUPS"] = os.path.join(MODULE, 'backups')
-
 variables = read_json(APP_CONFIG)
 
 os.environ["LOG_PATH"] = variables["logpath"]
+os.environ["CLUSTY_BACKUPS"] = variables["backups_path"]
 
 os.environ["STANFORD_NER_JAR"] = variables["stanford_ner_jar"]
 os.environ["STANFORD_NER_CLASSIFIER"] = variables["stanford_classifier"]
