@@ -7,7 +7,12 @@
 
 Bachelor thesis project. Not even alpha.
 
+
 - The source code can be found under [news-clusty/](news-clusty/)
+
+- Clustering experiments can be found under [news-clusty/bbc_data_clustering/](news-clusty/bbc_data_clustering/)
+
+- BBC dataset is checked in under [/bbc_data_clustering/bbc_raw/](news-clusty/bbc_data_clustering/bbc_raw/)
 
 - Literature can be found under [literature/](literature/)
 
