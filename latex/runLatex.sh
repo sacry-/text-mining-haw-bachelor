@@ -1,5 +1,7 @@
 #!/bin/bash
 
+texBin="/Library/TeX/texbin"
+
 function clear {
   for i in aux idx lof log lot nlo synctex.gz toc blg bbl dvi
   do
@@ -16,12 +18,12 @@ function copy_resources_to_out {
 }
 
 function texify {
-  /usr/texbin/pdflatex -interaction=batchmode thesis.tex
+  $texBin/pdflatex -interaction=batchmode thesis.tex
 }
 
 function compile {
   texify
-  /usr/texbin/bibtex thesis.aux
+  $texBin/bibtex thesis.aux
   # makeglossaries thesis
   texify
   texify

@@ -3,7 +3,6 @@ from data_view import BBCData
 
 from io_utils import print_clusters
 from io_utils import print_top_words
-from io_utils import plot
 
 from cluster_eval import ClusterEval
 from cluster_report import Report
